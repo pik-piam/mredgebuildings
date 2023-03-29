@@ -38,7 +38,7 @@ In case of questions / problems please contact Robin Hasse <robin.hasse@pik-pots
 
 To cite package **mredgebuildings** in publications use:
 
-Hasse R, Führlich P, Levesque A (2023). _mredgebuildings: Prepare data to be used by the EDGE-Buildings model_. R package version 0.1.5, <URL: https://github.com/pik-piam/mredgebuildings>.
+Hasse R, Führlich P, Levesque A (2023). _mredgebuildings: Prepare data to be used by the EDGE-Buildings model_. R package version 0.1.5, <https://github.com/pik-piam/mredgebuildings>.
 
 A BibTeX entry for LaTeX users is
 
