@@ -1,0 +1,7 @@
+,gcm,rcp,ssp,variable,start,end,folder,file,split
+1,,,,CountryMask,NA,NA,/p/projects/isimip/isimip/ISIMIP3b/InputData/geo_conditions/countrymasks,countrymasks.nc,NA
+2,,NA,2,pop,2015,2100,/p/tmp/volkholz/isimip/population_gdp_litpop/hires/final,population_ssp2_30arcmin_annual_2015_2100.nc,NA
+4,GFDL-ESM4,4.5,2,tas,2021,2030,/p/projects/isimip/isimip/ISIMIP3b/SecondaryInputData/climate/atmosphere/bias-adjusted/global/daily/ssp245/GFDL-ESM4,gfdl-esm4_r1i1p1f1_w5e5_ssp245_tas_global_daily_2021_2030.nc,TRUE
+13,GFDL-ESM4,4.5,2,rsds,2021,2030,/p/projects/isimip/isimip/ISIMIP3b/SecondaryInputData/climate/atmosphere/bias-adjusted/global/daily/ssp245/GFDL-ESM4,gfdl-esm4_r1i1p1f1_w5e5_ssp245_rsds_global_daily_2021_2030.nc,TRUE
+22,GFDL-ESM4,4.5,2,sfcwind,2021,2030,/p/projects/isimip/isimip/ISIMIP3b/SecondaryInputData/climate/atmosphere/bias-adjusted/global/daily/ssp245/GFDL-ESM4,gfdl-esm4_r1i1p1f1_w5e5_ssp245_sfcwind_global_daily_2021_2030.nc,TRUE
+31,GFDL-ESM4,4.5,2,huss,2021,2030,/p/projects/isimip/isimip/ISIMIP3b/SecondaryInputData/climate/atmosphere/bias-adjusted/global/daily/ssp245/GFDL-ESM4,gfdl-esm4_r1i1p1f1_w5e5_ssp245_huss_global_daily_2021_2030.nc,TRUE
