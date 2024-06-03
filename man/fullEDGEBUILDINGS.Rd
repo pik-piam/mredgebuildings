@@ -23,5 +23,5 @@ fullEDGEBUILDINGS()
 \code{\link{readSource}},\code{\link{getCalculations}},\code{\link{calcOutput}}
 }
 \author{
-Antoine Levesque, Robin Hasse
+Antoine Levesque, Robin Hasse, Hagen Tockhorn
 }

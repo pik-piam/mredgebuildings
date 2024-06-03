@@ -589,23 +589,6 @@ compHDDCDDFactors <- function(tlow, tup, tlim, tambStd = 5, tlimStd = 5) {
     return(h)
   }
 
-  # check if ambient/limit temperature interval is reasonable
-  # e.g. tLim = 17C and t_amb = -50C wouldn't give reasonable CDD
-  checkTDif <- function(tamb, tlim, typeDD, tambStd, tlimStd) {
-    check <- TRUE
-    stdDif <- tambStd + tlimStd
-    if (typeDD == "HDD") {
-      if (tamb - tlim > stdDif) {
-        check <- FALSE
-      }
-    } else if (typeDD == "CDD") {
-      if (tlim - tamb > 2 * stdDif) {
-        check <- FALSE
-      }
-    }
-    return(check)
-  }
-
   t <- seq(tlow, tup, .1)
 
   hddcddFactors <- do.call(
@@ -617,51 +600,42 @@ compHDDCDDFactors <- function(tlow, tup, tlim, tambStd = 5, tlimStd = 5) {
               do.call(
                 "rbind", lapply(
                   tlim[[typeDD]], function(.tlim) {
-                    if (!checkTDif(tamb, .tlim, typeDD, tambStd, tlimStd)) {
-                      tmp <- data.frame("T_amb"        = tamb,
-                                        "T_amb_K"      = round(tamb + 273.15, 1),
-                                        "tLim"         = .tlim,
-                                        "factor"       = 0,
-                                        "factor_err"   = 0,
-                                        "typeDD"       = typeDD)
+
+                    # tlim integration boundaries
+                    x1 <- .tlim - 3*tlimStd
+                    x2 <- .tlim + 3*tlimStd
+
+                    if (typeDD == "HDD") {
+                      f <- integral2(heatingFactor,
+                                     xmin = x1,
+                                     xmax = x2,
+                                     ymin = tamb - 3*tambStd,
+                                     ymax = min(.tlim, tamb + 3*tambStd),
+                                     tamb = tamb,
+                                     tambStd = tambStd,
+                                     tlim = .tlim,
+                                     tlimStd = tlimStd,
+                                     reltol = 1e-1)
                     } else {
-
-                      # integration boundaries
-                      x1 <- .tlim - 4 * tlimStd
-                      x2 <- .tlim + 4 * tlimStd
-                      y1 <- min(.tlim - 3 * tlimStd, tamb - 3 * tlimStd)
-                      y2 <- max(.tlim + 3 * tlimStd, tamb + 3 * tlimStd)
-
-                      if (typeDD == "HDD") {
-                        f <- integral2(heatingFactor,
-                                       xmin = x1,
-                                       xmax = x2,
-                                       ymin = y1,
-                                       ymax = function(x) {x}, #nolint
-                                       tamb = tamb,
-                                       tambStd = tambStd,
-                                       tlim = .tlim,
-                                       tlimStd = tlimStd,
-                                       reltol = 1e-1)
-                      } else {
-                        f <- integral2(coolingFactor,
-                                       xmin = x1,
-                                       xmax = x2,
-                                       ymin = function(x) {x}, #nolint
-                                       ymax = y2,
-                                       tamb = tamb,
-                                       tambStd = tambStd,
-                                       tlim = .tlim,
-                                       tlimStd = tlimStd,
-                                       reltol = 1e-1)
-                      }
-                      tmp <- data.frame("T_amb"        = tamb,
-                                        "T_amb_K"      = round(tamb + 273.15, 1),
-                                        "tLim"        = .tlim,
-                                        "factor"       = f$Q,
-                                        "factor_err"   = f$error,
-                                        "typeDD"       = typeDD)
+                      f <- integral2(coolingFactor,
+                                     xmin = x1,
+                                     xmax = x2,
+                                     ymin = max(.tlim, tamb - 3*tambStd),
+                                     ymax = tamb + 3*tambStd,
+                                     tamb = tamb,
+                                     tambStd = tambStd,
+                                     tlim = .tlim,
+                                     tlimStd = tlimStd,
+                                     reltol = 1e-1)
                     }
+
+                    tmp <- data.frame("T_amb"        = tamb,
+                                      "T_amb_K"      = round(tamb + 273.15, 1),
+                                      "tLim"         = .tlim,
+                                      "factor"       = f$Q,
+                                      "factor_err"   = f$error,
+                                      "typeDD"       = typeDD)
+
                     return(tmp)
                   }
                 )

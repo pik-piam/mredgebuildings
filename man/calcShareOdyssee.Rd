@@ -4,10 +4,15 @@
 \alias{calcShareOdyssee}
 \title{Share of energy carriers or end uses in historic buildings demand}
 \usage{
-calcShareOdyssee(subtype = c("enduse", "enduse_carrier"))
+calcShareOdyssee(
+  subtype = c("enduse", "carrier", "enduse_carrier"),
+  feOnly = FALSE
+)
 }
 \arguments{
 \item{subtype}{Character, dimension names, level of shares.}
+
+\item{feOnly}{if TRUE, output is absolute FE values}
 }
 \value{
 MAgPIE object with historic shares
@@ -20,8 +25,9 @@ categories. E.g. 'enduse_carrier' gives the share of each carrier in the
 demand from each end use.
 Missing shares that result from missing demand data are filled with the
 average share across all regions and periods and then normalised to sum up to
-one again. Traditional biomass use is assumed to be zero.
+one again.
+Biomass is split according to GDP per Capita (see toolSplitBiomass).
 }
 \author{
-Robin Hasse, Antoine Levesque
+Robin Hasse, Antoine Levesque, Hagen Tockhorn
 }

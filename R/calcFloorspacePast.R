@@ -11,12 +11,13 @@
 #'
 #' @returns MAgPIE object with historic floor space
 #'
-#' @author Robin Hasse, Antoine Levesque
+#' @author Robin Hasse, Antoine Levesque, Hagen Tockhorn
 #'
 #' @importFrom madrat readSource calcOutput toolCountryFill
-#' @importFrom quitte as.quitte calc_addVariable
+#' @importFrom quitte as.quitte calc_addVariable factor.data.frame
 #' @importFrom dplyr filter mutate select anti_join group_by left_join %>%
-#' ungroup .data
+#' ungroup .data %>%
+#' @importFrom rlang .data
 #' @importFrom magclass mbind as.magpie collapseDim mselect
 #' @importFrom tidyr spread
 #' @export
@@ -33,6 +34,15 @@ calcFloorspacePast <- function() {
                        units = "m2/cap", only.new = TRUE) %>%
       mutate(demographic = "Total")
   }
+
+
+  # PARAMETERS -----------------------------------------------------------------
+
+  # lower temporal boundary for historical data
+  periodBegin <- 1990
+
+  # upper temporal boundary for historical data
+  endOfHistory <- 2020
 
 
   # LOAD AND CALCULATE DATA ----------------------------------------------------
@@ -81,13 +91,19 @@ calcFloorspacePast <- function() {
   urbanshare <- calcOutput("UrbanPast", aggregate = FALSE) %>%
     as.quitte()
 
+  # population density
+  dens <- calcOutput("Density", aggregate = FALSE) %>%
+    as.quitte()
+
+
+
+  # PROCESS DATA ---------------------------------------------------------------
+
   # compute specific floor space
   eea <- floorPerCap(eea, pop)
   ind <- floorPerCap(ind, pop)
 
-
-  # JOIN DATA ------------------------------------------------------------------
-
+  # bind datasets
   data <- rbind(eea, ind)
   data <- data %>%
     rbind(anti_join(daioglou, data, by = c("period", "region", "demographic",
@@ -110,13 +126,20 @@ calcFloorspacePast <- function() {
     mutate(demographic = "Total") %>%
     rbind(data)
 
-  # remove urban and rural data
+  # remove urban and rural data and extrapolate missing entries
   data <- data %>%
     filter(.data[["demographic"]] == "Total") %>%
+    makeFloorspaceProjection(gdppop, dens, endOfHistory, periodBegin) %>%
+    mutate(scenario = "history")
+
+
+
+  # OUTPUT ---------------------------------------------------------------------
+
+  data <- data %>%
     as.quitte() %>%
     as.magpie() %>%
-    collapseDim() %>%
-    toolCountryFill(verbosity = 2)
+    collapseDim()
 
   pop <- pop %>%
     as.quitte() %>%
@@ -130,4 +153,81 @@ calcFloorspacePast <- function() {
               min = 0,
               unit = "m2/cap",
               description = "floor space per capita"))
+}
+
+
+#' Predict missing historic floorspace data
+#'
+#' A linear regression is performed to establish a general relationship between
+#' floorspace per capita and gdp per capita and population density.
+#' Predicted values are corrected w.r.t. to historical data where available,
+#' otherwise the prediction is chosen.
+#'
+#' @param df data.frame containing floorspace per capita
+#' @param gdppop data.frame containing gdp per capita
+#' @param dens data.frame containing population density
+#' @param endOfHistory upper temporal boundary of historic data
+#' @param periodBegin lower temporal boundary of historic data
+#'
+#' @return floorspace per capita with filled missing entries
+
+makeFloorspaceProjection <- function(df, gdppop, dens, endOfHistory, periodBegin) {
+
+  # Clean data
+  gdppop <- gdppop %>%
+    select(-"model", -"scenario", -"variable", -"unit") %>%
+    rename(gdppop = "value")
+
+  dens <- dens %>%
+    select(-"model", -"scenario", -"variable", -"unit", -"data") %>%
+    rename(density = "value")
+
+
+  # create full data set
+  dataFull <- df %>%
+    filter(.data[["demographic"]] == "Total") %>%
+    quitte::factor.data.frame() %>%
+    interpolate_missing_periods(period = seq(periodBegin, endOfHistory)) %>%
+    as.magpie() %>%
+    toolCountryFill() %>%
+    as.quitte() %>%
+    droplevels() %>%
+    left_join(gdppop, by = c("region", "period")) %>%
+    left_join(dens, by = c("region", "period"))
+
+  # estimation data set
+  dataEstimate <- dataFull %>%
+    filter(!is.na(.data[["value"]]))
+
+  # make linear regression to obtain estimate
+  estimate <- lm(log(value) ~ 1 + log(gdppop) + log(density), data = dataEstimate)
+
+  # predict missing data
+  dataPred <- dataFull %>%
+
+    # make prediction with regressed parameters
+    mutate(pred = exp(predict(estimate, newdata = dataFull))) %>%
+
+    # create correction factor to balance-out deviations w.r.t. historic data
+    group_by(across(all_of("region"))) %>%
+    mutate(factor = .data[["value"]] / .data[["pred"]]) %>%
+
+    # regress deviation factor for all periods
+    group_modify(~ extrapolateMissingPeriods(.x, key = "factor", slopeOfLast = 20)) %>%
+    ungroup() %>%
+
+    # correct prediction deviations if factor is available
+    mutate(pred = ifelse(is.na(.data[["factor"]]),
+                         .data[["pred"]],
+                         .data[["pred"]] * .data[["factor"]])) %>%
+
+    # fill missing values w/ predictions
+    mutate(value = ifelse(is.na(.data[["value"]]),
+                          .data[["pred"]],
+                          .data[["value"]])) %>%
+
+    # select columns
+    select("region", "period", "variable", "unit", "demographic", "value")
+
+  return(dataPred)
 }

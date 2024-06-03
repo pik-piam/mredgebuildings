@@ -7,7 +7,7 @@
 convertDaioglou(x, subtype = "households.specific floor space")
 }
 \arguments{
-\item{x}{MAgPIE object with data from Daioglou et al.}
+\item{x}{MAgPIE object with data from Daioglou et al. #nolint}
 
 \item{subtype}{\if{html}{\out{<dataFile>}}.\if{html}{\out{<variable>}}}
 }

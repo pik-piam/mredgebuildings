@@ -4,10 +4,12 @@
 \alias{calcShareETP}
 \title{Share of energy carriers or end uses in historic buildings demand}
 \usage{
-calcShareETP(subtype = c("enduse", "carrier"))
+calcShareETP(subtype = c("enduse", "carrier"), feOnly = FALSE)
 }
 \arguments{
 \item{subtype}{specifies share}
+
+\item{feOnly}{specifies if shares or quantities are returned}
 }
 \value{
 MAgPIE object with historic shares
@@ -17,7 +19,8 @@ Shares are calculated based on energy demands in households and services from
 the IEA ETP data base.
 Missing shares that result from missing demand data are filled with the
 average share across all regions and periods and then normalised to sum up to
-one again. Traditional biomass use is assumed to be zero.
+one again.
+Biomass is split according to GDP per Capita (see toolSplitBiomass).
 }
 \author{
 Robin Hasse, Antoine Levesque, Hagen Tockhorn

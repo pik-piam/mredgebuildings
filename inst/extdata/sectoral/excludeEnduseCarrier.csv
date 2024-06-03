@@ -1,0 +1,25 @@
+* combinations of end use and carrier that are generally excluded
+enduse,carrier
+appliances,natgas
+appliances,petrol
+appliances,biomod
+appliances,biotrad
+appliances,coal
+appliances,heat
+refrigerators,natgas
+refrigerators,petrol
+refrigerators,biomod
+refrigerators,biotrad
+refrigerators,coal
+refrigerators,heat
+lighting,biomod
+lighting,biotrad
+lighting,coal
+lighting,heat
+cooking,heat
+space_cooling,heat
+space_cooling,biomod
+space_cooling,biotrad
+space_cooling,coal
+space_cooling,natgas
+space_cooling,petrol

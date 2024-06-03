@@ -1,5 +1,4 @@
-parameter,space_cooling.elec,water_heating.elec,space_heating.elec
-Asym,3.10,1.5,1.5
-R0,0.50,,
-lrc,-10.12663,,
-phi3,NA,,
+enduse,carrier,Asym,lrc,R0
+space_cooling,elec,3.1,-10.12663,0.5
+space_heating,elec,1.5,NA,NA
+water_heating,elec,1.5,NA,NA

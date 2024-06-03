@@ -7,60 +7,85 @@
 #' demand from each end use.
 #' Missing shares that result from missing demand data are filled with the
 #' average share across all regions and periods and then normalised to sum up to
-#' one again. Traditional biomass use is assumed to be zero.
+#' one again.
+#' Biomass is split according to GDP per Capita (see toolSplitBiomass).
 #'
-#' @author Robin Hasse, Antoine Levesque
+#' @author Robin Hasse, Antoine Levesque, Hagen Tockhorn
 #'
 #' @param subtype Character, dimension names, level of shares.
+#' @param feOnly if TRUE, output is absolute FE values
+#'
 #' @returns MAgPIE object with historic shares
 #'
 #' @importFrom magclass mbind as.magpie
 #' @importFrom madrat readSource toolCountryFill
 #' @importFrom quitte as.quitte revalue.levels
 #' @importFrom dplyr filter %>% mutate group_by across all_of left_join
-#' summarise .data syms
+#' summarise
+#' @importFrom rlang .data syms
 #' @importFrom tidyr separate replace_na complete
 #' @importFrom utils tail
 #' @export
 
-calcShareOdyssee <- function(subtype = c("enduse", "enduse_carrier")) {
+calcShareOdyssee <- function(subtype = c("enduse", "carrier", "enduse_carrier"),
+                             feOnly = FALSE) {
+  # FUNCTIONS ------------------------------------------------------------------
+
+  # Calculate Shares w.r.t colShare
+  calcShares <- function(data, colShare) {
+    data %>%
+      group_by(across(-all_of(c(colShare, "value")))) %>%
+      mutate(value = .data[["value"]] / sum(.data[["value"]], na.rm = TRUE)) %>%
+      ungroup()
+  }
+
+
+  # READ-IN DATA ---------------------------------------------------------------
+
+  # Read Buildings Data
+  odysseeData <- mbind(readSource("Odyssee", "households"),
+                       readSource("Odyssee", "services")) %>%
+    as.quitte()
+
+  # Get GDP per Cap
+  gdppop <- calcOutput("GDPPop", aggregate = FALSE) %>%
+    as.quitte() %>%
+    select(-"model", -"scenario", -"unit")
+
+
+  # PARAMETERS -----------------------------------------------------------------
+
   subtype <- match.arg(subtype)
   shareOf <- strsplit(subtype, "_")[[1]]
 
+  # Variable Mappings
+  revalCarrier <- c(cms = "coal",
+                    pet = "petrol",
+                    gaz = "natgas",
+                    vap = "heat",
+                    enc = "biomod",
+                    elc = "elec")
 
-  # read buildings data
-  odyssee <- mbind(readSource("Odyssee", "households"),
-                   readSource("Odyssee", "services"))
+  revalSector <- c(cfres = "residential",
+                   cfter = "services")
 
+  revalEnduse <- c(chf = "space_heating",
+                   ecs = "water_heating",
+                   cui = "cooking",
+                   cli = "space_cooling",
+                   els1 = "appliances",
+                   lgt = "lighting")
 
-  # variable mappings
-  revalCarrier <- c(
-    cms = "coal",
-    pet = "petrol",
-    gaz = "natgas",
-    vap = "heat",
-    enc = "biomod",
-    elc = "elec"
-  )
-  revalSector <- c(
-    cfres = "residential",
-    cfter = "services"
-  )
-  revalEnduse <- c(
-    chf = "space_heating",
-    ecs = "water_heating",
-    cui = "cooking",
-    cli = "space_cooling",
-    els1 = "appliances",
-    lgt = "lighting"
-  )
   vars <- expand.grid(names(revalCarrier),
                       names(revalSector),
                       names(revalEnduse)) %>%
     apply(1, "paste", collapse = "")
 
-  # map variables
-  odyssee <- odyssee %>%
+
+  # PROCESS DATA ---------------------------------------------------------------
+
+  # Map Variables
+  odyssee <- odysseeData %>%
     as.quitte() %>%
     filter(.data[["variable"]] %in% paste0(vars, "_EJ"),
            !is.na(.data[["value"]])) %>%
@@ -73,82 +98,125 @@ calcShareOdyssee <- function(subtype = c("enduse", "enduse_carrier")) {
     interpolate_missing_periods(expand.values = TRUE)
 
 
-  # Extrapolate 'biotrad' share from 'biomod' values
-  edgeBio <- calcOutput("IOEdgeBuildings", subtype = "output_EDGE_buildings", aggregate = FALSE)
-  feBio <- calcOutput("IO", subtype = "output_biomass", aggregate = FALSE)
-
-  shareBiotrad <- edgeBio[, , "biotrad"] / (feBio[, , "sesobio.fesob.tdbiosob"] + feBio[, , "sesobio.fesoi.tdbiosoi"])
-  shareBiotrad[is.na(shareBiotrad)] <- 0
-
-  shareBiotrad <- shareBiotrad %>%
-    as.quitte() %>%
-    mutate(share = .data[["value"]]) %>%
-    select(-"value", -"model", -"scenario", -"variable", -"unit", -"d3", -"d31", -"data", -"data1", -"data2", -"data11")
-
-
-  odyssee <- odyssee %>%
-    filter(.data[["carrier"]] == "biomod") %>%
-    left_join(shareBiotrad, by = c("region", "period")) %>%
-    mutate(region = droplevels(.data[["region"]])) %>%
-    mutate(biotrad = .data[["value"]] * .data[["share"]],
-           biomod = .data[["value"]] * (1 - .data[["share"]])) %>%
-    select(-"value", -"share") %>%
-    gather(key = "carrier", value = "value", "biotrad", "biomod") %>%
-    rbind(odyssee %>% filter(.data[["carrier"]] != "biomod"))
-
-
-  # calculate shares
-  calcShares <- function(data, colShare) {
-    data %>%
-      group_by(across(-all_of(c(colShare, "value")))) %>%
-      mutate(value = proportions(.data[["value"]])) %>%
-      ungroup()
+  # Split Biomass
+  if (subtype != "enduse") {
+    odyssee <- odyssee %>%
+      rename(variable = "carrier") %>%
+      toolSplitBiomass(gdppop, varName = "biomod") %>%
+      rename(carrier = "variable")
   }
 
-  shareGlobal <- odyssee %>%
-    group_by(across(all_of(shareOf))) %>%
-    summarise(value = sum(.data[["value"]]), .groups = "drop") %>%
-    ungroup() %>%
-    mutate(value = .data[["value"]] / sum(.data[["value"]])) %>%
-    mutate(value = replace_na(.data[["value"]], 1))
+  # Fill missing "appliances"/"lighting" entries if "appliances_light" has non-NA entries.
+  if (subtype %in% c("enduse", "enduse_carrier")) {
+    revalEnduse <- c(els = "appliances_light")
+    vars <- expand.grid(names(revalCarrier),
+                        names(revalSector),
+                        names(revalEnduse)) %>%
+      apply(1, "paste", collapse = "")
 
-  share <- odyssee %>%
-    group_by(across(all_of(c("region", "period", shareOf)))) %>%
-    summarise(value = sum(.data[["value"]]), .groups = "drop") %>%
-    ungroup() %>%
-    calcShares(if (subtype == "enduse_carrier") shareOf else tail(shareOf, 1)) %>%
-    mutate(value = replace_na(.data[["value"]], 1)) %>%
-    complete(!!!syms(c("region", "period", shareOf))) %>%
-    left_join(shareGlobal, by = shareOf) %>%
-    mutate(value = ifelse(is.na(.data[["value.x"]]),
-                          .data[["value.y"]],
-                          .data[["value.x"]]),
-           value = replace_na(.data[["value"]], 0)) %>%
-    select(-"value.x", -"value.y") %>%
-    calcShares(if (subtype == "enduse_carrier") shareOf else tail(shareOf, 1))
+    # mean distribution of FE between "appliances" and "lighting"
+    meanApplightShares <- odyssee %>%
+      filter(.data[["enduse"]] %in% c("lighting", "appliances"),
+             !is.na(.data[["value"]])) %>%
+      group_by(across(all_of(c("region", "period", "sector", "carrier")))) %>%
+      mutate(value = proportions(.data[["value"]])) %>%
+      ungroup() %>%
+      group_by(across(all_of(c("period", "sector", "enduse")))) %>%
+      mutate(share = mean(.data[["value"]])) %>%
+      ungroup() %>%
+      select(all_of(c("period", "carrier", "sector", "enduse", "share")))
+
+    # split existing aggregated data into "appliances" and "lighting"
+    applightData <- odysseeData %>%
+      filter(.data[["variable"]] %in% paste0(vars, "_EJ"),
+             !is.na(.data[["value"]])) %>%
+      mutate(region = droplevels(.data[["region"]]),
+             variable = gsub("_.*$", "", .data[["variable"]])) %>%
+      separate("variable", c("carrier", "sector", "enduse"), c(3, 8)) %>%
+      revalue.levels(carrier = revalCarrier,
+                     sector  = revalSector,
+                     enduse  = revalEnduse) %>%
+      interpolate_missing_periods(expand.values = TRUE) %>%
+      pivot_wider(names_from = "enduse", values_from = "value") %>%
+      left_join(meanApplightShares,
+                by = c("period", "carrier", "sector"),
+                relationship = "many-to-many") %>%
+      mutate(value = .data[["appliances_light"]] * .data[["share"]]) %>%
+      select(all_of(c("region", "period", "carrier", "enduse", "sector", "value"))) %>%
+      unique()
+
+    # replace missing values
+    odyssee <- rbind(odyssee,
+                     applightData %>%
+                       anti_join(odyssee,
+                                 by = c("region", "period", "carrier", "enduse", "sector")) %>%
+                       select(-"variable"))
+  }
+
+  if (feOnly) {
+    # aggregate residential and services sector
+    odyssee <- odyssee %>%
+      group_by(across(all_of(c("region", "period", "carrier", "enduse")))) %>%
+      summarise(value = sum(.data[["value"]], na.rm = TRUE)) %>%
+      as.magpie() %>%
+      toolCountryFill(verbosity = 2)
+
+    return(list(x = odyssee,
+                unit = "FE",
+                description = "Aggregated fe values for Odyssee regions"))
+  } else {
+    #---Calculate Shares
+
+    shareGlobal <- odyssee %>%
+      group_by(across(all_of(shareOf))) %>%
+      summarise(value = sum(.data[["value"]], na.rm = TRUE), .groups = "drop") %>%
+      ungroup() %>%
+      mutate(value = .data[["value"]] / sum(.data[["value"]], na.rm = TRUE))
+
+    share <- odyssee %>%
+      group_by(across(all_of(c("region", "period", shareOf)))) %>%
+      summarise(value = sum(.data[["value"]], na.rm = TRUE), .groups = "drop") %>%
+      ungroup() %>%
+      calcShares(if (subtype == "enduse_carrier") shareOf else tail(shareOf, 1)) %>%
+      mutate(value = replace_na(.data[["value"]], 0)) %>%
+      complete(!!!syms(c("region", "period", shareOf))) %>%
+      left_join(shareGlobal, by = shareOf) %>%
+      mutate(value = ifelse(is.na(.data[["value.x"]]),
+                            .data[["value.y"]],
+                            .data[["value.x"]])) %>%
+      select(-"value.x", -"value.y") %>%
+      calcShares(if (subtype == "enduse_carrier") shareOf else tail(shareOf, 1))
 
 
-  # convert to magpie object
-  share <- share %>%
-    as.magpie() %>%
-    toolCountryFill(verbosity = 2)
+    # Weights: regional share of final energy
+    regShare <- odyssee %>%
+      complete(!!!syms(c("region", "period", "sector", "carrier", "enduse"))) %>%
+      interpolate_missing_periods(expand.values = TRUE) %>%
+      group_by(across(all_of(c("region", "period", head(shareOf, -1))))) %>%
+      summarise(value = sum(.data[["value"]], na.rm = TRUE), .groups = "drop") %>%
+      group_by(across(all_of(c("period", head(shareOf, -1))))) %>%
+      mutate(value = .data[["value"]] / sum(.data[["value"]], na.rm = TRUE))
 
-  # weights: regional share of final energy
-  regShare <- odyssee %>%
-    complete(!!!syms(c("region", "period", "sector", "carrier", "enduse"))) %>%
-    interpolate_missing_periods(expand.values = TRUE) %>%
-    group_by(across(all_of(c("region", "period", head(shareOf, -1))))) %>%
-    summarise(value = sum(.data[["value"]], na.rm = TRUE), .groups = "drop") %>%
-    group_by(across(all_of(c("period", head(shareOf, -1))))) %>%
-    mutate(value = .data[["value"]] / sum(.data[["value"]])) %>%
-    as.magpie() %>%
-    collapseDim() %>%
-    toolCountryFill(1, verbosity = 2)
 
-  return(list(x = share,
-              weight = regShare,
-              unit = "1",
-              min = 0,
-              max = 1,
-              description = "Share of carrier or end use in buildings demand"))
+
+    # OUTPUT ---------------------------------------------------------------------
+
+    # Convert to magpie object
+    share <- share %>%
+      as.magpie() %>%
+      toolCountryFill(verbosity = 2)
+
+    regShare <- regShare %>%
+      as.magpie() %>%
+      collapseDim() %>%
+      toolCountryFill(1, verbosity = 2)
+
+
+    return(list(x = share,
+                weight = regShare,
+                unit = "1",
+                min = 0,
+                max = 1,
+                description = "Share of carrier or end use in buildings demand"))
+  }
 }

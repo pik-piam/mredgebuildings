@@ -1,0 +1,8 @@
+enduse,EDGE
+* 1st level of aggregation
+Light,appliances_light
+Stationary power,appliances_light
+Other,appliances_light
+* 2nd level of aggregation
+refrigerators,appliances_light
+appliances_light,appliances_light

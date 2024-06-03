@@ -4,7 +4,22 @@
 \alias{calcShares}
 \title{Historic carrier-Enduse Shares w.r.t Final Energy}
 \usage{
-calcShares()
+calcShares(
+  subtype = c("carrier_nonthermal", "carrier_thermal", "enduse_nonthermal",
+    "enduse_thermal"),
+  carrierCorrection = FALSE,
+  feOnly = FALSE,
+  feWeights = TRUE
+)
+}
+\arguments{
+\item{subtype}{specifies share}
+
+\item{carrierCorrection}{allows additional corrections}
+
+\item{feOnly}{specifies if shares or quantities are returned}
+
+\item{feWeights}{calculate additional FE weights for share aggregation}
 }
 \value{
 data.frame with historic energy demands
@@ -13,7 +28,34 @@ data.frame with historic energy demands
 Merges and transforms the calculated shares from the Datasets:
 Odyssee
 IEA_ETP
+TCEP
+WEO
+}
+\details{
+Enduse shares are extrapolated using a linear regression where the ETP datapoint
+as well as selected regions from TCEP serves as origin and the entire TCEP dataset
+provides the growth factor.
+
+Carrier shares are exported w.r.t. to all carriers per region per period. In the case of
+"carrierCorrection = TRUE", carrier shares are exported w.r.t. their contribution
+to each individual enduse. The reason for the latter is that the implemantation
+here is closer to EDGE-B, but didn't work well with further data processing
+steps (e.g. toolDisaggregate) where EC shares are not necessarily used.
+Hence, this case is by default disabled.
+
+In the thermal case, the enduse "appliances" is transformed to "refrigerators"
+using the region-specific refrigerator share used in EDGE-B. Higher-resoluted
+data was not available.
+}
+\note{
+The parameter "feOnly" is only applicable to IEA_ETP and TCEP data,
+since this is the necessary data to do a full disaggregation of EU and EC
+data, whereas Odyssee already gives disaggregated data for countries of the
+European Union.
+
+As done in EDGE-B, enduse-disaggregated FE data from WEO for the regions
+MIE, AFR and JAP were used instead for values from IEA ETP.
 }
 \author{
-Antoine Levesque, Hagen Tockhorn
+Hagen Tockhorn, Robin Hasse
 }
