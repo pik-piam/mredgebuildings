@@ -31,8 +31,11 @@ fullEDGEBUILDINGS <- function(rev = 0) {
   # move calcIO to mrcommons
   calcOutput("IOEdgeBuildings", subtype = "output_EDGE_buildings", aggregate = FALSE, file = "f_edge_buildings.cs4r")
   calcOutput("IOEdgeBuildings", subtype = "output_EDGE",           aggregate = FALSE, file = "f_edge_stationary.cs4r")
-  calcOutput("IEAPFU",                                aggregate = FALSE, file = "f_iea_pfu.cs4r")
-  calcOutput("FloorspacePast",                        aggregate = FALSE, file = "f_floorspace.cs4r")
+  calcOutput("IEAPFU",                                             aggregate = FALSE, file = "f_iea_pfu.cs4r")
+  calcOutput("FloorspacePast",                                     aggregate = FALSE, file = "f_floorspace.cs4r")
+  calcOutput("IEAfloorspace",                                      aggregate = FALSE, file = "f_iea_floorspace.cs4r")
+  calcOutput("Uvalues", subtype = "EUBuildingsObservatory",        aggregate = FALSE, file = "f_uvalues_rescom.cs4r")
+  calcOutput("Uvalues", subtype = "ETSAP",                         aggregate = FALSE, file = "f_uvalues_etsap.cs4r")
 
   # climate data ---------------------------------------------------------------
   for (tlim in 17:25) {
