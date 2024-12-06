@@ -9,8 +9,7 @@ calcGDPPop <- function() {
 
   # LOAD DATA ------------------------------------------------------------------
 
-  gdp <- calcOutput("GDP", aggregate = FALSE, average2020 = FALSE,
-                    unit = "constant 2005 Int$PPP") %>%
+  gdp <- calcOutput("GDP", aggregate = FALSE, average2020 = FALSE) %>%
     mselect(variable = "gdp_SSP2") %>%
     as.quitte()
 
@@ -27,7 +26,7 @@ calcGDPPop <- function() {
                  select(-"unit", -"model", -"variable", -"scenario"),
                by = c("region", "period")) %>%
     mutate(value = .data[["value.x"]] / .data[["value.y"]],
-           variable = "gdppop in constant 2005 Int$PPP") %>%
+           variable = "gdppop in constant 2017 Int$PPP") %>%
     select(-"value.x", -"value.y")
 
 

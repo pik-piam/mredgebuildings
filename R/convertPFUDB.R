@@ -15,6 +15,7 @@
 #' @importFrom quitte as.quitte aggregate_map factor.data.frame
 #' @importFrom magclass as.magpie
 #' @importFrom madrat calcOutput toolGetMapping
+#' @importFrom mrcommons toolSplitBiomass
 #' @export
 
 
@@ -32,9 +33,8 @@ convertPFUDB <- function(x) {
                                   type = "regional", where = "mredgebuildings")
 
   # Get GDP per Cap
-  dfGDPpop <- calcOutput("GDPPop", aggregate = FALSE) %>%
-    as.quitte() %>%
-    select(-"model", -"scenario", -"unit")
+  gdppop <- calcOutput("GDPPop", aggregate = FALSE)
+
 
 
   # PARAMETERS -----------------------------------------------------------------
@@ -80,23 +80,24 @@ convertPFUDB <- function(x) {
     rename(variable = "carrier")
 
 
-  # DISAGGREGATE ---------------------------------------------------------------
+  # SAGGREGATE -----------------------------------------------------------------
 
-  # Disaggregate to ISO Level
   pfu <- pfu %>%
     droplevels() %>%
-    aggregate_map(subset2agg = levels(pfu$variable),
+    aggregate_map(mapping = regionmapping[!is.na(regionmapping$PFUDB), ],
+                  by = c("region" = "PFUDB"),
+                  subset2agg = levels(pfu$variable),
                   weights = ieaFe %>%
                     rename(weight = "value") %>%
                     select(-"model", -"scenario", -"unit") %>%
                     droplevels(),
-                  mapping = regionmapping[!is.na(regionmapping$PFUDB), c("PFUDB", "iso")],
-                  by = c("region" = "PFUDB"),
                   weight_item_col = "region",
                   weight_val_col = "weight") %>%
     mutate(value = replace_na(.data[["value"]], 0)) %>%
-    toolSplitBiomass(dfGDPpop, varName = "Biomass")
-
+    as.quitte() %>%
+    as.magpie() %>%
+    toolSplitBiomass(gdppop, "Biomass", dim = "variable") %>%
+    as.quitte()
 
   # Adaptation of correct Format
   pfu <- pfu %>%

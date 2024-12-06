@@ -21,7 +21,7 @@ fullEDGEBUILDINGS <- function(rev = 0) {
 
   # socio-economic data --------------------------------------------------------
   calcOutput("Population",     file = "f_pop.cs4r")
-  calcOutput("GDP",            file = "f_gdp.cs4r", average2020 = FALSE, unit = "constant 2005 Int$PPP")
+  calcOutput("GDP",            file = "f_gdp.cs4r", average2020 = FALSE)
   calcOutput("Surface",        file = "f_surface.cs4r")
   calcOutput("Urban",          file = "f_urban.cs4r")
 

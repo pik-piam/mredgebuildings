@@ -4,7 +4,7 @@
 #' countries from Daioglou et al 2012. The result does not cover all countries
 #' and has mixed points in time depending on the region.
 #'
-#' @note RK: In Antoine's EDGE-B, data points associated with an GDP/POP above
+#' @note RH: In Antoine's EDGE-B, data points associated with an GDP/POP above
 #' 70000 USD/cap are dropped here to improve the later regression. This
 #' filtering should be moved to getFloorspaceResidential where the regression is
 #' performed. Therefore, the high-income data points are kept at this stage.
@@ -14,13 +14,12 @@
 #' @author Robin Hasse, Antoine Levesque, Hagen Tockhorn
 #'
 #' @importFrom madrat readSource calcOutput toolCountryFill
-#' @importFrom quitte as.quitte calc_addVariable factor.data.frame interpolate_missing_periods
-#' @importFrom dplyr filter mutate select anti_join group_by left_join %>%
-#' ungroup .data %>% group_modify
-#' @importFrom rlang .data
+#' @importFrom quitte as.quitte factor.data.frame interpolate_missing_periods
+#'   calc_addVariable
+#' @importFrom dplyr filter mutate select anti_join group_by left_join %>% .data
+#'   ungroup group_modify
 #' @importFrom magclass mbind as.magpie collapseDim mselect
 #' @importFrom tidyr spread replace_na
-#'
 #' @export
 
 calcFloorspacePast <- function() {
@@ -61,7 +60,7 @@ calcFloorspacePast <- function() {
       factor.data.frame() %>%
       interpolate_missing_periods(period = seq(periodBegin, endOfHistory)) %>%
       as.magpie() %>%
-      toolCountryFill() %>%
+      toolCountryFill(verbosity = 2) %>%
       as.quitte() %>%
       droplevels() %>%
       left_join(gdppop, by = c("region", "period")) %>%
@@ -143,17 +142,11 @@ calcFloorspacePast <- function() {
     as.quitte() %>%
     filter(.data[["period"]] <= endOfHistory) %>%
     mutate(unit = "million cap",
-           variable = gsub("pop_SSP2", "population", .data[["variable"]], fixed = TRUE))
+           variable = gsub("pop_SSP2", "population", .data[["variable"]]))
 
   # historic GDP per capita
-  gdppop <- calcOutput("GDP", scenario = "SSP2", average2020 = FALSE, aggregate = FALSE, unit = "constant 2005 Int$PPP") %>% # nolint
-    as.quitte() %>%
-    filter(.data[["period"]] <= endOfHistory) %>%
-    mutate(variable = gsub("gdp_SSP2", "gdp in constant 2005 Int$PPP", .data[["variable"]], fixed = TRUE)) %>%
-    rbind(pop) %>%
-    calc_addVariable(gdppop = "`gdp in constant 2005 Int$PPP` / `population`",
-                     units = "USD2005/cap", only.new = TRUE) %>%
-    filter(.data[["variable"]] == "gdppop")
+  gdppop <- calcOutput("GDPPop", aggregate = FALSE) %>%
+    as.quitte()
 
   # share of urban population
   urbanshare <- calcOutput("UrbanPast", aggregate = FALSE) %>%

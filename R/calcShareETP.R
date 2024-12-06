@@ -18,11 +18,12 @@
 #' @importFrom madrat readSource toolCountryFill toolGetMapping
 #' @importFrom quitte as.quitte revalue.levels
 #' @importFrom dplyr filter %>% mutate group_by across all_of left_join
-#' summarise
+#'   summarise
 #' @importFrom plyr revalue
 #' @importFrom rlang .data syms
 #' @importFrom tidyr separate replace_na complete
 #' @importFrom utils tail
+#' @importFrom mrcommons toolSplitBiomass
 #' @export
 
 calcShareETP <- function(subtype = c("enduse", "carrier"), feOnly = FALSE) {
@@ -33,9 +34,7 @@ calcShareETP <- function(subtype = c("enduse", "carrier"), feOnly = FALSE) {
   etp <- readSource("IEA_ETP", "buildings")
 
   # Get GDP per Cap
-  gdppop <- calcOutput("GDPPop", aggregate = FALSE) %>%
-    as.quitte() %>%
-    select(-"model", -"scenario", -"unit")
+  gdppop <- calcOutput("GDPPop", aggregate = FALSE)
 
 
 
@@ -58,14 +57,13 @@ calcShareETP <- function(subtype = c("enduse", "carrier"), feOnly = FALSE) {
   reval <- switch(shareOf,
     enduse = toolGetMapping(name = "enduseMap_IEA-ETP.csv",
                             type = "sectoral",
-                            where = "mredgebuildings") %>%
-      pull("EDGE", "IEA_ETP"),
+                            where = "mredgebuildings"),
 
     carrier = toolGetMapping(name = "carrierMap_IEA-ETP.csv",
                              type = "sectoral",
-                             where = "mredgebuildings") %>%
-      pull("EDGE", "IEA_ETP")
-  )
+                             where = "mredgebuildings")
+  ) %>%
+    pull("EDGE", "IEA_ETP")
 
 
 
@@ -75,20 +73,20 @@ calcShareETP <- function(subtype = c("enduse", "carrier"), feOnly = FALSE) {
   etpFilter <- etp %>%
     as.quitte() %>%
     filter(.data[["period"]] %in% periods,
-           .data[["scenario"]] %in% scen) %>%
-    filter(.data[["variable"]] %in% names(reval),
+           .data[["scenario"]] %in% scen,
+           .data[["variable"]] %in% names(reval),
            !is.na(.data[["value"]])) %>%
     mutate(variable = droplevels(revalue(.data[["variable"]], reval)))
-
-  names(etpFilter)[names(etpFilter) == "variable"] <- shareOf
-
+  colnames(etpFilter)[colnames(etpFilter) == "variable"] <- shareOf
 
   # Extrapolate 'biotrad' share from 'biomod' values for carrier separation
   if (subtype == "carrier") {
     etpFilter <- etpFilter %>%
-      rename(variable = "carrier") %>%
-      toolSplitBiomass(gdppop, varName = "biomod") %>%
-      rename(carrier = "variable")
+      as.quitte() %>%
+      as.magpie() %>%
+      toolSplitBiomass(gdppop, "biomod", dim = "carrier") %>%
+      as.quitte() %>%
+      select(-"variable")
   }
 
   # Correct precision errors
