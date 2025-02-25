@@ -15,6 +15,7 @@ fullBRICK <- function(rev = 0) {
   calcOutput("BuildingStock", subtype = "residential", file = "f_buildingStock.cs4r")
 
 
+
   # Housing demand -------------------------------------------------------------
 
   calcOutput("PopulationBuildings", file = "f_population.cs4r")

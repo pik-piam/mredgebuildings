@@ -83,6 +83,8 @@ calcHeatingSystemReplacement <- function() {
 
 
 
+  # RETURN ---------------------------------------------------------------------
+
   return(list(x = replaceMatrix,
               weight = as.magpie(1),
               min = 0,
