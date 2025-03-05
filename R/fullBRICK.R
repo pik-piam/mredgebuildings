@@ -10,6 +10,8 @@
 
 fullBRICK <- function(rev = 0) {
 
+  scenarios <- c("SSPs")
+
   # Building stock -------------------------------------------------------------
 
   calcOutput("BuildingStock", subtype = "residential", file = "f_buildingStock.cs4r")
@@ -18,8 +20,8 @@ fullBRICK <- function(rev = 0) {
 
   # Housing demand -------------------------------------------------------------
 
-  calcOutput("PopulationBuildings", file = "f_population.cs4r")
-  calcOutput("FloorspacePerCap",    file = "f_floorspacePerCap.cs4r")
+  calcOutput("PopulationBuildings",                    file = "f_population.cs4r")
+  calcOutput("FloorspacePerCap", scenario = scenarios, file = "f_floorspacePerCap.cs4r")
 
 
 
