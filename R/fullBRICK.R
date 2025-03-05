@@ -20,8 +20,8 @@ fullBRICK <- function(rev = 0) {
 
   # Housing demand -------------------------------------------------------------
 
-  calcOutput("PopulationBuildings",                    file = "f_population.cs4r")
-  calcOutput("FloorspacePerCap", scenario = scenarios, file = "f_floorspacePerCap.cs4r")
+  calcOutput("PopulationBuildings",                     file = "f_population.cs4r")
+  calcOutput("FloorspacePerCap", scenarios = scenarios, file = "f_floorspacePerCap.cs4r")
 
 
 

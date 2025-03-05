@@ -4,19 +4,19 @@
 #'
 #' @author Robin Hasse
 #'
-#' @param scenario A string (or vector of strings) designating the scenario(s) to be returned.
+#' @param scenarios A string (or vector of strings) designating the scenario(s) to be returned.
 #' @importFrom madrat readSource calcOutput
 #' @importFrom magclass getItems getItems<- getSets getSets<- time_interpolate
 #'   mselect collapseDim
 #'
-calcFloorspacePerCap <- function(scenario) {
+calcFloorspacePerCap <- function(scenarios) {
 
   # Replace any calls to scenario groups such as "SSPs" and "SSP2IndiaDEAs",
   # to calls of the individual scenarios.
-  scenario <- mrdrivers::toolReplaceShortcuts(scenario) %>% unique()
+  scenarios <- mrdrivers::toolReplaceShortcuts(scenarios) %>% unique()
 
   # TODO: get rid of the mrremind dependency # nolint: todo_comment_linter
-  fs <- readSource("EdgeBuildings", subtype = "Floorspace", subset = scenario) %>%
+  fs <- readSource("EdgeBuildings", subtype = "Floorspace", subset = scenarios) %>%
     mselect(variable = "residential", collapseNames = TRUE)
 
   t <- getItems(fs, 2)
