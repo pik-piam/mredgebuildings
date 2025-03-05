@@ -4,7 +4,10 @@
 \alias{calcFloorspacePerCap}
 \title{Residential floor space per capita}
 \usage{
-calcFloorspacePerCap()
+calcFloorspacePerCap(scenario)
+}
+\arguments{
+\item{scenario}{A string (or vector of strings) designating the scenario(s) to be returned.}
 }
 \value{
 MagPIE object with residential floor space per capita
