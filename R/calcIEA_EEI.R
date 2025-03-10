@@ -71,13 +71,14 @@ calcIEA_EEI <- function(subtype = c("buildings")) { #nolint object_name_linter
                      enduse  = enduseMap) %>%
       # sum up service and residential data
       group_by(across(-all_of("value"))) %>%
-      summarise(value = sum(ifelse(all(is.na(.data[["value"]])),
-                                   NA,
-                                   sum(.data[["value"]], na.rm = TRUE))),
+      summarise(value = sum(.data[["value"]]),
                 .groups = "drop") %>%
+      # only keep region/periods with data
+      group_by(across(all_of(c("region", "period", "enduse")))) %>%
+      filter(any(.data$value > 0)) %>%
       ungroup() %>%
       # convert unit to EJ
-      mutate(value = .data[["value"]] * pj2ej)
+      mutate(value = replace_na(.data[["value"]], 0) * pj2ej)
 
 
     # split biomass into traditional + modern biomass
@@ -86,7 +87,7 @@ calcIEA_EEI <- function(subtype = c("buildings")) { #nolint object_name_linter
       as.quitte() %>%
       as.magpie() %>%
       toolSplitBiomass(gdppop) %>%
-      complete_magpie()
+      toolCountryFill(verbosity = 2)
   }
 
 

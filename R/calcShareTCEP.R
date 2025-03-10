@@ -40,7 +40,7 @@ calcShareTCEP <- function() {
 
   return(list(
     x = shares,
-    weights = regShare,
+    weight = regShare,
     min = 0,
     max = 1,
     unit = "",
