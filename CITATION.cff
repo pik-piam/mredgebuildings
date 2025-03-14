@@ -2,17 +2,17 @@ cff-version: 1.2.0
 message: If you use this software, please cite it using the metadata from this file.
 type: software
 title: 'mredgebuildings: Prepare data to be used by the EDGE-Buildings model'
-version: 0.8.7
-date-released: '2025-03-05'
+version: 0.8.8
+date-released: '2025-03-14'
 abstract: Prepare data to be used by the EDGE-Buildings model.
 authors:
 - family-names: Hasse
   given-names: Robin
   email: robin.hasse@pik-potsdam.de
   orcid: https://orcid.org/0000-0003-1818-3186
-- family-names: Führlich
+- family-names: Sauer
   given-names: Pascal
-  email: pascal.fuehrlich@pik-potsdam.de
+  email: pascal.sauer@pik-potsdam.de
 - family-names: Levesque
   given-names: Antoine
 - family-names: Tockhorn

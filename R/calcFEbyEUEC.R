@@ -116,33 +116,29 @@ calcFEbyEUEC <- function() {
 
 
   # existing enduse-carrier shares are applied directly on IEA data
-  dataReplaceFull <- feOdyssee %>%
-    select("region", "period", "carrier", "enduse", "value") %>%
-    group_by(across(all_of(c("region", "carrier", "enduse")))) %>%
-    filter(all(!is.na(.data[["value"]]))) %>%
-    ungroup() %>%
+  dataReplaceFull <- feDisagg %>%
+    interpolate_missing_periods(unique(ieaIODis$period), expand.values = TRUE) %>%
+    right_join(ieaIODis, by = c("region", "period", "carrier", "enduse"),
+               suffix = c("Data", "Calc")) %>%
     group_by(across(all_of(c("region", "period", "carrier")))) %>%
-    mutate(share = proportions(.data[["value"]])) %>%
+    filter(!all(is.na(.data$valueData))) %>%
+    mutate(value = ifelse(is.na(.data$valueData),
+                          .data$valueCalc,
+                          .data$valueData),
+           share = proportions(.data$value)) %>%
     ungroup() %>%
-    select(-"value") %>%
-    left_join(ieaIO, by = c("region", "period", "carrier")) %>%
-    mutate(replaceValue = .data[["value"]] * .data[["share"]],
-           replaceValue = replace_na(.data[["replaceValue"]], 0)) %>%
-    select("region", "period", "carrier", "enduse", "replaceValue")
+    select("region", "period", "carrier", "enduse", "share")
 
 
   # existing disaggregated data replaces values from optimization
   data <- ieaIODis %>%
     left_join(dataReplaceFull, by = c("region", "period", "carrier", "enduse")) %>%
-    mutate(valueUncorrected = ifelse(is.na(.data[["replaceValue"]]),
-                                     .data[["value"]],
-                                     .data[["replaceValue"]])) %>%
     group_by(across(all_of(c("region", "period", "carrier")))) %>%
-    mutate(value = ifelse(.data[["valueUncorrected"]] == 0,
-                          0,
-                          sum(.data[["value"]]) * proportions(.data[["valueUncorrected"]]))) %>%
+    mutate(recalculate = any(!is.na(.data$share)),
+           value = ifelse(.data$recalculate,
+                          sum(.data$value) * replace_na(.data$share, 0),
+                          .data$value)) %>%
     ungroup() %>%
-    select(-"valueUncorrected") %>%
     select("region", "period", "unit", "carrier", "enduse", "value")
 
 
