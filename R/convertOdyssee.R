@@ -18,6 +18,10 @@ convertOdyssee <- function(x, subtype = "households") {
 
   data <- x
 
+  # filter problematic/unnecessary regions
+  problematicRegions <- c("EU", "XK")
+  data <- data[!getItems(data, 1) %in% problematicRegions, , ]
+
   # rename regions: ISO2 -> ISO3
   getItems(data, 1) <- toolCountry2isocode(getItems(data, 1))
 
@@ -33,17 +37,12 @@ convertOdyssee <- function(x, subtype = "households") {
     "Mm2;      m2;       1E6",
     "%;        1;        1E-2",
     "degree;   dK/yr;    1",
-    "MEUR2010; MEUR2010; 1"
+    "MEUR2015; MEUR2015; 1"
   )
   data <- toolUnitConversion(data, unitConversion)
 
   # fill missing regions with NA
   data <- toolCountryFill(data, verbosity = 2)
 
-  # manually drop erroneous data points
-  if (subtype == "households") {
-    data["HUN", , c("surlpn_m2", "surmpn_m2", "suripn_m2")] <- NA
-    data["PRT", , c("nbrlprpet_1", "nbrlprgaz_1", "nbrlprcms_1", "nbrlprvap_1", "nbrlprboi_1", "nbrlprele_1")] <- NA
-  }
   return(data)
 }
