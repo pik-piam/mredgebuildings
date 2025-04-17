@@ -61,8 +61,8 @@ calcPFUDB <- function() {
 
   # Relevant toolDisaggregate Input-Data
 
-  sharesEU <- calcOutput("Shares",
-                         subtype = "enduse_thermal",
+  sharesEU <- calcOutput("SharesEU",
+                         thermal = TRUE,
                          aggregate = TRUE,
                          regionmapping = "regionmappingEUshares.csv") %>%
     as.quitte()
