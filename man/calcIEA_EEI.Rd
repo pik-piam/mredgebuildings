@@ -4,10 +4,12 @@
 \alias{calcIEA_EEI}
 \title{Process data from IEA End Uses and Efficiency Indicators Database}
 \usage{
-calcIEA_EEI(subtype = c("buildings"))
+calcIEA_EEI(subtype = c("buildings"), mixData = FALSE)
 }
 \arguments{
 \item{subtype}{sector name}
+
+\item{mixData}{logical indicating whether to mix res/com data points if both are not given}
 }
 \value{
 data.frame containing enduse- and carrier-resoluted energy data
