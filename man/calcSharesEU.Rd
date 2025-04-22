@@ -16,15 +16,34 @@ into "refrigerators" with appropriate share}
 data.frame with historic end-use shares relative to final energy demands
 }
 \description{
-Merges and transforms the calculated shares from the datasets:
+Merges and transforms the calculated shares from the datasets/reports:
 Odyssee 2024
 IEA Energy Efficiency Indicators 2024
 IEA Tracking Clean Energy Progress
 IEA World Energy Outlook 2014
+IEA "An Energy Sector Roadmap to Carbon Neutrality in China" 2021
 }
 \details{
-End-use shares are extrapolated using a log-linear regression on the existing
-data points while values in-between existing data are interpolated linearly.
+Data is merged following a strict priority hierarchy:
+\enumerate{
+\item Odyssee - Provides detailed European data
+\item IEA Energy Efficiency Indicators (EEI) - Global coverage
+\item IEA China data
+\item IEA World Energy Outlook (WEO) - Only used if EEI has fewer than 2 data points
+for a particular region-enduse combination
+\item IEA Energy Technology Perspectives (ETP) - Only used if EEI has fewer than 2 data points
+and no WEO data is available
+}
+
+For specific regions (Africa, Middle East), data points from WEO
+are prioritized due to their regional specificity. These data points are extrapolated using
+growth factors determined by TCEP (Tracking Clean Energy Progress) to ensure consistent
+time series extension.
+
+End-use shares are extrapolated using a log-linear regression on existing data points,
+while values between existing data points are interpolated linearly. The function preserves
+dataset consistency by avoiding mixing data sources when sufficient data points are available
+from a single source.
 
 In the thermal case, the enduse "appliances" is transformed to "refrigerators"
 using the region-specific refrigerator share used in EDGE-B. Higher resolved
