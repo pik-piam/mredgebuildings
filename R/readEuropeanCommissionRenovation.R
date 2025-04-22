@@ -12,7 +12,7 @@
 #'
 #' @source https://op.europa.eu/en/publication-detail/-/publication/97d6a4ca-5847-11ea-8b81-01aa75ed71a1
 #'
-#' @seealso \code{\link{readSource}}
+#' @seealso \code{\link[madrat]{readSource}}
 #' @examples
 #' \dontrun{ a <- readSource(type = "EuropeanCommissionRenovation")
 #' }
