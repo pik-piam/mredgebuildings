@@ -6,7 +6,7 @@
 #' @param subtype Temperature threshold for computing HDD and CDD
 #' @return magpie object HDD CDD
 #' @author Antoine Levesque
-#' @seealso \code{\link{readSource}}
+#' @seealso \code{\link[madrat]{readSource}}
 #' @examples
 #'
 #' \dontrun{ a <- readSource(type="HDDCDD")

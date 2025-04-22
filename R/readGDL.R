@@ -15,7 +15,7 @@
 #'
 #' @author Robin Hasse
 #'
-#' @seealso \code{\link{readSource}}
+#' @seealso \code{\link[madrat]{readSource}}
 #' @examples
 #' \dontrun{ a <- readSource(type = "GDL")
 #' }

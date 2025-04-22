@@ -6,7 +6,7 @@
 #'
 #' @author Antoine Levesque, Robin Hasse
 #'
-#' @seealso \code{\link{calcOutput}}
+#' @seealso \code{\link[madrat]{calcOutput}}
 #' @examples
 #' \dontrun{ a <- calcOutput("IEAPFU")
 #' }
