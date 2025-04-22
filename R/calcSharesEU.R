@@ -1,13 +1,30 @@
 #' Calculate historical energy end-use shares based on final energy demands
 #'
-#' Merges and transforms the calculated shares from the datasets:
+#' Merges and transforms the calculated shares from the datasets/reports:
 #' Odyssee 2024
 #' IEA Energy Efficiency Indicators 2024
 #' IEA Tracking Clean Energy Progress
 #' IEA World Energy Outlook 2014
+#' IEA "An Energy Sector Roadmap to Carbon Neutrality in China" 2021
 #'
-#' End-use shares are extrapolated using a log-linear regression on the existing
-#' data points while values in-between existing data are interpolated linearly.
+#' Data is merged following a strict priority hierarchy:
+#' 1. Odyssee - Provides detailed European data
+#' 2. IEA Energy Efficiency Indicators (EEI) - Global coverage
+#' 3. IEA China data
+#' 4. IEA World Energy Outlook (WEO) - Only used if EEI has fewer than 2 data points
+#'       for a particular region-enduse combination
+#' 5. IEA Energy Technology Perspectives (ETP) - Only used if EEI has fewer than 2 data points
+#'       and no WEO data is available
+#'
+#' For specific regions (Africa, Middle East), data points from WEO
+#' are prioritized due to their regional specificity. These data points are extrapolated using
+#' growth factors determined by TCEP (Tracking Clean Energy Progress) to ensure consistent
+#' time series extension.
+#'
+#' End-use shares are extrapolated using a log-linear regression on existing data points,
+#' while values between existing data points are interpolated linearly. The function preserves
+#' dataset consistency by avoiding mixing data sources when sufficient data points are available
+#' from a single source.
 #'
 #' In the thermal case, the enduse "appliances" is transformed to "refrigerators"
 #' using the region-specific refrigerator share used in EDGE-B. Higher resolved
@@ -212,9 +229,6 @@ calcSharesEU <- function(thermal = FALSE,
     left_join(sharesWEO %>%
                 filter(.data$region != "CHN") %>%
                 rename("valueWEO" = "value"),
-              by = c("region", "period", "enduse")) %>%
-    left_join(sharesTCEP %>%
-                rename("valueTCEP" = "value"),
               by = c("region", "period", "enduse")) %>%
 
     # Find region-enduse pairs that have data in any non-ETP dataset
