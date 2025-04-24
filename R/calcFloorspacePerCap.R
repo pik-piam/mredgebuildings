@@ -13,7 +13,7 @@ calcFloorspacePerCap <- function(scenarios) {
 
   # Replace any calls to scenario groups such as "SSPs" and "SSP2IndiaDEAs",
   # to calls of the individual scenarios.
-  scenarios <- mrdrivers::toolReplaceShortcuts(scenarios) %>% unique()
+  # scenarios <- mrdrivers::toolReplaceShortcuts(scenarios) %>% unique() #nolint commented_code_linter
 
   # TODO: get rid of the mrremind dependency # nolint: todo_comment_linter
   fs <- readSource("EdgeBuildings", subtype = "Floorspace", subset = scenarios) %>%
