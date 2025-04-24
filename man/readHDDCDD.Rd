@@ -2,28 +2,16 @@
 % Please edit documentation in R/readHDDCDD.R
 \name{readHDDCDD}
 \alias{readHDDCDD}
-\title{Read HDD CDD}
+\title{Read historical and projected degree-day data}
 \usage{
-readHDDCDD(subtype = 18)
+readHDDCDD(subtype = "ssp2")
 }
 \arguments{
-\item{subtype}{Temperature threshold for computing HDD and CDD}
-}
-\value{
-magpie object HDD CDD
+\item{subtype}{specifies SSP scenarios}
 }
 \description{
-Read heating and cooling degree days; past and scenario data as magclass
-objects
-}
-\examples{
-
-\dontrun{ a <- readSource(type="HDDCDD")
-}
-}
-\seealso{
-\code{\link[madrat]{readSource}}
+Read historical and projected degree-day data
 }
 \author{
-Antoine Levesque
+Hagen Tockhorn
 }
