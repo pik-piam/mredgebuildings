@@ -20,7 +20,6 @@ Depends:
     mrcommons (>= 1.46.9),
     mrremind (>= 0.199.1)
 Imports:
-    brick (>= 0.5.10),
     dplyr,
     GDPuc,
     ncdf4,
