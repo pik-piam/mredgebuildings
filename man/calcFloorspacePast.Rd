@@ -4,7 +4,10 @@
 \alias{calcFloorspacePast}
 \title{Historical residential floor space demand}
 \usage{
-calcFloorspacePast()
+calcFloorspacePast(endOfHistory = 2025)
+}
+\arguments{
+\item{endOfHistory}{upper temporal boundary for historical data}
 }
 \value{
 MAgPIE object with historic floor space

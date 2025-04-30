@@ -2,6 +2,8 @@
 #'
 #' @returns magpie object
 #'
+#' @param endOfHistory upper temporal boundary for historical data
+#'
 #' @author Hagen Tockhorn
 #'
 #' @importFrom madrat calcOutput
@@ -10,11 +12,11 @@
 #' @importFrom magclass as.magpie
 
 
-calcDensity <- function() {
+calcDensity <- function(endOfHistory = 2025) {
 
   # READ-IN DATA----------------------------------------------------------------
 
-  pop <- calcOutput("PopulationPast", aggregate = FALSE) %>%
+  pop <- calcOutput("Population", scenario = "SSP2", aggregate = FALSE) %>%
     as.quitte()
 
   surf <- calcOutput("Surface", aggregate = FALSE) %>%
@@ -31,6 +33,7 @@ calcDensity <- function() {
 
   # Clean DFs
   pop <- pop %>%
+    filter(.data[["period"]] <= endOfHistory) %>%
     select(-"model", -"scenario", -"unit", -"variable") %>%
     mutate(value = .data[["value"]] * million2unit) %>%
     rename(population = "value")

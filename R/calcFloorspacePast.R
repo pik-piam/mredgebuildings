@@ -9,6 +9,8 @@
 #' filtering should be moved to getFloorspaceResidential where the regression is
 #' performed. Therefore, the high-income data points are kept at this stage.
 #'
+#' @param endOfHistory upper temporal boundary for historical data
+#'
 #' @returns MAgPIE object with historic floor space
 #'
 #' @author Robin Hasse, Antoine Levesque, Hagen Tockhorn
@@ -22,7 +24,7 @@
 #' @importFrom tidyr spread replace_na
 #' @export
 
-calcFloorspacePast <- function() {
+calcFloorspacePast <- function(endOfHistory = 2025) {
 
   # FUNCTIONS ------------------------------------------------------------------
 
@@ -105,8 +107,6 @@ calcFloorspacePast <- function() {
   # lower temporal boundary for historical data
   periodBegin <- 1990
 
-  # upper temporal boundary for historical data
-  endOfHistory <- 2020
 
 
   # LOAD AND CALCULATE DATA ----------------------------------------------------

@@ -4,7 +4,10 @@
 \alias{calcDensity}
 \title{Get Population Density}
 \usage{
-calcDensity()
+calcDensity(endOfHistory = 2025)
+}
+\arguments{
+\item{endOfHistory}{upper temporal boundary for historical data}
 }
 \value{
 magpie object
