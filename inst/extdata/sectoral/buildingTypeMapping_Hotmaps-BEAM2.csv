@@ -1,0 +1,10 @@
+typHotmaps;typBEAM
+Residential sector|Single family- Terraced houses|Single family- Terraced houses;Residential|Single Family House
+Residential sector|Multifamily houses|Multifamily houses;Residential|Small Multi Family House
+Residential sector|Appartment blocks|Appartment blocks;Residential|Large Multi Family House
+Service sector|Offices|Offices;Non-Residential|Office Buildings
+Service sector|Trade|Trade;Non-Residential|Trade and Retail Buildings
+Service sector|Education|Education;Non-Residential|Education Building
+Service sector|Hotels and Restaurants|Hotels and Restaurants;Non-Residential|Touristic Building
+Service sector|Health|Health;Non-Residential|Health Building
+Service sector|Other non-residential buildings|Other non-residential buildings;Non-Residential|Other
