@@ -78,7 +78,7 @@ calcUValueParameters <- function(endOfHistory = 2025) {
 
   #TODO: improve this with new HDDCDD function   #nolint: todo_comment_linter
   # Heating / Cooling Degree-Days
-  hddcdd <- readSource("HDDCDD") %>%
+  hddcdd <- calcOutput("HDDCDD", fromSource = TRUE, aggregate = FALSE) %>%
     as_tibble()
 
 
@@ -153,6 +153,13 @@ calcUValueParameters <- function(endOfHistory = 2025) {
   varMapOdyssee <- list("surter_m2" = "floorCom",        # total floor area of services in m2
                         "nbrlog_1"  = "nDwellings",      # number of residential dwellings
                         "surlog_m2" = "residentialAvg")  # average floor space of single dwelling in m2
+
+  varMapFitPars <- c("(Intercept)"         = "parINTERCEPT",
+                     "HDD"                 = "parHDD",
+                     "CDD"                 = "parCDD",
+                     "log(gdppop + 1)"     = "parGDPPOP",
+                     "HDD:log(gdppop + 1)" = "parHDDGDPPOP",
+                     "log(gdppop + 1):CDD" = "parCDDGDPPOP")
 
   # Region mappings
 
@@ -466,7 +473,8 @@ calcUValueParameters <- function(endOfHistory = 2025) {
   regionalPars <- coef(model)$region %>%
     as.data.frame() %>%
     (\(x) mutate(x, region = row.names(x)))() %>%
-    filter(.data$region %in% singleRegions)
+    filter(.data$region %in% singleRegions) %>%
+    rename(!!!setNames(names(varMapFitPars), unlist(varMapFitPars)))
 
   row.names(regionalPars) <- c()
 
@@ -526,21 +534,17 @@ calcUValueParameters <- function(endOfHistory = 2025) {
     select("region", "offset") %>%
 
     # add global parameters
-    mutate("(Intercept)"         = globalPars["(Intercept)"],
-           "HDD"                 = globalPars["HDD"],
-           "log(gdppop + 1)"     = globalPars["log(gdppop + 1)"],
-           "CDD"                 = globalPars["CDD"],
-           "HDD:log(gdppop + 1)" = globalPars["HDD:log(gdppop + 1)"],
-           "log(gdppop + 1):CDD" = globalPars["log(gdppop + 1):CDD"]) %>%
+    mutate(!!!setNames(globalPars[unlist(names(varMapFitPars))], unlist(varMapFitPars))) %>%
 
     # adjust (Intercept) with offset
-    mutate("(Intercept)" = .data[["(Intercept)"]] + .data$offset) %>%
+    mutate("parINTERCEPT" = .data[["parINTERCEPT"]] + .data$offset) %>%
     select(-"offset")
 
 
   # Bind full set of parameters
   fullPars <- regionalPars %>%
     rbind(remainingRegionalPars) %>%
+    mutate(minU = minU) %>%
     pivot_longer(cols = -all_of("region"), names_to = "variable", values_to = "value")
 
 
