@@ -82,6 +82,12 @@ calcPFUDB <- function() {
     as.quitte()
 
 
+  # Household survey carrier-enduse shares
+  surveyShares <- rbind(readSource("HouseholdSurveys", "cooking") %>%
+                          as_tibble(),
+                        readSource("HouseholdSurveys", "lighting") %>%
+                          as_tibble())
+
 
   # Mappings
 
@@ -136,6 +142,12 @@ calcPFUDB <- function() {
 
   ## Prepare toolDisaggregate Input ====
 
+  # prepares shares to force on disaggregation estimates
+  surveyShares <- surveyShares %>%
+    filter(!is.na(.data$value),
+           # remove outlier region that leads to crooked estimates
+           .data$region != "PER")
+
   # mix already existing disaggregated data for share estimation
   feDisagg <- feOdyssee %>%
     left_join(feIEAEEI,
@@ -144,7 +156,8 @@ calcPFUDB <- function() {
                           .data[["value.y"]],
                           .data[["value.x"]])) %>%
     toolAddThermal(regmappingEDGE, fridgeShare) %>%
-    select("region", "period", "carrier", "enduse", "value")
+    select("region", "period", "carrier", "enduse", "value") %>%
+    interpolate_missing_periods(unique(pfu$period), expand.values = TRUE)
 
 
   # calculate shares for already disaggregated data
@@ -199,10 +212,10 @@ calcPFUDB <- function() {
            .data[["unit"]] == "fe") %>%
     select(-"enduse") %>%
     toolDisaggregate(enduseShares  = sharesEU,
-                     outliers      = c("IND", "CHN", "ZAF"),
                      exclude       = exclude,
                      dataDisagg    = feDisagg,
-                     regionMapping = regmapping) %>%
+                     regionMapping = regmapping,
+                     forceShares   = surveyShares) %>%
     select(colnames(pfuNonTherm))
 
 

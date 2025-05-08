@@ -59,6 +59,13 @@ calcFEbyEUEC <- function() {
     as.quitte()
 
 
+  # Household survey carrier-enduse shares
+  surveyShares <- rbind(readSource("HouseholdSurveys", "cooking") %>%
+                          as_tibble(),
+                        readSource("HouseholdSurveys", "lighting") %>%
+                          as_tibble())
+
+
   # EU Shares mapping
   regmapping <- toolGetMapping(name  = "regionmappingEUshares.csv",
                                type  = "regional",
@@ -93,14 +100,21 @@ calcFEbyEUEC <- function() {
 
   #--- Prepare toolDisaggregate Input
 
-  # combine the already disaggregated data
+  # prepares shares to force on disaggregation estimates
+  surveyShares <- surveyShares %>%
+    filter(!is.na(.data$value),
+           # remove outlier region that leads to crooked estimates
+           .data$region != "PER")
+
+  # combine the already disaggregated data and expand to cover full period range
   feDisagg <- feOdyssee %>%
     left_join(feIEAEEI,
               by = c("region", "period", "carrier", "enduse")) %>%
     mutate(value = ifelse(is.na(.data[["value.x"]]),
                           .data[["value.y"]],
                           .data[["value.x"]])) %>%
-    select("region", "period", "carrier", "enduse", "value")
+    select("region", "period", "carrier", "enduse", "value") %>%
+    interpolate_missing_periods(unique(ieaIO$period), expand.values = TRUE)
 
 
   # Disaggregate FE with EU/EC Shares
@@ -111,13 +125,12 @@ calcFEbyEUEC <- function() {
                      exclude       = exclude,
                      dataDisagg    = feDisagg,
                      regionMapping = regmapping,
-                     outliers      = c("IND", "CHN", "ZAF")) %>%
+                     forceShares   = surveyShares) %>%
     select("region", "period", "unit", "carrier", "enduse", "value")
 
 
   # existing enduse-carrier shares are applied directly on IEA data
   dataReplaceFull <- feDisagg %>%
-    interpolate_missing_periods(unique(ieaIODis$period), expand.values = TRUE) %>%
     right_join(ieaIODis, by = c("region", "period", "carrier", "enduse"),
                suffix = c("Data", "Calc")) %>%
     group_by(across(all_of(c("region", "period", "carrier")))) %>%
