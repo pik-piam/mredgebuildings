@@ -21,9 +21,10 @@ convertFEGECA <- function(x) {
 
   # translate technologies to English
   mapFEGECA <- toolGetMapping("technologyMapping_FEGECA.csv",
-                              type = "sectoral", where = "mredgebuildings")
-  mapFEGECA <- stats::setNames(mapFEGECA[["variable"]],
-                               mapFEGECA[["variableESP"]])
+                              type = "sectoral", where = "mredgebuildings",
+                              returnPathOnly = TRUE) %>%
+    read.csv(encoding = "UTF-8")
+  mapFEGECA <- dplyr::pull(mapFEGECA, "variable", "variableESP")
   getItems(x, 3.1) <- unname(mapFEGECA[getItems(x, 3.1)])
 
   # inter and extrapolate values

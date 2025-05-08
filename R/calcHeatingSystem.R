@@ -1,5 +1,10 @@
 #' Calculate installation cost or efficiency of heating systems
 #'
+#' The data is taken from the EU reference scenario technology assumptions. We
+#' map our technologies to the higher resolved PRIMES technologies. For missing
+#' commercial technologies, we assume residential values but decrease purchasing
+#' cost by 10%.
+#'
 #' @param subtype character, variable type (either 'Purchasing cost' or
 #'   'Efficiency')
 #' @returns MagPIE object with capacity-specific purchasing cost or efficiency
@@ -14,10 +19,29 @@
 #' @importFrom quitte as.quitte inline.data.frame
 #' @importFrom dplyr %>% right_join .data filter group_by across all_of
 #'   summarise select
-#' @importFrom tidyr pivot_longer
+#' @importFrom tidyr pivot_wider pivot_longer
 #' @export
 
 calcHeatingSystem <- function(subtype = c("Purchasing cost", "Efficiency")) {
+
+  # FUNCTIONS ------------------------------------------------------------------
+
+  completeServices <- function(x) {
+    x %>%
+      pivot_wider(names_from = "subsector") %>%
+      mutate(Services = ifelse(
+        is.na(.data[["Services"]]),
+        .data[["Residential"]] *
+          ifelse(.data[["variable"]] == "Purchasing cost", 0.9, 1),
+        .data[["Services"]]
+      )) %>%
+      pivot_longer(c("Residential", "Services"), names_to = "subsector") %>%
+      filter(!is.na(.data[["value"]]))
+  }
+
+
+
+  # CALCULATE ------------------------------------------------------------------
 
   subtype <- match.arg(subtype)
 
@@ -58,6 +82,7 @@ calcHeatingSystem <- function(subtype = c("Purchasing cost", "Efficiency")) {
   data <- readSource("EU_ReferenceScenario", "techAssump.Domestic") %>%
     as.quitte(na.rm = TRUE) %>%
     select(-"period") %>%
+    completeServices() %>%
     filter(.data[["variable"]] == subtype,
            .data[["level"]] %in% c("Current", "central")) %>%
     left_join(typMap, by = "subsector", relationship = "many-to-many") %>%

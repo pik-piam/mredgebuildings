@@ -79,8 +79,8 @@ calcRenovationCostModel <- function() {
     ungroup()
 
   # ratio of SFH
-  typeCode <- c(nbrmpr_1 = "SFH",
-                nbripr_1 = "MFH")
+  typeCode <- c(nbrmpr = "SFH",
+                nbripr = "MFH")
   typeShare <- readSource("Odyssee") %>%
     mselect(variable = names(typeCode)) %>%
     as.quitte(na.rm = TRUE) %>%

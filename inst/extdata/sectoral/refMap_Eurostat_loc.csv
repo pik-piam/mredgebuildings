@@ -1,0 +1,4 @@
+variable,.deg_urb,loc,sec,.comment
+urban,DEG1,urban,Res,Cities
+urban,DEG2,urban,Res,Towns and suburbs
+rural,DEG3,rural,Res,Rural areas

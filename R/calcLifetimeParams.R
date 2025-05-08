@@ -173,7 +173,8 @@ calcLifetimeParams <- function(subtype) {
 
       ### map to building types ####
       typMap <- toolGetMapping("buildingType.csv",
-                               type = "sectoral", where = "brick")
+                               type = "sectoral", where = "brick") %>%
+        rbind(data.frame(typ = "Com", subsector = "Com")) # TODO: remove once dim maps are dynamic # nolint
       typMap <- stats::setNames(typMap[["subsector"]], typMap[["typ"]])
 
       params <- params %>%
