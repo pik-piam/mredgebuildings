@@ -263,14 +263,18 @@ toolDisaggregate <- function(data,
   #   - total demand per carrier in each region has to be met
   #   - total demand per end use in each agg. region has to be met
   #   - all disaggregated quantities have to be larger or equal zero
-  constraints <- list(carrier = c("region", "carrier"),
-                      enduse  = "enduse",
-                      zero    = c("region", "carrier", "enduse"))
+  constraints <- list(carrier    = c("region", "carrier"),
+                      enduse     = "enduse",
+                      lowerBound = c("region", "carrier", "enduse"))
 
   # weight that increases the importance of minimising the deviation from given
   # end use quantities over minimising the deviations from the estimate
   # the estimate is often times rather arbitrary -> high weight
   weight <- 100
+
+  # percentage of naive estimate used as lower bound to avoid zero allocations for
+  # regions/periods where there is non-vanishing carrier and end-use demand
+  lowerBoundShare <- 0.05
 
 
   # PREPARE DATA ---------------------------------------------------------------
@@ -289,9 +293,9 @@ toolDisaggregate <- function(data,
   constraintRHS <- lapply(names(constraints), function(c) {
     subset %>%
       mutate(value = switch(c,
-                            carrier = .data[["value"]],
-                            enduse = .data[["enduseTotal"]],
-                            zero = 0)) %>%
+                            carrier    = .data[["value"]],
+                            enduse     = .data[["enduseTotal"]],
+                            lowerBound = lowerBoundShare * .data$estimate)) %>%
       unite("rhs", all_of(constraints[[c]]), sep = "-", remove = FALSE) %>%
       select("rhs", "value") %>%
       unique()
@@ -357,12 +361,12 @@ toolDisaggregate <- function(data,
 
       dvec <- t(objectiveMatrix) %*% objectiveRHS
 
-      aMat <- constraintMatrix[c("carrier", "zero")] %>%
+      aMat <- constraintMatrix[c("carrier", "lowerBound")] %>%
         reduce(full_join, by = c("region", "carrier", "enduse")) %>%
         select(-"region", -"carrier", -"enduse") %>%
         as.matrix()
 
-      bvec <- constraintRHS[c("carrier", "zero")] %>%
+      bvec <- constraintRHS[c("carrier", "lowerBound")] %>%
         do.call(what = rbind) %>%
         getElement("value")
 
