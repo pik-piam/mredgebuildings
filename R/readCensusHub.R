@@ -16,7 +16,7 @@
 #' @author Robin Hasse
 #'
 #' @importFrom madrat toolSubtypeSelect
-#' @importFrom dplyr %>% select rename
+#' @importFrom dplyr %>% select rename mutate .data distinct across all_of
 #' @importFrom utils read.csv
 #' @importFrom quitte as.quitte
 #' @importFrom magclass as.magpie
@@ -25,14 +25,42 @@
 readCensusHub <- function(subtype) {
 
   # pick file
-  files <- list(typeVintage = "csvoutput_HC53_2022_04_08_17_01.csv")
+  files <- list(typeVintage = c("csvoutput_HC53_2025_01_07_10_52.csv",
+                                "csvoutput_DF_HC37_2021_2025_04_29_11_01.csv"))
+
+
+
+  # FUNCTIONS ------------------------------------------------------------------
+
+  removeTrailingComma <- function(x) {
+    sub(",$", "", x)
+  }
+
+  removeCommaInText <- function(x) {
+    gsub(", ", " ", x)
+  }
+
+  readCsv <- function(file) {
+    readLines(file) %>%
+      removeCommaInText() %>%
+      removeTrailingComma() %>%
+      textConnection() %>%
+      read.csv(na.strings = ":")
+  }
+
+
+
+  # READ -----------------------------------------------------------------------
 
   data <- toolSubtypeSelect(subtype, files) %>%
-    read.csv() %>%
-    select(-"FLAGS", -"FOOTNOTES") %>%
+    lapply(readCsv) %>%
+    do.call(what = rbind) %>%
+    select(-"FLAGS", -"FOOTNOTES", -"PROVIDER") %>%
     rename(region = "GEO",
            period = "TIME",
            value = "VALUE") %>%
+    mutate(value = as.numeric(.data[["value"]])) %>%
+    distinct(across(-all_of("value")), .keep_all = TRUE) %>%
     as.quitte() %>%
     as.magpie()
 

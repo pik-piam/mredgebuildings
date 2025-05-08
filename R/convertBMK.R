@@ -20,9 +20,10 @@ convertBMK <- function(x) {
 
   # translate technologies to English
   mapBMK <- toolGetMapping("technologyMapping_BMK.csv",
-                           type = "sectoral", where = "mredgebuildings")
-  mapBMK <- stats::setNames(mapBMK[["technology"]],
-                            mapBMK[["technologyAUT"]])
+                           type = "sectoral", where = "mredgebuildings",
+                           returnPathOnly = TRUE) %>%
+    read.csv(encoding = "UTF-8")
+  mapBMK <- dplyr::pull(mapBMK, "technology", "technologyAUT")
   getItems(x, 3) <- unname(mapBMK[getItems(x, 3)])
 
 

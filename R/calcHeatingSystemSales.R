@@ -80,7 +80,9 @@ calcHeatingSystemSales <- function() {
   ### AUT ####
   mapBMK <- toolGetMapping("technologyMapping_BMK.csv",
                            type = "sectoral",
-                           where = "mredgebuildings")
+                           where = "mredgebuildings",
+                           returnPathOnly = TRUE) %>%
+    read.csv(encoding = "UTF-8")
   bmk <- readSource("BMK")["AUT", t] %>%
     .mapToBRICK(mapBMK, from = "technology")
   hs <- setdiff(getItems(bmk, "hs"), "sobo_biom")
@@ -101,7 +103,9 @@ calcHeatingSystemSales <- function() {
   ### ESP ####
   mapFEGECA <- toolGetMapping("technologyMapping_FEGECA.csv",
                               type = "sectoral",
-                              where = "mredgebuildings") %>%
+                              where = "mredgebuildings",
+                              returnPathOnly = TRUE) %>%
+    read.csv(encoding = "UTF-8") %>%
     filter(.data[["considerSales"]])
   # scale sum of gabo and libo to match total of boilers and add gas heaters
   fegeca <- readSource("FEGECA")["ESP", , ] %>%
@@ -174,8 +178,9 @@ calcHeatingSystemSales <- function() {
   salesExtrStock <- .predictSales(sales, stock)
 
   # recover data that got lost when we filtered for common regions
-  salesExtrStock[getItems(salesHp, 1), , "ehp1"] <- salesHp
-  reg <- intersect(getItems(salesEff, 1), getItems(salesExtrStock, 1))
+  reg <- intersect(getItems(salesExtrStock, 1), getItems(salesHp, 1))
+  salesExtrStock[reg, , "ehp1"] <- salesHp[reg, , ]
+  reg <- intersect(getItems(salesExtrStock, 1), getItems(salesEff, 1))
   salesExtrStock[reg, , "biom"] <- salesEff[reg, , "biom"]
 
 
@@ -192,6 +197,7 @@ calcHeatingSystemSales <- function() {
 
 
   # RETURN ---------------------------------------------------------------------
+
   salesExtr <- salesExtr %>%
     toolCountryFill(verbosity = 2)
 
@@ -223,7 +229,7 @@ calcHeatingSystemSales <- function() {
     dims <- getSets(x)
   }
   for (dim in dims) {
-    dimSelect <- dimSums(!is.na(x), setdiff(dims, dim)) > 0
+    dimSelect <- dimSums(!is.na(x), setdiff(getSets(x), dim)) > 0
     dimSelect <- getItems(dimSelect, dim)[dimSelect]
     dimSelect <- stats::setNames(list(dimSelect), dim)
     x <- mselect(x, dimSelect)

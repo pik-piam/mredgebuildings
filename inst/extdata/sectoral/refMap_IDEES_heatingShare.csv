@@ -1,11 +1,22 @@
-variable,.variableOriginal,.variableTotal,.variable_Brick,hs,.comment
-Solids,Residential|Stock of households|Space heating|Solids,Residential|Stock of households|Space heating,v_stock/v_stock,sobo,
-Liquids,Residential|Stock of households|Space heating|Liquified petroleum gas (LPG),Residential|Stock of households|Space heating,v_stock/v_stock,libo,
-Liquids,Residential|Stock of households|Space heating|Gas/Diesel oil incl_ biofuels (GDO),Residential|Stock of households|Space heating,v_stock/v_stock,libo,
-Gases incl_ biogas,Residential|Stock of households|Space heating|Gases incl_ biogas,Residential|Stock of households|Space heating,v_stock/v_stock,gabo,
-Biomass and wastes,Residential|Stock of households|Space heating|Biomass and wastes,Residential|Stock of households|Space heating,v_stock/v_stock,biom,
-#Geothermal energy,Residential|Stock of households|Space heating|Geothermal energy,Residential|Stock of households|Space heating,v_stock/v_stock,,not implemented
-Derived heat,Residential|Stock of households|Space heating|Derived heat,Residential|Stock of households|Space heating,v_stock/v_stock,dihe,
-Advanced electric heating,Residential|Stock of households|Space heating|Advanced electric heating,Residential|Stock of households|Space heating,v_stock/v_stock,ehp1,
-Conventional electric heating,Residential|Stock of households|Space heating|Conventional electric heating,Residential|Stock of households|Space heating,v_stock/v_stock,reel,
-#Circulation (no),Residential|Stock of households|Space heating|Circulation (no),Residential|Stock of households|Space heating,v_stock/v_stock,,ignored
+variable,refVarGroup,.code,.variable_Brick,hs,sec,.comment
+Res_Solids,Res,NUM.number.Res.HH.Thermal.SH.Solids,v_stock,sobo,Res,
+Res_LPG+Oil,Res,NUM.number.Res.HH.Thermal.SH.LPG,v_stock,libo,Res,
+Res_LPG+Oil,Res,NUM.number.Res.HH.Thermal.SH.Oil,v_stock,libo,Res,
+Res_Gas,Res,NUM.number.Res.HH.Thermal.SH.Gas,v_stock,gabo,Res,
+Res_Biomass,Res,NUM.number.Res.HH.Thermal.SH.Biomass,v_stock,biom,Res,
+#Res_Geo,,NUM.number.Res.HH.Thermal.SH.Geo,v_stock,,,not implemented
+Res_DistrHeat,Res,NUM.number.Res.HH.Thermal.SH.DistrHeat,v_stock,dihe,Res,
+Res_AdvElc,Res,NUM.number.Res.HH.Thermal.SH.AdvElc,v_stock,ehp1,Res,
+Res_ConvElc,Res,NUM.number.Res.HH.Thermal.SH.ConvElc,v_stock,reel,Res,
+Res_H2,Res,,v_stock,h2bo,Res,not in the data but needed to complete group
+Com_Solids,Com,NUM.number.Ser.Bld.Thermal.SH.Solids,v_stock,sobo,Com,
+Com_LPG+Oil,Com,NUM.number.Ser.Bld.Thermal.SH.LPG,v_stock,libo,Com,
+Com_LPG+Oil,Com,NUM.number.Ser.Bld.Thermal.SH.Oil,v_stock,libo,Com,
+Com_GasHP+GasTH,Com,NUM.number.Ser.Bld.Thermal.SH.GasHP,v_stock,gabo,Com,
+Com_GasHP+GasTH,Com,NUM.number.Ser.Bld.Thermal.SH.GasTH,v_stock,gabo,Com,
+Com_Biomass,Com,NUM.number.Ser.Bld.Thermal.SH.Biomass,v_stock,biom,Com,
+#Ser_Geo,,NUM.number.Ser.Bld.Thermal.SH.Geo,v_stock,,,not implemented
+Com_DistrHeat,Com,NUM.number.Ser.Bld.Thermal.SH.DistrHeat,v_stock,dihe,Com,
+Com_AdvElc,Com,NUM.number.Ser.Bld.Thermal.SH.AdvElc,v_stock,ehp1,Com,
+Com_ConvElc,Com,NUM.number.Ser.Bld.Thermal.SH.ConvElc,v_stock,reel,Com,
+Com_H2,Com,,v_stock,h2bo,Com,not in the data but needed to complete group
