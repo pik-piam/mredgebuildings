@@ -23,6 +23,32 @@
 
 calcLifetimeParams <- function(subtype) {
 
+  # FUNCTIONS ------------------------------------------------------------------
+
+  # dind Weibull parameters to given mean and standard deviation
+  aproxWeibull <- function(m, s, scale = 20, shape = 3, eps = 1E-5, iMax = 100) {
+    speed <- c(scale = 1.2, shape = 1)
+    calS <- function(scale, shape) {
+      scale * sqrt(gamma(1 + 2 / shape) - gamma(1 + 1 / shape)^2)
+    }
+    calM <- function(scale, shape) {
+      scale * gamma(1 + 1 / shape)
+    }
+
+    for (i in seq_len(iMax)) {
+
+      sAprox <- calS(scale, shape)
+      mAprox <- calM(scale, shape)
+
+      scale <- scale * (m / mAprox)^speed[["scale"]]
+      shape <- shape / (s / sAprox)^speed[["shape"]]
+
+      if (all(abs(c(m - mAprox, s - sAprox)) < eps)) break
+    }
+
+    return(list(scale = scale, shape = shape))
+  }
+
 
 
   # READ & CALCULATE -----------------------------------------------------------
@@ -34,6 +60,8 @@ calcLifetimeParams <- function(subtype) {
 
     building = {
 
+      ### Deetman et al. ####
+
       res <- readSource("Deetman2020", "residential")
       com <- readSource("Deetman2020", "commercial")
 
@@ -43,6 +71,37 @@ calcLifetimeParams <- function(subtype) {
       }))
 
       params <- mselect(params, variable = c("scale", "shape"))
+
+
+      ### Sandberg et al. ####
+
+      resEUR <- readSource("Sandberg") %>%
+        as_tibble() %>%
+        select(-"unit") %>%
+        group_by(across(-all_of(c("constructionPeriod", "value")))) %>%
+        summarise(value = mean(.data$value, na.rm = TRUE), .groups = "drop") %>%
+        group_by(across(-all_of(c("region", "value")))) %>%
+        mutate(value = ifelse(is.na(.data$value),
+                              mean(.data$value, na.rm = TRUE),
+                              .data$value)) %>%
+        ungroup() %>%
+        pivot_wider(names_from = "variable") %>%
+        mutate(params = Map(aproxWeibull,
+                            m = .data$averageLifetime,
+                            s = .data$averageLifetime / 2,
+                            scale = 1.1 * .data$averageLifetime)) %>%
+        tidyr::unnest_longer("params", indices_to = "variable", values_to = "value") %>%
+        select("region", "variable", "value") %>%
+        as.magpie(tidy = TRUE)
+
+
+      ### combine ####
+      eur <- toolGetMapping("regionmappingH12.csv") %>%
+        filter(.data$RegionCode == "EUR") %>%
+        getElement("CountryCode")
+
+      mselect(params, region = eur, typ = c("SFH", "MFH")) <- resEUR[eur, , ]
+
 
       description <- "Weibull lifetime distribution parameters for buildings"
 
@@ -98,30 +157,6 @@ calcLifetimeParams <- function(subtype) {
                            .data[["to"]] / .data[["from"]]),
                scale = .data[["from"]] / (-log(1 - prob[["from"]]))^(1 / .data[["shape"]]))
       params <- rbind(params, ranges[, colnames(params)])
-
-      # function that finds Weibull parameters to given mean and standard deviation
-      aproxWeibull <- function(m, s, scale = 20, shape = 3, eps = 1E-5, iMax = 100) {
-        speed <- c(scale = 1.2, shape = 1)
-        calS <- function(scale, shape) {
-          scale * sqrt(gamma(1 + 2 / shape) - gamma(1 + 1 / shape)^2)
-        }
-        calM <- function(scale, shape) {
-          scale * gamma(1 + 1 / shape)
-        }
-
-        for (i in seq(iMax)) {
-
-          sAprox <- calS(scale, shape)
-          mAprox <- calM(scale, shape)
-
-          scale <- scale * (m / mAprox)^speed[["scale"]]
-          shape <- shape / (s / sAprox)^speed[["shape"]]
-
-          if (all(abs(c(m - mAprox, s - sAprox)) < eps)) break
-        }
-
-        return(list(scale = scale, shape = shape))
-      }
 
       # average coefficient of variance (cv)
       cv <- params %>%
