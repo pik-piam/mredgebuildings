@@ -10,7 +10,8 @@ toolDisaggregate(
   outliers = NULL,
   exclude = NULL,
   dataDisagg = NULL,
-  regionMapping = NULL
+  regionMapping = NULL,
+  forceShares = NULL
 )
 }
 \arguments{
@@ -36,6 +37,9 @@ will be used as the target distribution for the minisation.}
 \item{regionMapping}{data.frame with the columns \code{region} and
 \code{regionAgg} that maps the regions between \code{data} and
 \code{enduseShares}.}
+
+\item{forceShares}{data frame with shares to enforce for carrier-enduse combinations
+with single year data points per region.}
 }
 \description{
 This function takes energy demand data that differentiates only by carrier
