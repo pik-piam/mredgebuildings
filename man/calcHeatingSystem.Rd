@@ -15,7 +15,10 @@ MagPIE object with capacity-specific purchasing cost or efficiency
 of heating systems
 }
 \description{
-Calculate installation cost or efficiency of heating systems
+The data is taken from the EU reference scenario technology assumptions. We
+map our technologies to the higher resolved PRIMES technologies. For missing
+commercial technologies, we assume residential values but decrease purchasing
+cost by 10\%.
 }
 \author{
 Robin Hasse

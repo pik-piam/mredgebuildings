@@ -17,8 +17,23 @@ Read various data sets from Eurostat that are used in the modelling of
 buildings
 \itemize{
 \item nrg_inf_hptc: Heat pumps - technical characteristics by technologies
-\item ilc_hcmh02: Average size of dwelling by household type and degree of urbanisation
 \item nrg_d_hhq: Disaggregated final energy consumption in households
+\item lfst_r_lfsd2hh: Number of households by degree of urbanisation (2006-2023)
+\item ilc_hcmh02: Average size of dwelling by household type and degree of urbanisation (2012)
+\item ilc_lvho31: Average size of dwelling by household composition and degree of urbanisation (2020, 2023)
+\item cens_21dwbnr_r3: Dwellings by type of building, number of rooms or useful floor space (2021)
+\item sts_cobp_a: Building permits (1992 - 2024)
+\item ilc_lvhe02: Persons living in private households by heating system used in
+the dwelling, household composition and degree of urbanisation (2023)
+\item ilc_lvhe04: Persons heating their dwelling with district heating by used
+energy source, household composition and degree of urbanisation (2023)
+\item ilc_lvhe05: Persons heating their dwelling with other than district heating
+by used energy source, household composition and degree of urbanisation (2023)
+\item hbs_car_t315: Household characteristics by degree of urbanisation (1988-2020)
+\item ilc_lvho01: Distribution of population by degree of urbanisation, dwelling
+type and income group (2003 - 2024)
+\item ilc_lvho03: Average number of rooms per person by tenure status and
+dwelling type (2003 - 2024)
 }
 }
 \note{

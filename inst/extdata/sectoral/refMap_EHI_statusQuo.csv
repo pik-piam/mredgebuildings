@@ -1,0 +1,65 @@
+variable,refVarGroup,hs,hsr,sec,.comment
+biom->reel,reel,biom,reel,Res,
+dihe->reel,reel,dihe,reel,Res,
+ehp1->reel,reel,ehp1,reel,Res,
+reel->reel,reel,reel,reel,Res,
+h2bo->reel,reel,h2bo,reel,Res,
+gabo->reel,reel,gabo,reel,Res,
+libo->reel,reel,libo,reel,Res,
+sobo->reel,reel,sobo,reel,Res,
+biom->ehp1,ehp1,biom,ehp1,Res,
+dihe->ehp1,ehp1,dihe,ehp1,Res,
+ehp1->ehp1,ehp1,ehp1,ehp1,Res,
+reel->ehp1,ehp1,reel,ehp1,Res,
+h2bo->ehp1,ehp1,h2bo,ehp1,Res,
+gabo->ehp1,ehp1,gabo,ehp1,Res,
+libo->ehp1,ehp1,libo,ehp1,Res,
+sobo->ehp1,ehp1,sobo,ehp1,Res,
+biom->biom,biom,biom,biom,Res,
+dihe->biom,biom,dihe,biom,Res,
+ehp1->biom,biom,ehp1,biom,Res,
+reel->biom,biom,reel,biom,Res,
+h2bo->biom,biom,h2bo,biom,Res,
+gabo->biom,biom,gabo,biom,Res,
+libo->biom,biom,libo,biom,Res,
+sobo->biom,biom,sobo,biom,Res,
+#biom->sobo,sobo,biom,sobo,Res,replacement not allowed
+#dihe->sobo,sobo,dihe,sobo,Res,replacement not allowed
+#ehp1->sobo,sobo,ehp1,sobo,Res,replacement not allowed
+#reel->sobo,sobo,reel,sobo,Res,replacement not allowed
+#h2bo->sobo,sobo,h2bo,sobo,Res,replacement not allowed
+#gabo->sobo,sobo,gabo,sobo,Res,replacement not allowed
+#libo->sobo,sobo,libo,sobo,Res,replacement not allowed
+sobo->sobo,sobo,sobo,sobo,Res,
+biom->gabo,gabo,biom,gabo,Res,
+dihe->gabo,gabo,dihe,gabo,Res,
+ehp1->gabo,gabo,ehp1,gabo,Res,
+reel->gabo,gabo,reel,gabo,Res,
+h2bo->gabo,gabo,h2bo,gabo,Res,
+gabo->gabo,gabo,gabo,gabo,Res,
+libo->gabo,gabo,libo,gabo,Res,
+sobo->gabo,gabo,sobo,gabo,Res,
+biom->dihe,dihe,biom,dihe,Res,
+dihe->dihe,dihe,dihe,dihe,Res,
+ehp1->dihe,dihe,ehp1,dihe,Res,
+reel->dihe,dihe,reel,dihe,Res,
+h2bo->dihe,dihe,h2bo,dihe,Res,
+gabo->dihe,dihe,gabo,dihe,Res,
+libo->dihe,dihe,libo,dihe,Res,
+sobo->dihe,dihe,sobo,dihe,Res,
+#biom->libo,libo,biom,libo,Res,replacement not allowed
+#dihe->libo,libo,dihe,libo,Res,replacement not allowed
+#ehp1->libo,libo,ehp1,libo,Res,replacement not allowed
+#reel->libo,libo,reel,libo,Res,replacement not allowed
+#h2bo->libo,libo,h2bo,libo,Res,replacement not allowed
+#gabo->libo,libo,gabo,libo,Res,replacement not allowed
+libo->libo,libo,libo,libo,Res,
+sobo->libo,libo,sobo,libo,Res,
+biom->h2bo,h2bo,biom,h2bo,Res,
+dihe->h2bo,h2bo,dihe,h2bo,Res,
+ehp1->h2bo,h2bo,ehp1,h2bo,Res,
+reel->h2bo,h2bo,reel,h2bo,Res,
+h2bo->h2bo,h2bo,h2bo,h2bo,Res,
+gabo->h2bo,h2bo,gabo,h2bo,Res,
+libo->h2bo,h2bo,libo,h2bo,Res,
+sobo->h2bo,h2bo,sobo,h2bo,Res,

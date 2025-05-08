@@ -1,0 +1,8 @@
+variable,.variable,typ,.comment
+Res,nbrlpr*surlog,SFH,permanently occupied dwellings
+Res,nbrlpr*surlog,MFH,permanently occupied dwellings
+#Res2,nbrlog*surlog,SFH,Total stock of dwelling
+#Res2,nbrlog*surlog,MFH,Total stock of dwelling
+Res_SFH,nbrmpr*surmpr,SFH,
+Res_MFH,nbripr*suripr,MFH,
+Com,surter,Com,

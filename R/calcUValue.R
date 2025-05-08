@@ -17,8 +17,8 @@ calcUValue <- function() {
     select("vin", "vinHotmaps")
 
   # map Hotmaps building types
-  typMap <- toolGetMapping("buildingType.csv",
-                           type = "sectoral",  where = "brick") %>%
+  typMap <- toolGetMapping("buildingTypeMapping_Hotmaps.csv",
+                           type = "sectoral", where = "mredgebuildings") %>%
     select("typ", building = "typHotmaps")
 
   # Simple average of U-values across building components
