@@ -1,0 +1,12 @@
+carrier;carrierTarget
+electricity;elec
+gas;natgas
+kerosene;petrol
+lpg;petrol
+unknown;NA
+charcoal;biotrad
+firewood;biotrad
+liquid_fuel;petrol
+coal;coal
+other_biomass;biomass
+other_lighting;elec
