@@ -35,7 +35,7 @@ https://globaldatalab.org/asset/286/Smits\%20GDL\%20Working\%
 20Paper\%2016-101\%20v360.pdf
 }
 \seealso{
-\code{\link{readSource}}
+\code{\link[madrat]{readSource}}
 }
 \author{
 Robin Hasse

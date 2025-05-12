@@ -18,7 +18,7 @@ Computes data for the Primary Final Useful (PFU) resolution
 
 }
 \seealso{
-\code{\link{calcOutput}}
+\code{\link[madrat]{calcOutput}}
 }
 \author{
 Antoine Levesque, Robin Hasse

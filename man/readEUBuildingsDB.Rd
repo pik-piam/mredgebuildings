@@ -24,7 +24,7 @@ variables for further filtering.
 
 }
 \seealso{
-\code{\link{readSource}}
+\code{\link[madrat]{readSource}}
 }
 \author{
 Robin Hasse
