@@ -97,6 +97,11 @@ calcUValueParameters <- function(endOfHistory = 2025) {
     as.quitte()
 
 
+  # General distribution of component area for different building types (taken from BEAM^2 model)
+  buildingCharacteristics <- readSource("BEAM2") %>%
+    as_tibble()
+
+
 
   # PARAMETERS -----------------------------------------------------------------
 
@@ -128,11 +133,6 @@ calcUValueParameters <- function(endOfHistory = 2025) {
   buildingTypeMap <- toolGetMapping("buildingTypeMapping_Hotmaps-BEAM2.csv",
                                     type = "sectoral",
                                     where = "mredgebuildings")
-
-  # General distribution of component area for different building types (taken from BEAM^2 model)
-  buildingCharacteristics <- toolGetMapping("buildingCharacteristics_BEAM2.csv",
-                                            type = "sectoral",
-                                            where = "mredgebuildings")
 
   # Vintage types of MessageIX
   vintageMapMessage <- toolGetMapping("vintageMapping_MessageIX.csv",
@@ -188,7 +188,7 @@ calcUValueParameters <- function(endOfHistory = 2025) {
   buildingCharacteristics <- buildingCharacteristics %>%
     mutate(variable = recode(.data$variable, !!!varMapBuildCharacteristics)) %>%
     rename("weight" = "value") %>%
-    select(-"unit", -"source", -"floorspace", -"component_area")
+    select(-"unit", -"source", -"floorspace", -"component_area", -"region", -"period")
 
   # Aggregate U-Values per building bage with weighted mean across component areas
   uvaluesAggComp <- uvaluesHotmapsData %>%
