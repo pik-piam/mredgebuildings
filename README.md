@@ -2,7 +2,7 @@
 
 R package **mredgebuildings**, version **0.8.9**
 
-[![CRAN status](https://www.r-pkg.org/badges/version/mredgebuildings)](https://cran.r-project.org/package=mredgebuildings)  [![R build status](https://github.com/pik-piam/mredgebuildings/workflows/check/badge.svg)](https://github.com/pik-piam/mredgebuildings/actions) [![codecov](https://codecov.io/gh/pik-piam/mredgebuildings/branch/master/graph/badge.svg)](https://app.codecov.io/gh/pik-piam/mredgebuildings) [![r-universe](https://pik-piam.r-universe.dev/badges/mredgebuildings)](https://pik-piam.r-universe.dev/builds)
+[![CRAN status](https://www.r-pkg.org/badges/version/mredgebuildings)](https://cran.r-project.org/package=mredgebuildings) [![R build status](https://github.com/pik-piam/mredgebuildings/workflows/check/badge.svg)](https://github.com/pik-piam/mredgebuildings/actions) [![codecov](https://codecov.io/gh/pik-piam/mredgebuildings/branch/master/graph/badge.svg)](https://app.codecov.io/gh/pik-piam/mredgebuildings) [![r-universe](https://pik-piam.r-universe.dev/badges/mredgebuildings)](https://pik-piam.r-universe.dev/builds)
 
 ## Purpose and Functionality
 
@@ -38,16 +38,15 @@ In case of questions / problems please contact Robin Hasse <robin.hasse@pik-pots
 
 To cite package **mredgebuildings** in publications use:
 
-Hasse R, Sauer P, Levesque A, Tockhorn H (2025). _mredgebuildings: Prepare data to be used by the EDGE-Buildings model_. R package version 0.8.9, <https://github.com/pik-piam/mredgebuildings>.
+Hasse R, Sauer P, Levesque A, Tockhorn H (2025). "mredgebuildings: Prepare data to be used by the EDGE-Buildings model - Version 0.8.9."
 
 A BibTeX entry for LaTeX users is
 
  ```latex
-@Manual{,
-  title = {mredgebuildings: Prepare data to be used by the EDGE-Buildings model},
+@Misc{,
+  title = {mredgebuildings: Prepare data to be used by the EDGE-Buildings model - Version 0.8.9},
   author = {Robin Hasse and Pascal Sauer and Antoine Levesque and Hagen Tockhorn},
+  date = {2025-05-12},
   year = {2025},
-  note = {R package version 0.8.9},
-  url = {https://github.com/pik-piam/mredgebuildings},
 }
 ```
