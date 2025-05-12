@@ -2,21 +2,17 @@
 #'
 #' @param subtype specifies data base category
 #'
+#' @importFrom openxlsx read.xlsx
+#'
 #' @export
 
 readMessageIXBuildings <- function(subtype = "uvalue") {
 
-  # READ-IN DATA ---------------------------------------------------------------
-
-  data <- switch(subtype,
-                 "uvalue"        = read.csv("input_U_values.csv"),
-                 "floorByCohort" = read.xlsx("Mastrucci2021_SI.xlsx",
-                                             sheet = "floor_by_cohort"))
-
-
-  # PROCESS DATA ---------------------------------------------------------------
+  # READ AND PROCESS DATA ------------------------------------------------------
 
   if (subtype == "uvalue") {
+    data <- read.csv("input_U_values.csv")
+
     data <- data %>%
       rename("region" = "name",
              "variable" = "arch",
@@ -24,8 +20,11 @@ readMessageIXBuildings <- function(subtype = "uvalue") {
       mutate(region = substr(.data$region, 1, 3))
 
   } else if (subtype == "floorByCohort") {
+    data <- read.xlsx("Mastrucci2021_SI.xlsx",
+                      sheet = "floor_by_cohort")
+
     data <- data %>%
-      pivot_longer(cols = as.character(seq(2015, 2050, 5)),
+      pivot_longer(cols = matches("\\d{4}"),
                    names_to = "period",
                    values_to = "value") %>%
       mutate(Variable = tolower(.data$Variable),

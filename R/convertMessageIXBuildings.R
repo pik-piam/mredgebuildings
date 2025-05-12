@@ -30,8 +30,7 @@ convertMessageIXBuildings <- function(x, subtype) {
 
   # last historical point in MessageIX is 2015
   if (subtype == "uvalue") {
-    data <- data %>%
-      mutate(period = 2015)
+    data$period <- 2015
   }
 
 

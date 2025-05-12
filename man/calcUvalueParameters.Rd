@@ -20,7 +20,9 @@ thermal performance across regions based on climate indicators (HDD/CDD) and eco
 }
 \details{
 The function uses a linear mixed-effects model with the formula:
-log(U-value - minU) ~ HDD * log(gdppop + 1) + CDD * log(gdppop + 1) + (1 | region)
+log(U-value - minU) ~ HDD + CDD + log(gdppop + 1) + (interaction terms) + (1 | region)
+where the interaction terms are interactions between HDD/CDD and log(gdppop + 1), respectively,
+and (1 | region) denotes a region-specific offset.
 
 This captures the relationship between U-values and:
 \itemize{

@@ -44,6 +44,8 @@ convertEUBuildingsDB <- function(x, subtype) {
   if (category == "BuildingStockCharacteristics") {
     data[, 2017, c("Total floor area of single family dwellings_m2",
                    "Total floor area of multi family dwellings_m2")] <- NA
+  } else if (category == "BuildingShellPerformance") {
+    data[, 2008, ] <- NA
   }
 
   # fill missing regions with NA

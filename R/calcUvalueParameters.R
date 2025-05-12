@@ -11,7 +11,9 @@
 #'
 #' @details
 #' The function uses a linear mixed-effects model with the formula:
-#' log(U-value - minU) ~ HDD * log(gdppop + 1) + CDD * log(gdppop + 1) + (1 | region)
+#' log(U-value - minU) ~ HDD + CDD + log(gdppop + 1) + (interaction terms) + (1 | region)
+#' where the interaction terms are interactions between HDD/CDD and log(gdppop + 1), respectively,
+#' and (1 | region) denotes a region-specific offset.
 #'
 #' This captures the relationship between U-values and:
 #' - Heating degree days (HDD)
@@ -32,7 +34,7 @@
 #' The resulting parameters can be used to project future U-values based on climate and
 #' economic scenarios.
 #'
-#' @importFrom stringr str_to_lower word
+#' @importFrom stringr word
 #' @importFrom dplyr filter mutate select rename group_by ungroup reframe recode semi_join left_join right_join
 #' @importFrom tibble deframe
 #' @importFrom lme4 lmer fixef
@@ -181,7 +183,7 @@ calcUValueParameters <- function(endOfHistory = 2025) {
   uvaluesHotmapsData <- hotmapsData %>%
     filter(.data$variable %in% uvalueParameters,
            !.data$building %in% buildingsToIgnore) %>%
-    mutate(variable = str_to_lower(word(.data$variable, -1, sep = "\\|"))) %>%
+    mutate(variable = tolower(word(.data$variable, -1, sep = "\\|"))) %>%
     select(-"unit", -"model", -"scenario")
 
   # Prepare building components
@@ -210,7 +212,7 @@ calcUValueParameters <- function(endOfHistory = 2025) {
     filter(!is.na(.data$value)) %>%
     left_join(floorspaceHotmaps, by = c("region", "period", "bage", "building")) %>%
     group_by(across(all_of(c("region", "period")))) %>%
-    reframe(uvalue = sum(.data$value * .data$floorspace) / sum(.data$floorspace))
+    reframe(uvalue = sum(.data$value * proportions(.data$floorspace)))
 
 
 
@@ -231,12 +233,16 @@ calcUValueParameters <- function(endOfHistory = 2025) {
     # calculate regional residential share
     group_by(across(all_of(c("region", "period")))) %>%
     mutate(floorShareRes = .data$floorRes / (.data$floorRes + .data$floorCom)) %>%
-    ungroup() %>%
 
     # calculate global average shares per period
     group_by(across(all_of("period"))) %>%
-    mutate(floorShareResGlo = mean(.data$floorShareRes, na.rm = TRUE)) %>%
+    mutate(isComplete = !is.na(.data$floorRes) & !is.na(.data$floorCom),
+           floorShareResGlo = sum(.data$floorRes[.data$isComplete]) /
+             sum(.data$floorRes + .data$floorCom, na.rm = TRUE)) %>%
     ungroup() %>%
+
+    # interpolate floorShareRes to avoid switches btw regional and global values
+    interpolate_missing_periods(value = "floorShareRes", expand.values = TRUE) %>%
 
     # allocate regional shares; use global average where NA
     mutate(floorShareRes = ifelse(is.na(.data$floorShareRes),
@@ -267,8 +273,7 @@ calcUValueParameters <- function(endOfHistory = 2025) {
 
   # Calculate U-values per region and period
   uvaluesEUBuildObs <- euBuildObsData %>%
-    filter(.data$variable %in% varMapEUBuildObs$variable,
-           .data$period != 2008) %>%
+    filter(.data$variable %in% varMapEUBuildObs$variable) %>%
 
     left_join(varMapEUBuildObs, by = "variable") %>%
     select("region", "period", "variable" = "variableNew", "building", "value") %>%
