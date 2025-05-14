@@ -107,10 +107,6 @@ calcUValueParameters <- function(endOfHistory = 2025) {
 
   # PARAMETERS -----------------------------------------------------------------
 
-  # Historical limit temperatures
-  tLim <- c("HDD" = 14, "CDD" = 20)
-
-
   # factor for minimum u-value assumption (minU = minFactor * min(historical u-values))
   minFactor <- 0.75
 
@@ -361,15 +357,11 @@ calcUValueParameters <- function(endOfHistory = 2025) {
 
   # Filter correct historical limit temperatures
   hddcdd <- hddcdd %>%
-    filter((.data$variable == "CDD" & .data$tlim == tLim[["CDD"]]) |
-             (.data$variable == "HDD" & .data$tlim == tLim[["HDD"]]),
-           .data$rcp == "historical",
-           !is.na(.data$value)) %>%
+    filter(.data$variable %in% c("HDD_14", "CDD_20"),
+           .data$scenario == "SSP1_2_6") %>%
+    separate(col = "variable", into = c("variable", "tlim"), sep = "_") %>%
     filter(.data$period <= endOfHistory) %>%
-    select("region", "period", "variable", "value") %>%
-
-    # we have some 0 entries due to insufficient resolution for very small islands
-    filter(.data$value != 0)
+    select("region", "period", "variable", "value")
 
 
   # Aggregate HDD/CDDS to MessageIX regions
