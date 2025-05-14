@@ -2,6 +2,9 @@
 #'
 #' Population differentiated by location (urban/rural) and building type
 #'
+#' @param granularity character, name of BRICK granularity
+#' @returns MagPIE object with population at BRICK granularity
+#'
 #' @author Robin Hasse
 #'
 #' @importFrom magclass add_dimension mbind getItems getItems<- getSets<-
@@ -10,7 +13,7 @@
 #' @importFrom utils tail
 #' @export
 
-calcPopulationBuildings <- function() {
+calcPopulationBuildings <- function(granularity = NULL) {
 
   scenarios <- c("SSPs", "SDPs")
   pop <- calcOutput("Population", scenario = scenarios, naming = "scenario", aggregate = FALSE)
@@ -41,7 +44,10 @@ calcPopulationBuildings <- function() {
   # split population in SFH/MFH
   pop <- pop * typShare
 
-  return(list(x = pop,
+  # aggregate to BRICK granularity
+  agg <- toolAggregateBrick(pop, granularity, NULL)
+
+  return(list(x = agg$x,
               weight = NULL,
               unit = "million",
               description = "Rural and urban population",

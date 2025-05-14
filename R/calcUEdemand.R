@@ -1,5 +1,7 @@
 #' Calculate useful energy demand for space heating in buildings
 #'
+#' @param granularity character, name of BRICK granularity
+#'
 #' @author Robin Hasse
 #'
 #' @importFrom madrat readSource calcOutput toolGetMapping
@@ -9,7 +11,7 @@
 #' @importFrom quitte as.quitte
 #' @export
 
-calcUEdemand <- function() {
+calcUEdemand <- function(granularity = NULL) {
 
   # map Hotmaps vintages
   vinMap <- toolGetMapping("vintageMapping_Hotmaps.csv",
@@ -22,7 +24,7 @@ calcUEdemand <- function() {
     select("typ", "typHotmaps")
 
   # building shell map
-  bsMap <- toolGetMapping("buildingShell.csv",
+  bsMap <- toolGetMapping("dim_bs.csv",
                           type = "sectoral", where = "brick")
 
   # Useful energy demand for space heating (kWh/yr/m2)
@@ -35,19 +37,18 @@ calcUEdemand <- function() {
                relationship = "many-to-many") %>%
     select("region", "typ", "vin", "value") %>%
     group_by(across(-all_of(c("value")))) %>%
-    summarise(value = mean(.data[["value"]]), .groups = "drop")
+    summarise(value = mean(.data$value), .groups = "drop")
 
   # scale demand such that average relative demand is 1
   relDem <- bsMap %>%
     select("bs", "relDem", "initShare") %>%
-    mutate(relDem = .data[["relDem"]] /
-             sum(.data[["initShare"]] * .data[["relDem"]])) %>%
+    mutate(relDem = .data$relDem / sum(.data$initShare * .data$relDem)) %>%
     select(-"initShare")
 
   # add dimension: building shell
   ueDem <- ueDem %>%
     cross_join(relDem) %>%
-    mutate(value = .data[["value"]] * .data[["relDem"]]) %>%
+    mutate(value = .data$value * .data$relDem) %>%
     select(-"relDem")
 
   # convert to magpie object
@@ -59,8 +60,13 @@ calcUEdemand <- function() {
   feBuildings <- calcOutput("WeightFeBuildings", aggregate = FALSE) %>%
     mselect(period = "y2017", collapseNames = TRUE)
 
-  return(list(x = ueDem,
-              weight = feBuildings,
+  # aggregate to BRICK granularity
+  agg <- toolAggregateBrick(ueDem, granularity, feBuildings)
+
+
+
+  return(list(x = agg$x,
+              weight = agg$weight,
               unit = "kWh/yr/m2",
               min = 0,
               description = "Floor-space specific useful energy demand for space heating"))
