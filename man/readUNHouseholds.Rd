@@ -27,7 +27,7 @@ collected between 1960 to 2018.
 
 }
 \seealso{
-\code{\link{readSource}}
+\code{\link[madrat]{readSource}}
 }
 \author{
 Robin Hasse

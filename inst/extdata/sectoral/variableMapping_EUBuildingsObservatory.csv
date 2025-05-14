@@ -1,0 +1,9 @@
+variable;variableNew;building
+Energy efficiency value of residential building external walls_W/m2K;walls;residential
+Energy efficiency value of residential building floors_W/m2K;floor;residential
+Energy efficiency value of non-residential building external walls_W/m2K;walls;commercial
+Energy efficiency value of non-residential building floors_W/m2K;floor;commercial
+U-value of roofs in residential buildings_W/m2K;roof;residential
+U-value of windows in residential buildings_W/m2K;windows;residential
+U-value of roofs in non-residential buildings_W/m2K;roof;commercial
+U-value of windows in non-residential buildings_W/m2K;windows;commercial

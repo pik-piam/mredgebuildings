@@ -22,7 +22,7 @@ objects
 }
 }
 \seealso{
-\code{\link{readSource}}
+\code{\link[madrat]{readSource}}
 }
 \author{
 Antoine Levesque

@@ -12,7 +12,7 @@
 #'
 #' @author Robin Hasse
 #'
-#' @seealso \code{\link{readSource}}
+#' @seealso \code{\link[madrat]{readSource}}
 #' @examples
 #' \dontrun{ a <- readSource(type = "UNHouseholds")
 #' }
@@ -25,7 +25,8 @@ readUNHouseholds <- function(subtype) {
 
   data <- suppressMessages(read_xlsx(
     "undesa_pd_2019_houseshold_size_and_composition_dataset.xlsx",
-    sheet = "UN HH Size and Composition 2019", skip = 4, na = "..")) %>%
+    sheet = "UN HH Size and Composition 2019", skip = 4, na = ".."
+  )) %>%
     select(-"ISO Code", -"Data source category") %>%
     rename(region = "Country or area",
            period = "Reference date (dd/mm/yyyy)")
@@ -41,7 +42,8 @@ readUNHouseholds <- function(subtype) {
     avgHHMembersOfAge = select(data, "region", "period", 23:27),
     BasicHHType       = select(data, "region", "period", 28:32),
     IntergenHHType    = select(data, "region", "period", 28:41),
-    stop("'", subtype, "'", "is not a valid subtype."))
+    stop("'", subtype, "'", "is not a valid subtype.")
+  )
 
   # prepare MAgPIE object
   data <- data %>%

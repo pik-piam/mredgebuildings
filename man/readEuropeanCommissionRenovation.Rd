@@ -27,7 +27,7 @@ averages between 2012 and 2016.
 
 }
 \seealso{
-\code{\link{readSource}}
+\code{\link[madrat]{readSource}}
 }
 \author{
 Robin Hasse

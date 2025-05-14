@@ -8,7 +8,7 @@
 #' @author Antoine Levesque, Robin Hasse, Hagen Tockhorn
 #'
 #' @seealso
-#' \code{\link{readSource}},\code{\link{getCalculations}},\code{\link{calcOutput}}
+#' \code{\link[madrat]{readSource}},\code{\link[madrat]{getCalculations}},\code{\link[madrat]{calcOutput}}
 #' @examples
 #' \dontrun{
 #' fullEDGEBUILDINGS()
@@ -44,7 +44,6 @@ fullEDGEBUILDINGS <- function(rev = 0) {
   calcOutput("FEbyEUEC",                                           file = "f_fe.cs4r")
   calcOutput("FEUEefficiencies",                                   file = "f_feue_efficiencies.cs4r")
   calcOutput("EfficiencyRegression",            aggregate = FALSE, file = "f_feue_efficiencyPars.cs4r")
-  calcOutput("UValueSource", subtype = "ETSAP", aggregate = FALSE, file = "f_uvalues_etsap.cs4r")
-  calcOutput("UValueSource", subtype = "EUBuildingsObservatory", aggregate = FALSE,  file = "f_uvalues_rescom.cs4r")
+  calcOutput("UValueParameters",                aggregate = FALSE, file = "f_uvaluePars.cs4r")
 
 }
