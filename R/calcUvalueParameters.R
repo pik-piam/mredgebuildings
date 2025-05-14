@@ -241,8 +241,14 @@ calcUValueParameters <- function(endOfHistory = 2025) {
              sum(.data$floorRes + .data$floorCom, na.rm = TRUE)) %>%
     ungroup() %>%
 
+    select("region", "period", "floorShareRes", "floorShareResGlo") %>%
+    pivot_longer(cols = c("floorShareRes", "floorShareResGlo"),
+                 names_to = "variable",
+                 values_to = "value") %>%
+
     # interpolate floorShareRes to avoid switches btw regional and global values
-    interpolate_missing_periods(value = "floorShareRes", expand.values = TRUE) %>%
+    interpolate_missing_periods(expand.values = TRUE) %>%
+    pivot_wider(names_from = "variable", values_from = "value") %>%
 
     # allocate regional shares; use global average where NA
     mutate(floorShareRes = ifelse(is.na(.data$floorShareRes),
@@ -484,7 +490,16 @@ calcUValueParameters <- function(endOfHistory = 2025) {
   row.names(regionalPars) <- c()
 
 
-  # calculate regional offset for remaining countries
+  # total floor space per region
+  floorspaceWeights <- floorspaceWeights %>%
+    left_join(pop %>%
+                pivot_wider(names_from = "variable", values_from = "value"),
+              by = c("region", "period")) %>%
+    mutate(value = .data$value * .data$pop) %>%
+    select(-"pop")
+
+
+  # Calculate regional offset for remaining countries
   remainingOffsets <- uvalueProjection %>%
     filter(!.data$region %in% singleRegions) %>%
 
@@ -507,27 +522,39 @@ calcUValueParameters <- function(endOfHistory = 2025) {
       )
     })() %>%
 
-
-    # calculate difference to reference values
+    # join with reference values
     left_join(uvaluesMessageAgg, by = c("region", "period")) %>%
     select("region", "period", "projection" = "value", "reference" = "uvalue") %>%
     filter(!is.na(.data$reference)) %>%
+
+    # calculate offsets in model's transformed space when possible, ratio-based otherwise
+    group_by(across(all_of("region"))) %>%
+    mutate(useRatio = any(.data$projection <= minU)) %>%
+    ungroup() %>%
+
+    # naive offset
+    mutate(offset = ifelse(.data$projection <= minU,
+                           log(.data$reference / .data$projection),
+                           log(.data$reference - minU) - log(.data$projection - minU))) %>%
+
     group_by(across(all_of("region"))) %>%
     reframe(
-      # Calculate the weighted mean difference
-      meanDiff = mean(.data$reference - .data$projection, na.rm = TRUE),
+      # mean offset
+      meanOffset = mean(.data$offset, na.rm = TRUE),
 
-      # Calculate variance of these differences
-      varDiff = var(.data$reference - .data$projection, na.rm = TRUE),
+      # variance
+      varOffset = var(.data$offset, na.rm = TRUE),
 
-      # Calculate total variance (model residual variance + region variance)
-      totalVar = .data$varDiff + sigma(model)^2,
+      # total variance (model residual variance + region variance)
+      totalVar = .data$varOffset + sigma(model)^2,
 
-      # Calculate shrinkage factor using empirical Bayes
-      shrinkage = .data$varDiff / .data$totalVar,
+      # shrinkage factor using empirical Bayes
+      shrinkage = ifelse(.data$varOffset > 0,
+                         .data$varOffset / .data$totalVar,
+                         0),
 
-      # Calculate offset with appropriate shrinkage
-      offset = .data$shrinkage * .data$meanDiff
+      # offset with appropriate shrinkage
+      offset = .data$shrinkage * .data$meanOffset
     ) %>%
     select("regionTarget" = "region", "offset")
 
