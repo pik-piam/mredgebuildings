@@ -9,11 +9,13 @@ https://www.eia.gov/analysis/studies/buildings/equipcosts/pdf/full.pdf
 http://dx.doi.org/10.1016/j.enbuild.2017.01.080
 }
 \usage{
-calcLifetimeParams(subtype)
+calcLifetimeParams(subtype, granularity = NULL)
 }
 \arguments{
 \item{subtype}{character, type of asset (either \code{building}, 'heatingSystem'
 or 'buildingShell')}
+
+\item{granularity}{character, name of BRICK granularity}
 }
 \value{
 MagPIE object with Weibull lifetime distribution parameters

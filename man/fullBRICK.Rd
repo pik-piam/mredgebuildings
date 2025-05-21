@@ -4,10 +4,12 @@
 \alias{fullBRICK}
 \title{fullBRICK}
 \usage{
-fullBRICK(rev = 0)
+fullBRICK(rev = 0, granularity = NULL)
 }
 \arguments{
 \item{rev}{data revision which should be used as input (positive numeric).}
+
+\item{granularity}{character, name of BRICK granularity}
 }
 \description{
 Compute complete input data set for BRICK

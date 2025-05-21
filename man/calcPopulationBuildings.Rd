@@ -4,7 +4,13 @@
 \alias{calcPopulationBuildings}
 \title{Historic and projected population}
 \usage{
-calcPopulationBuildings()
+calcPopulationBuildings(granularity = NULL)
+}
+\arguments{
+\item{granularity}{character, name of BRICK granularity}
+}
+\value{
+MagPIE object with population at BRICK granularity
 }
 \description{
 Population differentiated by location (urban/rural) and building type
