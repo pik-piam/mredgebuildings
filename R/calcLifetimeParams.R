@@ -51,6 +51,11 @@ calcLifetimeParams <- function(subtype) {
               "The tolerance might not be fulfilled.")
     }
 
+    if (i == iMax) {
+      warning("Approximation stopped after the maximum of", iMax, " iterations. ",
+              "The tolerance might not be fulfilled.")
+    }
+
     return(list(scale = scale, shape = shape))
   }
 
