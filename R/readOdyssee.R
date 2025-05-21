@@ -29,15 +29,16 @@ readOdyssee <- function(subtype = "households") {
 
   # check subtype
   file <- switch(subtype,
-                 households = "export_enerdata_9259_031531.csv",
-                 services   = "export_enerdata_9259_031431.csv",
+                 "households" = c("Enerdata_Odyssee_250109_150210.csv",
+                                  "Enerdata_Odyssee_250109_145827.csv"),
+                 "services" = c("Enerdata_Odyssee_250109_150428.csv"),
                  stop("'", subtype, "' is not a valid subtype."))
 
   # read data
-  data <- read.csv(file, skip = 1, na.strings = c("n.a.", "")) %>%
-    select(region = "ISO.code",
+  data <- do.call(rbind, lapply(file, function(f) read.csv(f, na.strings = c("n.a.", "")))) %>%
+    select(region = "ISO.Code",
            period = "Year",
-           variable = "Item.code",
+           variable = "Item.Code",
            value = "Value",
            unit = "Unit") %>%
     mutate(value = as.numeric(.data[["value"]])) %>%
