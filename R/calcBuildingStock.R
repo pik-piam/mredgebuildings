@@ -94,12 +94,14 @@ calcBuildingStock <- function(subtype = c("residential", "commercial")) {
     # calculate missing total
     outDf <- outDf %>%
       group_by(across(all_of(c("region", "period")))) %>%
-      filter(all(varSfhMfh %in% .data[["variable"]]),
-             n() == 2) %>%
+      filter(setequal(varSfhMfh, .data$variable)) %>%
       summarise(value = sum(.data[["value"]]),
                 variable = varTotal,
                 .groups = "drop") %>%
       bind_rows(outDf)
+
+    # calculate missing variable from total and other type
+    # e.g. MFH = total - SFH
     outDf <- outDf %>%
       group_by(across(all_of(c("region", "period")))) %>%
       filter(.data[["variable"]] %in% vars) %>%
@@ -110,6 +112,7 @@ calcBuildingStock <- function(subtype = c("residential", "commercial")) {
                 variable = setdiff(vars, .data[["variable"]]),
                 .groups = "drop") %>%
       bind_rows(outDf)
+
     dwellingTypeRatio <- outDf %>%
       select("period", "region", "variable", "value") %>%
       filter(.data[["variable"]] %in% varSfhMfh) %>%

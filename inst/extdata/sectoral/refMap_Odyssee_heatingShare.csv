@@ -1,4 +1,4 @@
-variable,refVarGroup,.code,.codeTotal,.variableTilte,.variable_Brick,typ,hs,.comment
+variable,refVarGroup,.code,.codeTotal,.variableTitle,.variable_Brick,typ,hs,.comment
 Res_libo,Res,nbrlprpet,nbrlpr,Stock of dwellings with oil space heating_Stock of dwellings (permanently occupied),v_stock/v_stock,SFH,libo,
 Res_libo,Res,nbrlprpet,nbrlpr,Stock of dwellings with oil space heating_Stock of dwellings (permanently occupied),v_stock/v_stock,MFH,libo,
 Res_gabo,Res,nbrlprgaz,nbrlpr,Stock of dwellings with gas space heating_Stock of dwellings (permanently occupied),v_stock/v_stock,SFH,gabo,

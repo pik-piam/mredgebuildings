@@ -4,10 +4,10 @@
 \alias{calcOdysseeStock}
 \title{Calculate Odyssee building stock variables}
 \usage{
-calcOdysseeStock(extrapolate = FALSE)
+calcOdysseeStock(interpolate = FALSE)
 }
 \arguments{
-\item{extrapolate}{logical, if TRUE, floor space growth rates from JRC_IDEES
+\item{interpolate}{logical, if TRUE, floor space growth rates from JRC_IDEES
 are used to inter- and extrapolate the data}
 }
 \value{
@@ -22,7 +22,7 @@ size.
 \details{
 The data can be inter- and extrapolated using IDEES floor space data. As we
 trust the absolute level less than Odyssee, we only consider the growth to
-fill vales.
+fill values.
 }
 \author{
 Robin Hasse

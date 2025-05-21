@@ -5,7 +5,7 @@
 #' @author Robin Hasse
 #'
 #' @param subtype character, specifies study and the respective csv file to
-#'   read: \code{<study>.<file>}
+#'   read: \code{<study>.<file>} (without file extension)
 #' @returns MagPIE object
 #'
 #' @importFrom dplyr %>% .data select mutate distinct across all_of

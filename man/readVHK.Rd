@@ -8,7 +8,7 @@ readVHK(subtype)
 }
 \arguments{
 \item{subtype}{character, specifies study and the respective csv file to
-read: \code{<study>.<file>}}
+read: \code{<study>.<file>} (without file extension)}
 }
 \value{
 MagPIE object

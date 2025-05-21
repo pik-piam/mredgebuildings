@@ -7,9 +7,9 @@
 #'
 #' The data can be inter- and extrapolated using IDEES floor space data. As we
 #' trust the absolute level less than Odyssee, we only consider the growth to
-#' fill vales.
+#' fill values.
 #'
-#' @param extrapolate logical, if TRUE, floor space growth rates from JRC_IDEES
+#' @param interpolate logical, if TRUE, floor space growth rates from JRC_IDEES
 #'   are used to inter- and extrapolate the data
 #' @returns MagPIE object with building stock data
 #'
@@ -22,27 +22,35 @@
 #' @importFrom quitte as.quitte interpolate_missing_periods removeColNa
 #' @export
 
-calcOdysseeStock <- function(extrapolate = FALSE) {
+calcOdysseeStock <- function(interpolate = FALSE) {
 
   # FUNCTIONS ------------------------------------------------------------------
 
   pick <- function(x, var) mselect(x, variable = var, collapseNames = TRUE)
 
 
-  naIfBeyondData <- function(x, period, data) {
-    x[is.na(data[match(x, period)])] <- NA
-    return(x)
-  }
-
-  .extrapol <- function(x, t, ref, tref) { # nolint: object_usage_linter.
-    ref * x[match(tref, t)] / ref[match(tref, t)]
-  }
-
-  .interpol <- function(x, t, ref, before, after) { # nolint: object_usage_linter.
-    pos <- (t - before) / (after - before)
-    ref *
-      ((1 - pos) * x[match(before, t)] + pos * x[match(after, t)]) /
-      ((1 - pos) * ref[match(before, t)] + pos * ref[match(after, t)])
+  .interpol <- function(x, t, ref, before, after, brwsr = FALSE) { # nolint: object_usage_linter.
+    # inter-/extrapolate ref
+    refFull <- if (sum(!is.na(ref)) >= 2) {
+      stats::approx(x = t, y = ref, xout = t, rule = 2)$y
+    } else {
+      ref
+    }
+    factor <- case_when(
+      before %in% t & !after %in% t ~
+        x[match(before, t)] / ref[match(before, t)],
+      !before %in% t &  after %in% t ~
+        x[match(after, t)] / ref[match(after, t)],
+      .default = {
+        pos <- (t - before) / (after - before)
+        (
+          (1 - pos) * x[match(before, t)] + pos * x[match(after, t)]
+        ) / (
+          (1 - pos) * refFull[match(before, t)] + pos * refFull[match(after, t)]
+        )
+      }
+    )
+    factor * ref
   }
 
 
@@ -72,9 +80,9 @@ calcOdysseeStock <- function(extrapolate = FALSE) {
 
 
 
-  # EXTRAPOLATE ----------------------------------------------------------------
+  # INTERPOLATE ----------------------------------------------------------------
 
-  if (isTRUE(extrapolate)) {
+  if (isTRUE(interpolate)) {
 
     m <- m %>%
       mutate(variable = ifelse(.data$quantityCode %in% varsIncomplete,
@@ -96,34 +104,30 @@ calcOdysseeStock <- function(extrapolate = FALSE) {
       left_join(m, by = c(code = "ideesCode"),
                 relationship = "many-to-many")
 
-    x <- as.quitte(x)
-    xInterpol <- x %>%
-      interpolate_missing_periods(expand.values = TRUE) %>%
-      removeColNa()
+
     x <- x %>%
+      as.quitte() %>%
       removeColNa() %>%
-      right_join(xInterpol, by = c("region", "period", "variable"),
-                 suffix = c("", "Interpol")) %>%
       full_join(idees, by = c("region", "period", "variable"),
                 suffix = c("Odyssee", "IDEES")) %>%
+      # divide time series into sections of consecutive periods with Odyssee
+      # value that are either all NA or not
       group_by(across(all_of(c("region", "variable")))) %>%
       arrange(.data$period) %>%
       mutate(section = cumsum(c(diff(c(FALSE, is.na(.data$valueOdyssee))) != 0))) %>%
+      # The NA sections are filled with the IDEES profile scaled by a linearly
+      # changing factor that connects the final values towards both sides with
+      # existing values before and after the section. If no values exist on
+      # either side, they are extrapolated using a time-invariant factor.
       group_by(across(all_of(c("region", "variable", "section")))) %>%
       mutate(before = min(.data$period) - 1,
              after  = max(.data$period) + 1) %>%
       group_by(across(all_of(c("region", "variable")))) %>%
-      mutate(before = naIfBeyondData(.data$before, .data$period, .data$valueIDEES),
-             after  = naIfBeyondData(.data$after,  .data$period, .data$valueIDEES),
-             fill = case_when(
-               !is.na(.data$before) & !is.na(.data$after) ~
-                 .interpol(.data$valueInterpol, .data$period, .data$valueIDEES, .data$before, .data$after),
-               !is.na(.data$before) ~
-                 .extrapol(.data$valueInterpol, .data$period, .data$valueIDEES, .data$before),
-               !is.na(.data$after) ~
-                 .extrapol(.data$valueInterpol, .data$period, .data$valueIDEES, .data$after),
-               .default = NA
-             )) %>%
+      mutate(fill = .interpol(.data$valueOdyssee,
+                              .data$period,
+                              .data$valueIDEES,
+                              .data$before,
+                              .data$after)) %>%
       ungroup() %>%
       mutate(value = ifelse(is.na(.data$valueOdyssee),
                             ifelse(is.na(.data$valueIDEES), NA, .data$fill),

@@ -25,8 +25,8 @@ calcLifetimeParams <- function(subtype) {
 
   # FUNCTIONS ------------------------------------------------------------------
 
-  # dind Weibull parameters to given mean and standard deviation
-  aproxWeibull <- function(m, s, scale = 20, shape = 3, eps = 1E-5, iMax = 100) {
+  # find Weibull parameters to given mean and standard deviation
+  approxWeibull <- function(m, s, scale = 20, shape = 3, eps = 1E-5, iMax = 100) {
     speed <- c(scale = 1.2, shape = 1)
     calS <- function(scale, shape) {
       scale * sqrt(gamma(1 + 2 / shape) - gamma(1 + 1 / shape)^2)
@@ -37,13 +37,18 @@ calcLifetimeParams <- function(subtype) {
 
     for (i in seq_len(iMax)) {
 
-      sAprox <- calS(scale, shape)
-      mAprox <- calM(scale, shape)
+      sApprox <- calS(scale, shape)
+      mApprox <- calM(scale, shape)
 
-      scale <- scale * (m / mAprox)^speed[["scale"]]
-      shape <- shape / (s / sAprox)^speed[["shape"]]
+      scale <- scale * (m / mApprox)^speed[["scale"]]
+      shape <- shape / (s / sApprox)^speed[["shape"]]
 
-      if (all(abs(c(m - mAprox, s - sAprox)) < eps)) break
+      if (all(abs(c(m - mApprox, s - sApprox)) < eps)) break
+    }
+
+    if (i == iMax) {
+      warning("Approximation stopped after the maximum of ", iMax, " iterations. ",
+              "The tolerance might not be fulfilled.")
     }
 
     return(list(scale = scale, shape = shape))
@@ -86,9 +91,9 @@ calcLifetimeParams <- function(subtype) {
                               .data$value)) %>%
         ungroup() %>%
         pivot_wider(names_from = "variable") %>%
-        mutate(params = Map(aproxWeibull,
+        mutate(params = Map(approxWeibull,
                             m = .data$averageLifetime,
-                            s = .data$averageLifetime / 2,
+                            s = .data$averageLifetime / 2, # roughly matched Deetman distributions
                             scale = 1.1 * .data$averageLifetime)) %>%
         tidyr::unnest_longer("params", indices_to = "variable", values_to = "value") %>%
         select("region", "variable", "value") %>%
@@ -172,7 +177,7 @@ calcLifetimeParams <- function(subtype) {
       central <- central %>%
         mutate(sd = cv * .data[["mean"]])
       central <- do.call(rbind,
-                         Map(aproxWeibull, m = central$mean, s = central$sd)) %>%
+                         Map(approxWeibull, m = central$mean, s = central$sd)) %>%
         cbind(central) %>%
         mutate(shape = as.numeric(.data[["shape"]]),
                scale = as.numeric(.data[["scale"]]))

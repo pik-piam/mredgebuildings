@@ -18,9 +18,8 @@ convertOdyssee <- function(x) {
   data <- x
 
   # rename regions: ISO2 -> ISO3
-  data <- data["EU", invert = TRUE]
-  data <- data["XK", invert = TRUE]
-  getItems(data, 1) <- toolCountry2isocode(getItems(data, 1))
+  getItems(data, 1) <- toolCountry2isocode(getItems(data, 1),
+                                           ignoreCountries = c("EU", "XK"))
 
   # unit conversion
   unitConversion <- inline.data.frame(

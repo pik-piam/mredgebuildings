@@ -3,8 +3,6 @@
 #' @author Robin Hasse
 #'
 #' @param x MagPie object
-#' @param subtype character, specifies study and the respective csv file to
-#'   read: \code{<study>.<file>}
 #' @returns MagPIE object
 #'
 #' @importFrom dplyr %>% .data  mutate distinct across all_of filter arrange
@@ -13,7 +11,7 @@
 #' @importFrom madrat toolCountry2isocode toolCountryFill
 #' @export
 
-convertVHK <- function(x, subtype) {
+convertVHK <- function(x) {
   data <- as_tibble(x) %>%
     filter(!.data$region %in% c("EU"),
            !is.na(.data$value)) %>%

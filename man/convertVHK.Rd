@@ -4,13 +4,10 @@
 \alias{convertVHK}
 \title{Convert VHK data}
 \usage{
-convertVHK(x, subtype)
+convertVHK(x)
 }
 \arguments{
 \item{x}{MagPie object}
-
-\item{subtype}{character, specifies study and the respective csv file to
-read: \code{<study>.<file>}}
 }
 \value{
 MagPIE object

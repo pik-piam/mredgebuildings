@@ -1,4 +1,4 @@
-variable,.variableTilte,.dataSet,.variable_Brick,typ,hs,qty,.comment
+variable,.variableTitle,.dataSet,.variable_Brick,typ,hs,qty,.comment
 nbrlpr,Stock of dwellings (permanently occupied),households,v_stock,MFH,libo,num,
 nbrlpr,Stock of dwellings (permanently occupied),households,v_stock,MFH,gabo,num,
 nbrlpr,Stock of dwellings (permanently occupied),households,v_stock,MFH,sobo,num,

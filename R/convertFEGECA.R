@@ -8,6 +8,7 @@
 #' @importFrom madrat toolCountry2isocode toolCountryFill toolGetMapping
 #' @importFrom magclass add_dimension getItems getItems<-
 #' @importFrom quitte as.quitte interpolate_missing_periods
+#' @importFrom dplyr pull
 #' @export
 
 convertFEGECA <- function(x) {
@@ -24,7 +25,7 @@ convertFEGECA <- function(x) {
                               type = "sectoral", where = "mredgebuildings",
                               returnPathOnly = TRUE) %>%
     read.csv(encoding = "UTF-8")
-  mapFEGECA <- dplyr::pull(mapFEGECA, "variable", "variableESP")
+  mapFEGECA <- pull(mapFEGECA, "variable", name = "variableESP")
   getItems(x, 3.1) <- unname(mapFEGECA[getItems(x, 3.1)])
 
   # inter and extrapolate values

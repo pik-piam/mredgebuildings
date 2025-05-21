@@ -8,7 +8,8 @@
 #' @importFrom madrat readSource toolCountryFill toolGetMapping
 #' @importFrom quitte as.quitte interpolate_missing_periods
 #' @importFrom dplyr group_by filter mutate .data across all_of reframe
-#' @export
+#' @importFrom tidyr complete
+#' @importFrom zoo rollmean
 #'
 calcMatchingReference <- function(subtype) {
 
@@ -29,6 +30,17 @@ calcMatchingReference <- function(subtype) {
 
 
   # FUNCTIONS ------------------------------------------------------------------
+
+
+  aggStock <- function(stockHist, dim) {
+    data <- stockHist %>%
+      group_by(across(all_of(c("region", "period", dim)))) %>%
+      summarise(value = sum(.data[["value"]]),
+                .groups = "drop")
+    colnames(data)[3] <- "variable"
+    return(as.quitte(data))
+  }
+
 
   .calcShares <- function(x) {
     x %>%
@@ -95,15 +107,6 @@ calcMatchingReference <- function(subtype) {
       as.quitte(na.rm = TRUE) %>%
       filter(.data[["variable"]] == "floor") %>%
       select(-"model", -"scenario", -"variable", -"unit")
-  }
-
-  aggStock <- function(stockHist, dim) {
-    data <- stockHist %>%
-      group_by(across(all_of(c("region", "period", dim)))) %>%
-      summarise(value = sum(.data[["value"]]),
-                .groups = "drop")
-    colnames(data)[3] <- "variable"
-    return(as.quitte(data))
   }
 
 
@@ -252,7 +255,7 @@ calcMatchingReference <- function(subtype) {
     ## OdysseeIDEES ====
 
     `OdysseeIDEES` = {
-      data <- calcOutput("OdysseeStock", extrapolate = TRUE, aggregate = FALSE) %>%
+      data <- calcOutput("OdysseeStock", interpolate = TRUE, aggregate = FALSE) %>%
         as.quitte()
       data <- refMap %>%
         select("variable", ".variable") %>%
@@ -271,7 +274,7 @@ calcMatchingReference <- function(subtype) {
     ## OdysseeIDEES_heating ====
 
     `OdysseeIDEES_heating` = {
-      data <- calcOutput("OdysseeStock", extrapolate = TRUE, aggregate = FALSE) %>%
+      data <- calcOutput("OdysseeStock", interpolate = TRUE, aggregate = FALSE) %>%
         as.quitte()
       data <- refMap %>%
         select("variable", ".variable") %>%
@@ -364,7 +367,7 @@ calcMatchingReference <- function(subtype) {
     Odyssee_heatingShare = {
       odyssee <- odyssee %>%
         select("region", "period", "variable", "value")
-      completeVars <- function(rvg) {
+      uniqueVarsInGroup <- function(rvg) {
         unique(refMap[refMap$refVarGroup == unique(rvg), "variable"])
       }
       data <- refMap %>%
@@ -375,7 +378,7 @@ calcMatchingReference <- function(subtype) {
         summarise(across(matches("value"), sum), .groups = "drop") %>%
         ungroup() %>%
         group_by(across(all_of(c("region", "period", "refVarGroup")))) %>%
-        mutate(value = ifelse(all(completeVars(.data$refVarGroup) %in% .data$variable),
+        mutate(value = ifelse(all(uniqueVarsInGroup(.data$refVarGroup) %in% .data$variable),
                               proportions(.data$value),
                               .data$value / .data$valueTotal)) %>%
         ungroup() %>%
@@ -422,7 +425,7 @@ calcMatchingReference <- function(subtype) {
         select(-"qty", -".variable") %>%
         as.quitte(na.rm = TRUE)
 
-      unit <- "million dwel/yr"
+      unit <- "million dwel or million m2"
       description <- "stock of dwellings and service floor space"
     },
 
@@ -447,7 +450,7 @@ calcMatchingReference <- function(subtype) {
         as.quitte()
 
       unit <- "1/yr"
-      description <- "stock of dwellings and service floor space"
+      description <- "building shell renovation rate"
     },
 
 
@@ -728,7 +731,7 @@ calcMatchingReference <- function(subtype) {
         interpolate_missing_periods(t, expand.values = TRUE) %>%
         as.magpie()
 
-      # room ration: houses:flats
+      # room ratio: houses:flats
       roomRatio <- rooms[, , "HOUSE", drop = TRUE] / rooms[, , "FLAT", drop = TRUE]
       roomRatio <- toolCountryFillAvg(roomRatio, verbosity = 2)
       areaRatio <- roomRatio * 1.2 # assumed: rooms in houses are 20% bigger than rooms in flats
@@ -772,7 +775,8 @@ calcMatchingReference <- function(subtype) {
         .calcShares()
 
       minVal <- 0
-      unit <- "million m2"
+      maxVal <- 1
+      unit <- "1"
       description <- "Residential building stock by building type and location"
 
     },

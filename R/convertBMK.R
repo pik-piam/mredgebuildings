@@ -7,6 +7,7 @@
 #'
 #' @importFrom madrat toolCountry2isocode toolCountryFill toolGetMapping
 #' @importFrom magclass add_dimension getItems getItems<-
+#' @importFrom dplyr pull
 #' @export
 
 convertBMK <- function(x) {
@@ -23,7 +24,7 @@ convertBMK <- function(x) {
                            type = "sectoral", where = "mredgebuildings",
                            returnPathOnly = TRUE) %>%
     read.csv(encoding = "UTF-8")
-  mapBMK <- dplyr::pull(mapBMK, "technology", "technologyAUT")
+  mapBMK <- pull(mapBMK, "technology", name = "technologyAUT")
   getItems(x, 3) <- unname(mapBMK[getItems(x, 3)])
 
 
