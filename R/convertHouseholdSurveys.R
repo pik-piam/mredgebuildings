@@ -1,8 +1,9 @@
-#' Convert household survey data on energy carrier use for cooking and lighting
+#' Convert household survey data on energy carrier use for cooking, lighting and appliances ownership rates
 #'
 #' @references https://hdl.handle.net/10419/301069
 #'
 #' @param x data.frame containing survey data
+#' @param subtype specifies data subset
 #'
 #' @author Hagen Tockhorn
 #'
@@ -11,9 +12,16 @@
 #' @importFrom magclass as.magpie
 #' @importFrom madrat toolGetMapping
 
-convertHouseholdSurveys <- function(x) {
+convertHouseholdSurveys <- function(x, subtype) {
 
   # READ-IN DATA ---------------------------------------------------------------
+
+  if (subtype == "appliances") {
+    data <- x %>%
+      toolCountryFill(verbosity = 2)
+
+    return(data)
+  }
 
   #GDP per capita
   gdppop <- calcOutput("GDPpc",
