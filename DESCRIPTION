@@ -20,7 +20,8 @@ Depends:
     mrdrivers (>= 4.0.7),
     mrremind (>= 0.199.1)
 Imports:
-    brick (>= 0.7.0),
+    brick (>= 0.5.10),
+    climbed (>= 1.1.0),
     dplyr,
     GDPuc,
     openxlsx,
