@@ -18,6 +18,7 @@
 #' @importFrom quitte as.quitte
 #' @importFrom dplyr filter mutate semi_join %>%
 #' @importFrom magclass as.magpie
+#' @importFrom climbed getDegreeDays
 #'
 #' @export
 
@@ -25,25 +26,21 @@ calcHDDCDD <- function(scenario = c("ssp2"), fromSource = TRUE) {
 
   # PARAMETERS -----------------------------------------------------------------
 
-  # nolint start
+  # get madrat sourcefolder -> HDDCDD -> calcHDDCDD
+  sourceDir <- getConfig("sourcefolder")
+  outDir    <- file.path(sourceDir, "HDDCDD", "calcHDDCDD")
 
-  # # get madrat sourcefolder -> HDDCDD -> calcHDDCDD
-  # sourceDir <- getConfig("sourcefolder")
-  # outDir    <- file.path(sourceDir, "HDDCDD", "calcHDDCDD")
-  #
-  # # limit temperature range
-  # tLim <- list("HDD" = seq(9, 19), "CDD" = seq(15, 25))
-  #
-  # # limit and ambient temperature standard deviation
-  # std <- c("tLim" = 2, "tAmb" = 2)
-  #
-  # # use global parameters
-  # globalPars <- TRUE
-  #
-  # # end of history
-  # endOfHistory <- 2025
+  # limit temperature range
+  tLim <- list("HDD" = seq(9, 19), "CDD" = seq(15, 25))
 
-  # nolint end
+  # limit and ambient temperature standard deviation
+  std <- c("tLim" = 2, "tAmb" = 2)
+
+  # use global parameters
+  globalPars <- FALSE
+
+  # end of history
+  endOfHistory <- 2025
 
   # all scenarios
   allScenarios <- c("historical", scenario)
@@ -69,60 +66,58 @@ calcHDDCDD <- function(scenario = c("ssp2"), fromSource = TRUE) {
 
   # PROCESS DATA ---------------------------------------------------------------
 
-  # nolint start
-
   ## Calculate degree days ====
 
-  # if (isFALSE(fromSource)) {
-  #   # climate change
-  #   dataCC <- getDegreeDays(mappingFile  = "ISIMIPbuildings_fileMapping.csv",
-  #                           bait         = TRUE,
-  #                           tLim         = tLim,
-  #                           std          = std,
-  #                           ssp          = allScenarios,
-  #                           outDir       = outDir,
-  #                           globalPars   = globalPars,
-  #                           endOfHistory = endOfHistory,
-  #                           noCC         = FALSE) %>%
-  #     read.csv()
-  #
-  #   # no climate change
-  #   dataNoCC <- getDegreeDays(mappingFile  = "ISIMIPbuildings_fileMapping.csv",
-  #                             bait         = TRUE,
-  #                             tLim         = tLim,
-  #                             std          = std,
-  #                             ssp          = allScenarios,
-  #                             outDir       = outDir,
-  #                             globalPars   = globalPars,
-  #                             endOfHistory = endOfHistory,
-  #                             noCC         = TRUE) %>%
-  #     read.csv()
-  #
-  #   # bind data
-  #   data <- rbind(dataCC, dataNoCC)
-  #
-  #
-  #   # overwrite "historical" with respective ssp scenario
-  #   dataHist <- data %>%
-  #     filter(.data$ssp == "historical")
-  #
-  #   dataScen <- data %>%
-  #     filter(.data$ssp != "historical")
-  #
-  #   data <- do.call(rbind, lapply(unique(dataScen$ssp), function(s) {
-  #     rbind(dataHist %>%
-  #             mutate(ssp = s),
-  #           dataScen %>%
-  #             filter(.data$ssp == s))
-  #   })) %>%
-  #     unique()
+  if (isFALSE(fromSource)) {
+    # climate change
+    dataCC <- getDegreeDays(mappingFile  = "ISIMIPbuildings_fileMapping.csv",
+                            bait         = TRUE,
+                            tLim         = tLim,
+                            std          = std,
+                            ssp          = allScenarios,
+                            outDir       = outDir,
+                            globalPars   = globalPars,
+                            endOfHistory = endOfHistory,
+                            noCC         = FALSE) %>%
+      read.csv()
 
-  ### replace NAs with zero
+    # no climate change
+    dataNoCC <- getDegreeDays(mappingFile  = "ISIMIPbuildings_fileMapping.csv",
+                              bait         = TRUE,
+                              tLim         = tLim,
+                              std          = std,
+                              ssp          = allScenarios,
+                              outDir       = outDir,
+                              globalPars   = globalPars,
+                              endOfHistory = endOfHistory,
+                              noCC         = TRUE) %>%
+      read.csv()
+
+    # bind data
+    data <- rbind(dataCC, dataNoCC)
 
 
-  # }
+    # average historical data to avoid duplicates and overwrite "historical" with respective ssp scenario
+    dataHist <- data %>%
+      filter(.data$ssp == "historical") %>%
+      group_by(across(-all_of("value"))) %>%
+      reframe(value = mean(.data$value, na.rm = TRUE))
 
-  # nolint end
+    dataScen <- data %>%
+      filter(.data$ssp != "historical")
+
+    data <- do.call(rbind, lapply(unique(dataScen$ssp), function(s) {
+      rbind(dataHist %>%
+              mutate(ssp = s),
+            dataScen %>%
+              filter(.data$ssp == s))
+    })) %>%
+      unique()
+
+    # replace NAs with zero
+    data <- data %>%
+      mutate(value = replace_na(.data$value, 0))
+  }
 
 
   # filter population weights
