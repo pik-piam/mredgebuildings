@@ -4,7 +4,10 @@
 \alias{calcCostConstruction}
 \title{calculate construction cost}
 \usage{
-calcCostConstruction()
+calcCostConstruction(granularity = NULL)
+}
+\arguments{
+\item{granularity}{character, name of BRICK granularity}
 }
 \description{
 floor-space specific construction cost

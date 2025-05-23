@@ -4,11 +4,13 @@
 \alias{calcCostRenovation}
 \title{calculate renovation cost}
 \usage{
-calcCostRenovation(energyLadder = FALSE)
+calcCostRenovation(energyLadder = FALSE, granularity = NULL)
 }
 \arguments{
 \item{energyLadder}{logical, should the calculation include renovation
 transitions that are considered a decline on the energy ladder?}
+
+\item{granularity}{character, name of BRICK granularity}
 }
 \value{
 MagPIE object with floor-space specific renovation cost depending on

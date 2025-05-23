@@ -56,7 +56,7 @@ calcRenovation <- function() {
 
   # READ -----------------------------------------------------------------------
 
-  hs <- toolGetMapping("heatingSystem.csv",
+  hs <- toolGetMapping("dim_hs.csv",
                        type = "sectoral", where = "brick") %>%
     getElement("hs") %>%
     unique()

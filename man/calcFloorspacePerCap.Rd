@@ -4,10 +4,12 @@
 \alias{calcFloorspacePerCap}
 \title{Residential floor space per capita}
 \usage{
-calcFloorspacePerCap(scenarios)
+calcFloorspacePerCap(scenarios, granularity = NULL)
 }
 \arguments{
 \item{scenarios}{A string (or vector of strings) designating the scenario(s) to be returned.}
+
+\item{granularity}{character, name of BRICK granularity}
 }
 \value{
 MagPIE object with residential floor space per capita

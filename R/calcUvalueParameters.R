@@ -173,7 +173,7 @@ calcUValueParameters <- function(endOfHistory = 2025) {
   ## Process U-Value Data ====
 
 
-  ### Hotmaps Data =====
+  ### Hotmaps Data ====
 
   # U-Values per building vintage and building component (e.g. floor, windows, ...)
   uvaluesHotmapsData <- hotmapsData %>%
