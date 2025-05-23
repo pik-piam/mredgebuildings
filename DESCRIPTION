@@ -20,7 +20,7 @@ Depends:
     mrdrivers (>= 4.0.7),
     mrremind (>= 0.199.1)
 Imports:
-    brick (>= 0.7.0),
+    brick (>= 0.8.0),
     dplyr,
     GDPuc,
     lme4,

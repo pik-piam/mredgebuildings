@@ -4,11 +4,16 @@
 \alias{calcHeatingSystem}
 \title{Calculate installation cost or efficiency of heating systems}
 \usage{
-calcHeatingSystem(subtype = c("Purchasing cost", "Efficiency"))
+calcHeatingSystem(
+  subtype = c("Purchasing cost", "Efficiency"),
+  granularity = NULL
+)
 }
 \arguments{
 \item{subtype}{character, variable type (either 'Purchasing cost' or
 'Efficiency')}
+
+\item{granularity}{character, name of BRICK granularity}
 }
 \value{
 MagPIE object with capacity-specific purchasing cost or efficiency
