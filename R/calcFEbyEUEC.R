@@ -81,15 +81,21 @@ calcFEbyEUEC <- function() {
                             type  = "sectoral",
                             where = "mredgebuildings")
 
+  # lower temporal boundary for historical data
+  periodBegin <- 1990
+
 
   # PROCESS DATA ---------------------------------------------------------------
 
+  # expand end-use shares to cover full period range
   sharesEU <- sharesEU %>%
-    select("region", "period", "enduse", "value")
+    select("region", "period", "enduse", "value") %>%
+    interpolate_missing_periods(unique(ieaIO$period), expand.values = TRUE) %>%
+    filter(.data$period >= periodBegin)
 
   ieaIO <- ieaIO %>%
     rename(carrier = "variable") %>%
-    semi_join(sharesEU, by = c("period"))
+    filter(.data$period >= periodBegin)
 
 
   # remove district space cooling from disaggregation
