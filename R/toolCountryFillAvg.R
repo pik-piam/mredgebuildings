@@ -33,8 +33,8 @@ toolCountryFillAvg <- function(x, ...) {
   # fill NAs with average
   x[is.na(x)] <- avg[is.na(x)]
 
-  # resture set names
-  getSets(x) <- getSets(avg)
+  # restore set names
+  getSets(x)[3] <- getSets(avg)[3]
 
   return(x)
 }

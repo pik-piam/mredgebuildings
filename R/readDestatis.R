@@ -21,7 +21,7 @@ readDestatis <- function(subtype) {
     stop("unknown subtype: ", subtype)
   )
 
-  data <- read.csv2(file)
+  data <- read.csv2(file, fileEncoding = "ISO-8859-1")
 
   cols <- stats::setNames(
     grep("X\\d+_Auspraegung_Code", colnames(data), value = TRUE),

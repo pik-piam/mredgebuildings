@@ -1,0 +1,28 @@
+typ,hs,code,comment
+Res,biom,nbrlprboi,
+Res,dihe,nbrlprvap,
+Res,ehp1,nbrlprelehp,
+Res,reel,,
+Res,elec,nbrlprele,all electric incl. HP
+Res,h2bo,,
+Res,gabo,nbrlprgaz,
+Res,libo,nbrlprpet,
+Res,sobo,,
+MFH,biom,nbriprboi,
+MFH,dihe,nbriprvap,
+MFH,ehp1,nbriprelehp,only occupied flats (all other MFH entries incl non-occupied)
+MFH,reel,,
+MFH,elec,nbriprele,all electric incl. HP
+MFH,h2bo,,
+MFH,gabo,nbriprgaz,
+MFH,libo,nbriprpet,
+MFH,sobo,,
+SFH,biom,nbrmprboi,
+SFH,dihe,nbrmprvap,
+SFH,ehp1,nbrmprelehp,
+SFH,reel,,
+SFH,elec,nbrmprele,
+SFH,h2bo,,
+SFH,gabo,nbrmprgaz,
+SFH,libo,nbrmprpet,
+SFH,sobo,,

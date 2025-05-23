@@ -12,13 +12,26 @@
 
 convertEHI <- function(x) {
 
-  # ISO 3 country code
+  # FUNCTIONS ------------------------------------------------------------------
+
+  .countriesInRegion <- function(region) {
+    unlist(strsplit(region, "_"))
+  }
+
+
+
+  # CONVERT --------------------------------------------------------------------
+
+  ## ISO 3 country code ====
+
   getItems(x, 1) <- sub("^The ", "", getItems(x, 1))
   getItems(x, 1) <- unlist(lapply(getItems(x, 1), function(region) {
     do.call(paste, c(lapply(.countriesInRegion(region), toolCountry2isocode), list(sep = "_")))
   }))
 
-  # split aggregated regions
+
+  ## split aggregated regions ====
+
   weight <- calcOutput("WeightFeBuildings", aggregate = FALSE) %>%
     dimSums("typ") %>%
     time_interpolate(getItems(x, 2), extrapolation_type = "constant")
@@ -48,19 +61,17 @@ convertEHI <- function(x) {
     return(xReg)
   }))
 
-  # fill missing countries with NA
+
+  ## fill missing countries with NA ====
+
   x <- toolCountryFill(x, verbosity = 2)
+
+
+
+  # RETURN ---------------------------------------------------------------------
 
   return(list(x = x,
               weight = NULL,
               min = 0,
               description = "Stock and sales of (efficient) heating systems in units(/yr)"))
-}
-
-
-
-
-
-.countriesInRegion <- function(region) {
-  unlist(strsplit(region, "_"))
 }

@@ -10,6 +10,7 @@
 #'
 #' @importFrom magclass getItems getItems<- getSets<- getSets
 #' @importFrom madrat toolCountry2isocode
+#' @importFrom utils  head
 #' @export
 
 convertCensusHub <- function(x, subtype) {
@@ -39,11 +40,18 @@ convertCensusHub <- function(x, subtype) {
     `Y1919-1945` = "1919-1945",
     `Y1946-1960` = "1946-1960",
     `Y1961-1970` = "1961-1970",
+    `Y1961-1980` = "1961-1980",
     `Y1971-1980` = "1971-1980",
     `Y1981-1990` = "1981-1990",
+    `Y1981-2000` = "1981-2000",
     `Y1991-2000` = "1991-2000",
     `Y2001-2005` = "2001-2005",
-    Y_GE2006     = "after2005"
+    `Y2001-2010` = "2001-2010",
+    `Y2011-2015` = "2011-2015",
+    `Y_GE2006`   = "after2005",
+    `Y_GE2016`   = "after2016",
+    `NA`         = NA
+
   )
   for (dim in 3 + 0.1 * seq_along(tail(getSets(data), -2))) {
     getItems(data, dim) <- itemNames[getItems(data, dim)]

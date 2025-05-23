@@ -1,0 +1,22 @@
+variable,refVarGroup,.code,.variable_Brick,hs,sec,.comment
+Res_Solids,Res,NUM.number.Res.HHnew.Thermal.SH.Solids,v_construction,sobo,Res,
+Res_LPG+Oil,Res,NUM.number.Res.HHnew.Thermal.SH.LPG,v_construction,libo,Res,
+Res_LPG+Oil,Res,NUM.number.Res.HHnew.Thermal.SH.Oil,v_construction,libo,Res,
+Res_Gas,Res,NUM.number.Res.HHnew.Thermal.SH.Gas,v_construction,gabo,Res,
+Res_Biomass,Res,NUM.number.Res.HHnew.Thermal.SH.Biomass,v_construction,biom,Res,
+#Res_Geo,,NUM.number.Res.HHnew.Thermal.SH.Geo,v_construction,,,not implemented
+Res_DistrHeat,Res,NUM.number.Res.HHnew.Thermal.SH.DistrHeat,v_construction,dihe,Res,
+Res_AdvElc,Res,NUM.number.Res.HHnew.Thermal.SH.AdvElc,v_construction,ehp1,Res,
+Res_ConvElc,Res,NUM.number.Res.HHnew.Thermal.SH.ConvElc,v_construction,reel,Res,
+Res_H2,Res,,v_construction,h2bo,Res,not in the data but needed to complete group
+Com_Solids,Com,NUM.number.Ser.BldNew.Thermal.SH.Solids,v_construction,sobo,Com,
+Com_LPG+Oil,Com,NUM.number.Ser.BldNew.Thermal.SH.LPG,v_construction,libo,Com,
+Com_LPG+Oil,Com,NUM.number.Ser.BldNew.Thermal.SH.Oil,v_construction,libo,Com,
+Com_GasHP+GasTH,Com,NUM.number.Ser.BldNew.Thermal.SH.GasHP,v_construction,gabo,Com,
+Com_GasHP+GasTH,Com,NUM.number.Ser.BldNew.Thermal.SH.GasTH,v_construction,gabo,Com,
+Com_Biomass,Com,NUM.number.Ser.BldNew.Thermal.SH.Biomass,v_construction,biom,Com,
+#Ser_Geo,,NUM.number.Ser.BldNew.Thermal.SH.Geo,v_construction,,,not implemented
+Com_DistrHeat,Com,NUM.number.Ser.BldNew.Thermal.SH.DistrHeat,v_construction,dihe,Com,
+Com_AdvElc,Com,NUM.number.Ser.BldNew.Thermal.SH.AdvElc,v_construction,ehp1,Com,
+Com_ConvElc,Com,NUM.number.Ser.BldNew.Thermal.SH.ConvElc,v_construction,reel,Com,
+Com_H2,Com,,v_construction,h2bo,Com,not in the data but needed to complete group

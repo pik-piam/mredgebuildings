@@ -24,7 +24,7 @@ readFEGECA <- function(subtype = NULL) {
   data <- if (is.null(subtype)) {
     # consider all files and always use the most recent information
     do.call(rbind, lapply(names(files), function(fileName) {
-      read.csv(files[[fileName]], encoding = "ANSI") %>%
+      read.csv(files[[fileName]], encoding = "UTF-8") %>%
         mutate(file = fileName)
     })) %>%
       group_by(across(all_of(c("period", "variable", "unit")))) %>%

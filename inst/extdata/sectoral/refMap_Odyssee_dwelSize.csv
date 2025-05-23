@@ -1,4 +1,4 @@
-variable,.variableTilte,.variable_Brick,var,typ,.comment
+variable,.variableTitle,.variable_Brick,var,typ,.comment
 surlog,Floor area of dwellings (average),v_dwelSizeStock,stock,SFH,
 surlog,Floor area of dwellings (average),v_dwelSizeStock,stock,MFH,
 surmpr,Floor area of single family dwellings,v_dwelSizeStock,stock,SFH,

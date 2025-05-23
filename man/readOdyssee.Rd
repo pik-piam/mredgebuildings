@@ -2,15 +2,12 @@
 % Please edit documentation in R/readOdyssee.R
 \name{readOdyssee}
 \alias{readOdyssee}
-\title{Read Odyssee data base}
+\title{Read Odyssee data base on households and services}
 \source{
 https://odyssee.enerdata.net/database/
 }
 \usage{
-readOdyssee(subtype = "households")
-}
-\arguments{
-\item{subtype}{database category}
+readOdyssee()
 }
 \value{
 magpie object
@@ -25,7 +22,9 @@ Kingdom.
 }
 \note{
 To download new data, log into the website, select all items of all
-levels and download the data 'column-orientated csv'.
+levels and download the data as
+\code{CSV (1 observation = 1 row, delimeter: ",")}. If this exceeds the
+download limit, download multiple files, e.g. by splitting along periods.
 
 Variables are labels with the item code but full names can be found in
 the source data

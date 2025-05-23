@@ -1,4 +1,4 @@
-variable,.variableTilte,.variable_Brick,typ,.comment
+variable,.variableTitle,.variable_Brick,typ,.comment
 nbrlpn_surlpn,Total construction of dwellings_Floor area of new dwellings (average),v_construction,SFH,
 nbrlpn_surlpn,Total construction of dwellings_Floor area of new dwellings (average),v_construction,MFH,
 nbrmpn_surmpn,Construction of single family dwellings_Floor area of new singlefamily dwellings,v_construction,SFH,

@@ -1,17 +1,17 @@
 variableESP,variable,considerSales,technologyBRICK,comment
 Venta|Bombas de calor,Sales|Heat pumps,FALSE,ehp1,
-Venta|Bomba de calor sólo ACS,Sales|Heat pumps|Hot water only,FALSE,,
+Venta|Bomba de calor sÃ³lo ACS,Sales|Heat pumps|Hot water only,FALSE,,
 Venta|Bombas de calor multitarea,Sales|Heat pumps|multi-split,FALSE,,
 Venta|Calderas murales,Sales|Wall-hung boilers,TRUE,gabo_libo,
 Venta|Calderas de pie,Sales|Floor-standing boilers,TRUE,gabo_libo,
 Venta|Calderas de pie / Biomasa,Sales|Floor-standing / biomass boilers,FALSE,,
-Venta|Calderas de condensación de pie / Biomasa,Sales|Floor-standing boilers|Condensing,FALSE,,
+Venta|Calderas de condensaciÃ³n de pie / Biomasa,Sales|Floor-standing boilers|Condensing,FALSE,,
 Venta|Calderas biomasa,Sales|Biomass boilers,FALSE,biom,too few data points
 Venta|Calentadores,Sales|Heaters,FALSE,,
 Venta|Calentadores a gas,Sales|Heaters|Gas,TRUE,gabo,
-Venta|Termos eléctricos,Sales|Electric boilers,FALSE,,from the high number I assume this is mainly for hot water
+Venta|Termos elÃ©ctricos,Sales|Electric boilers,FALSE,,from the high number I assume this is mainly for hot water
 Venta|Captadores solares,Sales|Solar collectors,FALSE,,
 Venta|Controladores,Sales|Controls,FALSE,,
 Venta|Radiadores,Sales|Radiators,FALSE,,
 Venta|Suelo radiante,Sales|Radiant floor,FALSE,,
-Venta|Depósitos,Sales|Storages,FALSE,,
+Venta|DepÃ³sitos,Sales|Storages,FALSE,,

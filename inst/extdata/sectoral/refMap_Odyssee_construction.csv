@@ -1,4 +1,4 @@
-variable,.variableTilte,.variable_Brick,typ,.comment
+variable,.variableTitle,.variable_Brick,typ,.comment
 nbrlpn,Total construction of dwellings,v_construction,SFH,
 nbrlpn,Total construction of dwellings,v_construction,MFH,
 nbrmpn,Construction of single family dwellings,v_construction,SFH,
