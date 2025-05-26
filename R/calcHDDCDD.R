@@ -1,16 +1,18 @@
 #' Calculate Heating and Cooling Degree Days (HDD/CDD)
 #'
 #' Computes or loads annual heating and cooling degree days (HDDs and CDDs)
-#' for given socio-economic scenarios. If \code{readFromSource = TRUE},
-#' data is read from the \code{HDDCDD} source. Otherwise, degree days are
-#' calculated using the \strong{CLIMBED} package with specified parameters
-#' such as temperature limits and standard deviations.
+#' for given socio-economic scenarios.
 #'
 #' @param scenario Character vector specifying the socio-economic scenario(s), e.g., \code{"ssp2"}.
 #' @param fromSource Logical. If \code{TRUE}, loads HDD/CDD data from source.
-#'        If \code{FALSE}, computes them using the CLIMBED package.
+#'        If \code{FALSE}, computes them using the \strong{CLIMBED} package.
+#' @param endOfHistory Integer. Upper temporal boundary for historical data.
+#' If it deviates from 2025, \code{fromSource} needs to be set to \code{FALSE}.
 #'
 #' @returns A magclass object with annual degree-day values.
+#'
+#' @note
+#' For \code{fromSource = FALSE}, the job requires a runtime of >24h and memory > 100G.
 #'
 #' @author Hagen Tockhorn
 #'
@@ -22,13 +24,15 @@
 #'
 #' @export
 
-calcHDDCDD <- function(scenario = c("ssp2"), fromSource = TRUE) {
+calcHDDCDD <- function(scenario = c("ssp2"),
+                       fromSource = TRUE,
+                       endOfHistory = 2025) {
 
   # PARAMETERS -----------------------------------------------------------------
 
-  # get madrat sourcefolder -> HDDCDD -> calcHDDCDD
-  sourceDir <- getConfig("sourcefolder")
-  outDir    <- file.path(sourceDir, "HDDCDD", "calcHDDCDD")
+  # get working dir (= output dir) -> climbed
+  workingDir <- getwd()
+  outDir    <- file.path(workingDir, "climbed")
 
   # limit temperature range
   tLim <- list("HDD" = seq(9, 19), "CDD" = seq(15, 25))
@@ -38,9 +42,6 @@ calcHDDCDD <- function(scenario = c("ssp2"), fromSource = TRUE) {
 
   # use global parameters
   globalPars <- FALSE
-
-  # end of history
-  endOfHistory <- 2025
 
   # all scenarios
   allScenarios <- c("historical", scenario)
@@ -57,7 +58,7 @@ calcHDDCDD <- function(scenario = c("ssp2"), fromSource = TRUE) {
 
   if (isTRUE(fromSource)) {
     # read from source
-    data <- readSource("HDDCDD", subtype = scenario) %>%
+    data <- readSource("HDDCDD", subtype = paste0(scenario, collapse = "|")) %>%
       as.quitte(na.rm = TRUE) %>%
       removeColNa()
   }
@@ -90,12 +91,12 @@ calcHDDCDD <- function(scenario = c("ssp2"), fromSource = TRUE) {
                               outDir       = outDir,
                               globalPars   = globalPars,
                               endOfHistory = endOfHistory,
-                              noCC         = TRUE) %>%
+                              noCC         = TRUE,
+                              fileRev      = "noCC") %>%
       read.csv()
 
     # bind data
     data <- rbind(dataCC, dataNoCC)
-
 
     # average historical data to avoid duplicates and overwrite "historical" with respective ssp scenario
     dataHist <- data %>%
@@ -128,12 +129,14 @@ calcHDDCDD <- function(scenario = c("ssp2"), fromSource = TRUE) {
            variable = NULL)
 
 
-  # reduce temporal resolution
+  # reduce temporal resolution and bring SSPs to capital letters
   data <- data %>%
-    semi_join(pop, by = c("region", "period"))
+    semi_join(pop, by = c("region", "period")) %>%
+    mutate(ssp = toupper(.data$ssp))
 
   pop <- pop %>%
-    semi_join(data, by = c("period"))
+    semi_join(data, by = c("period")) %>%
+    mutate(ssp = toupper(.data$ssp))
 
 
 
