@@ -1,7 +1,8 @@
 reference;isRelative;isUsed;weight;comment
 Odyssee_stock;FALSE;FALSE;1;
 Odyssee_construction;FALSE;FALSE;1;
-Odyssee_constructionFloor;FALSE;TRUE;1;
+Odyssee_constructionFloor_typ;FALSE;TRUE;1;
+Odyssee_constructionFloor_sec;FALSE;TRUE;1;
 Odyssee_dwelSize;FALSE;FALSE;1;
 Odyssee_heatingShare;FALSE;FALSE;1;Not ready yet - there are weird jumps
 #mredgebuildings_location;FALSE;FALSE;1;
@@ -15,9 +16,12 @@ IDEES_heatingShareNew;TRUE;TRUE;1;IDEES includes new and renovated buildings but
 EUBDB_stock;FALSE;FALSE;1;
 EUBDB_vintage;TRUE;FALSE;1;
 EuropeanCommissionRenovation;FALSE;FALSE;1;
-Hotmaps;TRUE;TRUE;1;
-CensusHub;TRUE;TRUE;1;
-OdysseeIDEES;FALSE;TRUE;1;
+Hotmaps_typ_vin;TRUE;TRUE;1;
+Hotmaps_sec_vin;TRUE;TRUE;1;
+CensusHub_typ_vin;TRUE;TRUE;1;
+CensusHub_vin;TRUE;TRUE;1;
+OdysseeIDEES_typ;FALSE;TRUE;1;
+OdysseeIDEES_sec;FALSE;TRUE;1;
 OdysseeIDEES_heating;FALSE;TRUE;1;
 HeatingSystemSales;TRUE;TRUE;1;applying appliance shares as floor area shares is a simplification - one could use type-specific weights
 VHK;TRUE;TRUE;1;applying appliance shares as floor area shares is a simplification - one could/should use type-specific weights

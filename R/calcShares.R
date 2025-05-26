@@ -297,7 +297,6 @@ calcShares <- function(subtype = c("carrier_nonthermal",
       # Specific Exclusion
       data <- data %>%
         unite(col = "EUEC", .data[["enduse"]], .data[["carrier"]], sep = "-", remove = FALSE) %>%
-        # anti_join(data.frame("EUEC" = c(exclude, excludeNEW)), by = "EUEC") %>%
         mutate(value = ifelse(.data[["EUEC"]] %in% exclude,
                               0,
                               .data[["value"]])) %>%

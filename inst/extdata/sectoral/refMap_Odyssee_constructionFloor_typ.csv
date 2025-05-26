@@ -1,0 +1,3 @@
+variable,.dwel,.size,.variableTilte,.variable_Brick,typ,.comment
+SFH,nbrmpn,surmpn,Construction of single family dwellings_Floor area of new singlefamily dwellings,v_construction,SFH,
+MFH,nbripn,suripn,Construction of multifamily dwellings_Floor area of new multifamily dwellings,v_construction,MFH,
