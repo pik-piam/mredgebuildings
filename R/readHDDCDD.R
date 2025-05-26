@@ -1,6 +1,6 @@
 #' Read historical and projected degree-day data
 #'
-#' @param subtype specifies SSP scenarios
+#' @param subtype specifies SSP scenarios (e.g. "ssp2" or "ssp1|ssp2")
 #'
 #' @author Hagen Tockhorn
 #'
@@ -12,7 +12,7 @@
 readHDDCDD <- function(subtype = "ssp2") {
   # READ-IN DATA ---------------------------------------------------------------
 
-  files <- list.files(pattern = paste0(subtype, collapse = "|"), full.names = TRUE)
+  files <- list.files(pattern = subtype, full.names = TRUE)
 
   data <- do.call(rbind, lapply(files, function(f) {
     # read file
