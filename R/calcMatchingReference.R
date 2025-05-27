@@ -252,9 +252,28 @@ calcMatchingReference <- function(subtype) {
     },
 
 
-    ## OdysseeIDEES ====
+    ## OdysseeIDEES_typ ====
 
-    `OdysseeIDEES` = {
+    OdysseeIDEES_typ = {
+      data <- calcOutput("OdysseeStock", interpolate = TRUE, aggregate = FALSE) %>%
+        as.quitte()
+      data <- refMap %>%
+        select("variable", ".variable") %>%
+        unique() %>%
+        left_join(data, by = c(.variable = "variable")) %>%
+        select(-".variable") %>%
+        mutate(value = .data[["value"]] / 1E6) # m2 -> million m2
+
+      minVal <- 0
+      unit <- "million m2"
+      description <- "Building stock floor space from Odyssee extrapolated with IDEES"
+
+    },
+
+
+    ## OdysseeIDEES_sec ====
+
+    OdysseeIDEES_sec = {
       data <- calcOutput("OdysseeStock", interpolate = TRUE, aggregate = FALSE) %>%
         as.quitte()
       data <- refMap %>%
@@ -339,20 +358,42 @@ calcMatchingReference <- function(subtype) {
     },
 
 
-    ## Odyssee_constructionFloor ====
+    ## Odyssee_constructionFloor_typ ====
 
-    Odyssee_constructionFloor = {
+    Odyssee_constructionFloor_typ = {
 
       data <- refMap %>%
-        select("variable") %>%
+        select("variable", ".dwel", ".size") %>%
         unique() %>%
-        separate("variable", c("dwel", "size"), sep = "_") %>%
-        left_join(odyssee, by = c(dwel = "variable")) %>%
-        left_join(odyssee, by = c(size = "variable", "region", "period")) %>%
-        mutate(value = .data[["value.x"]] * .data[["value.y"]] / 1E6, # m2/yr -> million m2/yr
+        left_join(odyssee, by = c(.dwel = "variable")) %>%
+        left_join(odyssee, by = c(.size = "variable", "region", "period"),
+                  suffix = c("Dwel", "Size")) %>%
+        mutate(value = .data$valueDwel * .data$valueSize / 1E6, # m2/yr -> million m2/yr
                unit = "million m2/yr") %>%
-        select(-"value.x", -"value.y") %>%
-        unite("variable", "dwel", "size", sep = "_") %>%
+        select("region", "period", "variable", "unit", "value") %>%
+        as.quitte() %>%
+        interpolate_missing_periods(periods, expand.values = TRUE) # TODO: remove extrapolation
+
+      unit <- "million m2/yr"
+      description <- "flow of newly constructed buildings"
+
+    },
+
+
+
+    ## Odyssee_constructionFloor_sec ====
+
+    Odyssee_constructionFloor_sec = {
+
+      data <- refMap %>%
+        select("variable", ".dwel", ".size") %>%
+        unique() %>%
+        left_join(odyssee, by = c(.dwel = "variable")) %>%
+        left_join(odyssee, by = c(.size = "variable", "region", "period"),
+                  suffix = c("Dwel", "Size")) %>%
+        mutate(value = .data$valueDwel * .data$valueSize / 1E6, # m2/yr -> million m2/yr
+               unit = "million m2/yr") %>%
+        select("region", "period", "variable", "unit", "value") %>%
         as.quitte() %>%
         interpolate_missing_periods(periods, expand.values = TRUE) # TODO: remove extrapolation
 
@@ -454,9 +495,9 @@ calcMatchingReference <- function(subtype) {
     },
 
 
-    ## Hotmaps ====
+    ## Hotmaps_typ_vin ====
 
-    Hotmaps = {
+    Hotmaps_typ_vin = {
       data <- readSource("Hotmaps") %>%
         as.quitte(na.rm = TRUE) %>%
         select(-"model", -"scenario", -"unit")
@@ -477,9 +518,32 @@ calcMatchingReference <- function(subtype) {
     },
 
 
-    ## CensusHub ====
+    ## Hotmaps_sec_vin ====
 
-    CensusHub = {
+    Hotmaps_sec_vin = {
+      data <- readSource("Hotmaps") %>%
+        as.quitte(na.rm = TRUE) %>%
+        select(-"model", -"scenario", -"unit")
+      data <- refMap %>%
+        left_join(data, by = c(.variable = "variable",
+                               .bage = "bage",
+                               .building = "building")) %>%
+        select(-matches("\\.")) %>%
+        group_by(across(all_of(c("region", "period", "variable", "refVarGroup")))) %>%
+        summarise(value = sum(.data[["value"]]), .groups = "drop") %>%
+        .calcShares()
+
+
+      minVal <- 0
+      maxVal <- 1
+      unit <- "1"
+      description <- "Share of vintages in building stock"
+    },
+
+
+    ## CensusHub_typ_vin ====
+
+    CensusHub_typ_vin = {
       vinMap <- toolGetMapping("vintageMapping_CensusHub.csv",
                                type = "sectoral", where = "mredgebuildings")
       data <- readSource("CensusHub", subtype = "typeVintage") %>%
@@ -499,9 +563,36 @@ calcMatchingReference <- function(subtype) {
         select("region", "period", "variable", "value")
 
       minVal <- 0
-      minVal <- 1
+      maxVal <- 1
       unit <- "1"
       description <- "Share of vintages in residential building stock by building type"
+    },
+
+
+    ## CensusHub_vin ====
+
+    CensusHub_vin = {
+      vinMap <- toolGetMapping("vintageMapping_CensusHub.csv",
+                               type = "sectoral", where = "mredgebuildings")
+      data <- readSource("CensusHub", subtype = "typeVintage") %>%
+        as.quitte(na.rm = TRUE) %>%
+        right_join(vinMap, by = c("period", "constructionPeriod"),
+                   relationship = "many-to-many") %>%
+        group_by(across(all_of(c("region", "period", "vin", "buildingType")))) %>%
+        summarise(value = sum(.data[["weight"]] * .data[["value"]]),
+                  .groups = "drop")
+      data <- refMap %>%
+        left_join(data,
+                  by = c("vin", .buildingType = "buildingType")) %>%
+        group_by(across(all_of(c("region", "period", "variable", "refVarGroup", "vin")))) %>%
+        summarise(value = sum(.data[["value"]]), .groups = "drop") %>%
+        .calcShares() %>%
+        select("region", "period", "variable", "value")
+
+      minVal <- 0
+      maxVal <- 1
+      unit <- "1"
+      description <- "Share of vintages in residential building stock"
     },
 
 
@@ -597,7 +688,7 @@ calcMatchingReference <- function(subtype) {
 
     dummy_hsReplace = {
       lifetime <- 20
-      data <- calcOutput("MatchingReference", subtype = "OdysseeIDEES",
+      data <- calcOutput("MatchingReference", subtype = "OdysseeIDEES_typ",
                          aggregate = FALSE) %>%
         as.quitte(na.rm = TRUE) %>%
         removeColNa() %>%

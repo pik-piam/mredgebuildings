@@ -4,10 +4,12 @@
 \alias{calcBuildingStock}
 \title{calculate the European historic building stock}
 \usage{
-calcBuildingStock(subtype = c("residential", "commercial"))
+calcBuildingStock(subtype = c("residential", "commercial"), granularity = NULL)
 }
 \arguments{
 \item{subtype}{Character with subsector}
+
+\item{granularity}{character, name of BRICK granularity}
 }
 \value{
 MAgPIE object with historic building stock

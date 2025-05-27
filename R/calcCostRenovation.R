@@ -4,6 +4,7 @@
 #'
 #' @param energyLadder logical, should the calculation include renovation
 #'   transitions that are considered a decline on the energy ladder?
+#' @param granularity character, name of BRICK granularity
 #' @returns MagPIE object with floor-space specific renovation cost depending on
 #'   the initial and final state of the building
 #'
@@ -17,7 +18,7 @@
 #' @importFrom tidyr pivot_wider
 #' @export
 
-calcCostRenovation <- function(energyLadder = FALSE) {
+calcCostRenovation <- function(energyLadder = FALSE, granularity = NULL) {
 
   # ASSUMPTIONS ----------------------------------------------------------------
 
@@ -27,7 +28,7 @@ calcCostRenovation <- function(energyLadder = FALSE) {
   # quadratically increasing factor to increase shell cost for old buildings
   vinFactorMax <- 1.5
   vinFactorStart <- 2020
-  vinFactor <- toolGetMapping("vintage.csv",
+  vinFactor <- toolGetMapping("dim_vin.csv",
                               type = "sectoral", where = "brick") %>%
     mutate(avgYear = (.data[["from"]] + .data[["to"]]) / 2,
            factor = ifelse(.data[["avgYear"]] < vinFactorStart,
@@ -50,7 +51,7 @@ calcCostRenovation <- function(energyLadder = FALSE) {
   ## Building shell ====
 
   ### relative demand ####
-  relDem <- toolGetMapping("buildingShell.csv",
+  relDem <- toolGetMapping("dim_bs.csv",
                            type = "sectoral", where = "brick") %>%
     select("bs", "relDem") %>%
     unique()
@@ -104,7 +105,7 @@ calcCostRenovation <- function(energyLadder = FALSE) {
   ### renovation transitions ####
 
   # heating systems hierarchy
-  heatingLadder <- toolGetMapping("heatingSystem.csv",
+  heatingLadder <- toolGetMapping("dim_hs.csv",
                                   type = "sectoral", where = "brick") %>%
     select("hs", ladder = "energyLadder")
 
@@ -221,11 +222,14 @@ calcCostRenovation <- function(energyLadder = FALSE) {
     time_interpolate(getItems(renovationCost, 2),
                      extrapolation_type = "constant")
 
+  # aggregate to BRICK granularity
+  agg <- toolAggregateBrick(renovationCost, granularity, feBuildings)
 
 
-  return(list(x = renovationCost,
+
+  return(list(x = agg$x,
               unit = "USD2020/m2",
-              weight = feBuildings,
+              weight = agg$weight,
               min = 0,
               description = "Floor-space specific cost of renovation"))
 }

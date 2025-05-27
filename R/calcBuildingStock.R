@@ -10,6 +10,8 @@
 #' @author Robin Hasse
 #'
 #' @param subtype Character with subsector
+#' @param granularity character, name of BRICK granularity
+#'
 #' @returns MAgPIE object with historic building stock
 #'
 #' @importFrom madrat readSource toolGetMapping
@@ -23,7 +25,8 @@
 #' @importFrom stats pweibull
 #' @export
 
-calcBuildingStock <- function(subtype = c("residential", "commercial")) {
+calcBuildingStock <- function(subtype = c("residential", "commercial"),
+                              granularity = NULL) {
 
   subtype <- match.arg(subtype)
 
@@ -1023,13 +1026,13 @@ calcBuildingStock <- function(subtype = c("residential", "commercial")) {
   # sources that define the dimensions are read
 
   # heating system
-  hsMap <- toolGetMapping("heatingSystem.csv",
+  hsMap <- toolGetMapping("dim_hs.csv",
                           type = "sectoral", where = "brick") %>%
     select(heating = "mredgebuildings", "hs") %>%
     unique()
 
   # building shell
-  bsMap <- toolGetMapping("buildingShell.csv",
+  bsMap <- toolGetMapping("dim_bs.csv",
                           type = "sectoral", where = "brick") %>%
     select("bs", "initShare")
 
@@ -1052,7 +1055,10 @@ calcBuildingStock <- function(subtype = c("residential", "commercial")) {
     collapseDim() %>%
     toolCountryFill(verbosity = 2)
 
-  return(list(x = stock,
+  # aggregate to BRICK granularity
+  agg <- toolAggregateBrick(stock, granularity, NULL)
+
+  return(list(x = agg$x,
               weight = NULL,
               min = 0,
               unit = "million dwellings or million m2",

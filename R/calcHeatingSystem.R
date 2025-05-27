@@ -7,6 +7,7 @@
 #'
 #' @param subtype character, variable type (either 'Purchasing cost' or
 #'   'Efficiency')
+#' @param granularity character, name of BRICK granularity
 #' @returns MagPIE object with capacity-specific purchasing cost or efficiency
 #'   of heating systems
 #'
@@ -22,7 +23,8 @@
 #' @importFrom tidyr pivot_wider pivot_longer
 #' @export
 
-calcHeatingSystem <- function(subtype = c("Purchasing cost", "Efficiency")) {
+calcHeatingSystem <- function(subtype = c("Purchasing cost", "Efficiency"),
+                              granularity = NULL) {
 
   # FUNCTIONS ------------------------------------------------------------------
 
@@ -46,7 +48,7 @@ calcHeatingSystem <- function(subtype = c("Purchasing cost", "Efficiency")) {
   subtype <- match.arg(subtype)
 
   # all heating technologies
-  hsMap <- toolGetMapping("heatingSystem.csv",
+  hsMap <- toolGetMapping("dim_hs.csv",
                           type = "sectoral", where = "brick")
 
   # map heating technologies
@@ -134,13 +136,22 @@ calcHeatingSystem <- function(subtype = c("Purchasing cost", "Efficiency")) {
   # fill missing non-European countries with average
   data <- toolCountryFillAvg(data, verbosity = 2)
 
+
+
+  # RETURN ---------------------------------------------------------------------
+
   # weight: FE demand
   feBuildings <- calcOutput("WeightFeBuildings", aggregate = FALSE) %>%
     time_interpolate(getItems(data, 2), extrapolation_type = "constant")
 
-  return(list(x = data,
+  # aggregate to BRICK granularity
+  agg <- toolAggregateBrick(data, granularity, feBuildings)
+
+
+
+  return(list(x = agg$x,
+              weight = agg$weight,
               unit = unit,
-              weight = feBuildings,
               min = 0,
               description = subtype))
 }

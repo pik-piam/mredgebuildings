@@ -9,6 +9,7 @@
 #'
 #' @param subtype character, type of asset (either `building`, 'heatingSystem'
 #'   or 'buildingShell')
+#' @param granularity character, name of BRICK granularity
 #' @returns MagPIE object with Weibull lifetime distribution parameters
 #'
 #' @author Robin Hasse
@@ -16,12 +17,12 @@
 #' @importFrom madrat readSource calcOutput toolGetMapping
 #' @importFrom magclass add_dimension as.magpie mselect getSets mbind
 #' @importFrom quitte inline.data.frame
-#' @importFrom dplyr .data %>% mutate filter everything
+#' @importFrom dplyr .data %>% mutate filter everything pull
 #'   right_join
 #' @importFrom tidyr pivot_longer
 #' @export
 
-calcLifetimeParams <- function(subtype) {
+calcLifetimeParams <- function(subtype, granularity = NULL) {
 
   # FUNCTIONS ------------------------------------------------------------------
 
@@ -201,7 +202,7 @@ calcLifetimeParams <- function(subtype) {
                 mutate(hs = "sobo"))
 
       # all technologies included?
-      hs <- toolGetMapping("heatingSystem.csv",
+      hs <- toolGetMapping("dim_hs.csv",
                            type = "sectoral", where = "brick")
       params <- params %>%
         right_join(hs["hs"], by = "hs")
@@ -212,10 +213,9 @@ calcLifetimeParams <- function(subtype) {
 
 
       ### map to building types ####
-      typMap <- toolGetMapping("buildingType.csv",
+      typMap <- toolGetMapping("dim_typ.csv",
                                type = "sectoral", where = "brick") %>%
-        rbind(data.frame(typ = "Com", subsector = "Com")) # TODO: remove once dim maps are dynamic # nolint
-      typMap <- stats::setNames(typMap[["subsector"]], typMap[["typ"]])
+        pull("subsector", "typ")
 
       params <- params %>%
         pivot_longer(c("scale", "shape"), names_to = "variable") %>%
@@ -278,9 +278,13 @@ calcLifetimeParams <- function(subtype) {
     feBuildings <- dimSums(feBuildings)
   }
 
+  # aggregate to BRICK granularity
+  agg <- toolAggregateBrick(params, granularity, feBuildings)
 
-  return(list(x = params,
-              weight = feBuildings,
+
+
+  return(list(x = agg$x,
+              weight = agg$weight,
               min = 0,
               unit = "[scale] = yr; [shape] = 1",
               description = description))

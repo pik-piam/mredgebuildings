@@ -2,6 +2,8 @@
 #'
 #' @returns MagPIE object with residential floor space per capita
 #'
+#' @param scenarios character vector of population scenarios
+#' @param granularity character, name of BRICK granularity
 #' @author Robin Hasse
 #'
 #' @param scenarios A string (or vector of strings) designating the scenario(s) to be returned.
@@ -9,7 +11,7 @@
 #' @importFrom magclass getItems getItems<- getSets getSets<- time_interpolate
 #'   mselect collapseDim
 #'
-calcFloorspacePerCap <- function(scenarios) {
+calcFloorspacePerCap <- function(scenarios, granularity = NULL) {
 
   # Replace any calls to scenario groups such as "SSPs" and "SSP2IndiaDEAs",
   # to calls of the individual scenarios.
@@ -47,8 +49,11 @@ calcFloorspacePerCap <- function(scenarios) {
   fsPerCap <- fs / pop
   fsPerCap <- lowpass(fsPerCap)
 
-  return(list(x = fsPerCap,
-              weight = pop,
+  # aggregate to BRICK granularity
+  agg <- toolAggregateBrick(fsPerCap, granularity, pop)
+
+  return(list(x = agg$x,
+              weight = agg$weight,
               min = 0,
               description = "Residential floor space per capita",
               unit = "m2/cap"))

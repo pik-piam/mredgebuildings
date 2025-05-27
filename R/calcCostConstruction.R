@@ -2,6 +2,8 @@
 #'
 #' floor-space specific construction cost
 #'
+#' @param granularity character, name of BRICK granularity
+#'
 #' @author Robin Hasse
 #'
 #' @importFrom madrat toolGetMapping toolCountryFill calcOutput
@@ -12,7 +14,7 @@
 #'   select rename left_join inner_join
 #' @export
 #'
-calcCostConstruction <- function() {
+calcCostConstruction <- function(granularity = NULL) {
 
   # floor space ----------------------------------------------------------------
 
@@ -81,11 +83,14 @@ calcCostConstruction <- function() {
     time_interpolate(getItems(constructionCost, 2),
                      extrapolation_type = "constant")
 
+  # aggregate to BRICK granularity
+  agg <- toolAggregateBrick(constructionCost, granularity, feBuildings)
 
 
-  return(list(x = constructionCost,
+
+  return(list(x = agg$x,
               unit = "USD2020/m2",
-              weight = feBuildings,
+              weight = agg$weight,
               min = 0,
               description = "Floor-space specific cost of new costruction"))
 }

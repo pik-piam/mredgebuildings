@@ -4,7 +4,10 @@
 \alias{calcUEdemand}
 \title{Calculate useful energy demand for space heating in buildings}
 \usage{
-calcUEdemand()
+calcUEdemand(granularity = NULL)
+}
+\arguments{
+\item{granularity}{character, name of BRICK granularity}
 }
 \description{
 Calculate useful energy demand for space heating in buildings
