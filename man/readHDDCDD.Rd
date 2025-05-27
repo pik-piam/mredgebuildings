@@ -7,7 +7,7 @@
 readHDDCDD(subtype = "ssp2")
 }
 \arguments{
-\item{subtype}{specifies SSP scenarios}
+\item{subtype}{specifies SSP scenarios (e.g. "ssp2" or "ssp1|ssp2")}
 }
 \description{
 Read historical and projected degree-day data
