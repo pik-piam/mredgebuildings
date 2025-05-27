@@ -23,12 +23,15 @@ Imports:
     brick (>= 0.8.0),
     dplyr,
     GDPuc,
+    lme4,
     openxlsx,
     purrr,
     rlang,
     quadprog,
     quitte,
     readxl,
+    stringr,
+    tibble,
     tidyr,
     zoo
 Suggests:
