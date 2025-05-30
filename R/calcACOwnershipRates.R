@@ -84,12 +84,21 @@ calcACOwnershipRates <- function() {
 
   ### Odyssee ====
 
-  # filter "AC equipment rate" and take most recent data point per region
+  # filter "AC equipment rate" and take most recent data point per region where necessary
   odysseeData <- odysseeData %>%
     filter(.data$variable == "teqcli_1") %>%
     select("region", "period", "value") %>%
-    group_by(across(all_of(c("region")))) %>%
-    slice_max(order_by = .data$period, n = 1, with_ties = FALSE) %>%
+    left_join(regionmapEDGE, by = c("region" = "CountryCode")) %>%
+    group_by(.data$region) %>%
+    (\(x) {
+      # split data into (non-)single-country regions
+      nonSingleCountry <- filter(x, .data$region != .data$RegionCodeEUR_ETP)
+      singleCountry    <- filter(x, .data$region == .data$RegionCodeEUR_ETP)
+      # take only max period for non-single-country regions
+      nonSingleCountry <- nonSingleCountry %>%
+        slice_max(order_by = .data$period, n = 1, with_ties = FALSE)
+      bind_rows(nonSingleCountry, singleCountry)
+    })() %>%
     ungroup() %>%
     rename("valueOdyssee" = "value") %>%
 
@@ -118,10 +127,13 @@ calcACOwnershipRates <- function() {
   ownershipRates <- ownershipRates %>%
     left_join(regionmapEDGE, by = c("region" = "CountryCode")) %>%
     group_by(across(all_of("RegionCodeEUR_ETP"))) %>%
-    mutate(period = as.integer(median(.data$period)),
+    mutate(period = ifelse(.data$region == .data$RegionCodeEUR_ETP,
+                           .data$period,
+                           as.integer(median(.data$period))),
            variable = "ac ownership rate") %>%
     ungroup() %>%
     select(-"RegionCodeEUR_ETP") %>%
+    filter(!is.na(.data$value)) %>%
     interpolate_missing_periods()
 
 
@@ -132,6 +144,7 @@ calcACOwnershipRates <- function() {
     filter(.data$enduse == "space_cooling") %>%
     group_by(across(all_of(c("region", "period")))) %>%
     reframe(value = sum(.data$value)) %>%
+    filter(.data$value != 0) %>%
     interpolate_missing_periods(min(unique(ownershipRates$period)):max(unique(ownershipRates$period)),
                                 expand.values = TRUE) %>%
     semi_join(ownershipRates, by = c("region", "period"))
