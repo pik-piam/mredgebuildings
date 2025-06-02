@@ -68,10 +68,8 @@ calcUValueParameters <- function(endOfHistory = 2025) {
     as.quitte(na.rm = TRUE)
 
   # Odyssee
-  odysseeData <- rbind(readSource("Odyssee", subtype = "households") %>%
-                         as.quitte(na.rm = TRUE),
-                       readSource("Odyssee", subtype = "services") %>%
-                         as.quitte(na.rm = TRUE))
+  odysseeData <- readSource("Odyssee") %>%
+    as.quitte(na.rm = TRUE)
 
   # historical floor space as regional aggregation weights
   floorspaceWeights <- calcOutput("FloorspacePast", aggregate = FALSE) %>%
@@ -85,7 +83,7 @@ calcUValueParameters <- function(endOfHistory = 2025) {
 
 
   # Population
-  pop <- calcOutput("Population", aggregate = FALSE) %>%
+  pop <- calcOutput("Population", scenario = "SSP2", aggregate = FALSE) %>%
     as.quitte()
 
 
@@ -148,9 +146,9 @@ calcUValueParameters <- function(endOfHistory = 2025) {
                                      "Exterior Walls"       = "walls",
                                      "Windows"              = "windows")
 
-  varMapOdyssee <- list("surter_m2" = "floorCom",        # total floor area of services in m2
-                        "nbrlog_1"  = "nDwellings",      # number of residential dwellings
-                        "surlog_m2" = "residentialAvg")  # average floor space of single dwelling in m2
+  varMapOdyssee <- list("surter" = "floorCom",        # total floor area of services in m2
+                        "nbrlog"  = "nDwellings",      # number of residential dwellings
+                        "surlog" = "residentialAvg")  # average floor space of single dwelling in m2
 
   varMapFitPars <- c("(Intercept)"         = "parINTERCEPT",
                      "HDD"                 = "parHDD",
@@ -367,8 +365,7 @@ calcUValueParameters <- function(endOfHistory = 2025) {
   # Aggregate HDD/CDDS to MessageIX regions
   #TODO: replace this by calcOutput("HDDCDD", aggregate = TRUE, ...)   #nolint: todo_comment_linter
   pop <- pop %>%
-    filter(.data$variable == "pop_SSP2") %>%
-    mutate(variable = sub("_SSP2", "", .data$variable)) %>%
+    mutate(variable = "pop") %>%
     select("region", "period", "variable", "value")
 
   hddcddMessage <- hddcdd %>%
