@@ -168,7 +168,7 @@ calcShares <- function(subtype = c("carrier_nonthermal",
       select(-"regionAgg")
   }
 
-  extrapolateGrowth <- function(df, growth, periods = 1990:2020) {
+  extrapolateGrowth <- function(df, growth, periods) {
     df %>%
       left_join(growth, by = c("region", "enduse")) %>%
       group_by(across(all_of(c("region", "enduse")))) %>%
@@ -215,7 +215,7 @@ calcShares <- function(subtype = c("carrier_nonthermal",
     if (isFALSE(feOnly)) {
       # Extrapolate ETP FE Data
       evolutionFactor <- getGrowth(sharesTCEP, regmappingETP)
-      sharesFull <- extrapolateGrowth(shares, evolutionFactor) %>%
+      sharesFull <- extrapolateGrowth(shares, evolutionFactor, unique(sharesOdyssee$period)) %>%
         normalize(shareOf)
 
       # Merge Data
@@ -233,7 +233,7 @@ calcShares <- function(subtype = c("carrier_nonthermal",
 
     # Extrapolate ETP FE Data
     evolutionFactor <- getGrowth(feTCEP, regmappingETP)
-    feETPfull <- extrapolateGrowth(feETP, evolutionFactor)
+    feETPfull <- extrapolateGrowth(feETP, evolutionFactor, unique(sharesOdyssee$period))
 
     if (feOnly) {
       data  <- feETPfull

@@ -45,7 +45,7 @@
 #'
 #' @export
 
-calcUValueParameters <- function(endOfHistory = 2025) {
+calcUvalueParameters <- function(endOfHistory = 2025) {
 
   # READ-IN DATA ---------------------------------------------------------------
 
