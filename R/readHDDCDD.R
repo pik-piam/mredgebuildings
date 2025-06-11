@@ -20,15 +20,13 @@ readHDDCDD <- function(subtype = "ssp2") {
 
     # get SSP scenario
     scen <- df %>%
-      filter(.data$ssp != "historical") %>%
-      pull("ssp") %>%
-      unique() %>%
-      unlist()
+      getElement("ssp") %>%
+      setdiff("historical")
 
     # overwrite "historical" in ssp column with scenario
     df %>%
       filter(.data$period >= 1990) %>%
-      mutate(ssp = ifelse(.data$ssp == "historical", scen, .data$ssp),
+      mutate(ssp = scen,
              rcp = sub("\\.", "_", .data$rcp),
              value = replace_na(.data$value, 0))
   }))
@@ -36,7 +34,7 @@ readHDDCDD <- function(subtype = "ssp2") {
   # average historical data to avoid duplicates
   data <- data %>%
     group_by(across(-all_of("value"))) %>%
-    reframe(value = mean(.data$value))
+    reframe(value = mean(.data$value, na.rm = TRUE))
 
   # prepare for output
   data <- data %>%

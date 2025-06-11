@@ -4,7 +4,7 @@
 \alias{calcHDDCDD}
 \title{Calculate Heating and Cooling Degree Days (HDD/CDD)}
 \usage{
-calcHDDCDD(scenario = c("ssp2"), fromSource = TRUE, endOfHistory = 2025)
+calcHDDCDD(scenario = "SSPs", fromSource = TRUE, endOfHistory = 2025)
 }
 \arguments{
 \item{scenario}{Character vector specifying the socio-economic scenario(s), e.g., \code{"ssp2"}.}

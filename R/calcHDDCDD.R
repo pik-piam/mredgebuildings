@@ -24,7 +24,7 @@
 #'
 #' @export
 
-calcHDDCDD <- function(scenario = c("ssp2"),
+calcHDDCDD <- function(scenario = "SSPs",
                        fromSource = TRUE,
                        endOfHistory = 2025) {
 
@@ -34,16 +34,19 @@ calcHDDCDD <- function(scenario = c("ssp2"),
   workingDir <- getwd()
   outDir    <- file.path(workingDir, "climbed")
 
-  # limit temperature range
+  # limit temperature range [C]
   tLim <- list("HDD" = seq(9, 19), "CDD" = seq(15, 25))
 
-  # limit and ambient temperature standard deviation
+  # limit and ambient temperature standard deviation [K]
   std <- c("tLim" = 2, "tAmb" = 2)
 
   # use global parameters
-  globalPars <- FALSE
+  useGlobalPars <- FALSE
 
   # all scenarios
+  if (scenario == "SSPs") {
+    scenario <- c("ssp1", "ssp2", "ssp3", "ssp4", "ssp5")
+  }
   allScenarios <- c("historical", scenario)
 
 
@@ -63,37 +66,35 @@ calcHDDCDD <- function(scenario = c("ssp2"),
       removeColNa()
   }
 
-
-
   # PROCESS DATA ---------------------------------------------------------------
 
   ## Calculate degree days ====
 
   if (isFALSE(fromSource)) {
     # climate change
-    dataCC <- getDegreeDays(mappingFile  = "ISIMIPbuildings_fileMapping.csv",
-                            bait         = TRUE,
-                            tLim         = tLim,
-                            std          = std,
-                            ssp          = allScenarios,
-                            outDir       = outDir,
-                            globalPars   = globalPars,
-                            endOfHistory = endOfHistory,
-                            noCC         = FALSE) %>%
-      read.csv()
+    dataCC <- getDegreeDays(mappingFile    = "ISIMIPbuildings_fileMapping.csv",
+                            bait           = TRUE,
+                            tLim           = tLim,
+                            std            = std,
+                            ssp            = allScenarios,
+                            outDir         = outDir,
+                            globalPars     = useGlobalPars,
+                            endOfHistory   = endOfHistory,
+                            noCC           = FALSE,
+                            returnPathOnly = FALSE)
 
     # no climate change
-    dataNoCC <- getDegreeDays(mappingFile  = "ISIMIPbuildings_fileMapping.csv",
-                              bait         = TRUE,
-                              tLim         = tLim,
-                              std          = std,
-                              ssp          = allScenarios,
-                              outDir       = outDir,
-                              globalPars   = globalPars,
-                              endOfHistory = endOfHistory,
-                              noCC         = TRUE,
-                              fileRev      = "noCC") %>%
-      read.csv()
+    dataNoCC <- getDegreeDays(mappingFile    = "ISIMIPbuildings_fileMapping.csv",
+                              bait           = TRUE,
+                              tLim           = tLim,
+                              std            = std,
+                              ssp            = allScenarios,
+                              outDir         = outDir,
+                              globalPars     = useGlobalPars,
+                              endOfHistory   = endOfHistory,
+                              noCC           = TRUE,
+                              fileRev        = "noCC",
+                              returnPathOnly = FALSE)
 
     # bind data
     data <- rbind(dataCC, dataNoCC)
@@ -117,14 +118,13 @@ calcHDDCDD <- function(scenario = c("ssp2"),
 
     # replace NAs with zero
     data <- data %>%
-      mutate(value = replace_na(.data$value, 0))
+      replace_na(list(value = 0))
   }
 
 
   # filter population weights
   pop <- pop %>%
-    mutate(variable = tolower(.data$variable)) %>%
-    filter(.data$variable %in% allScenarios[allScenarios != "historical"]) %>%
+    filter(.data$variable %in% toupper(setdiff(allScenarios, "historical"))) %>%
     mutate(ssp = .data$variable,
            variable = NULL)
 
@@ -135,8 +135,7 @@ calcHDDCDD <- function(scenario = c("ssp2"),
     mutate(ssp = toupper(.data$ssp))
 
   pop <- pop %>%
-    semi_join(data, by = c("period")) %>%
-    mutate(ssp = toupper(.data$ssp))
+    semi_join(data, by = c("period"))
 
 
 
