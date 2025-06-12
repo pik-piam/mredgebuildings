@@ -52,8 +52,8 @@ calcFEbyEUEC <- function() {
 
 
   # EU Shares
-  sharesEU <- calcOutput("Shares",
-                         subtype = "enduse_nonthermal",
+  sharesEU <- calcOutput("SharesEU",
+                         thermal = FALSE,
                          aggregate = TRUE,
                          regionmapping = "regionmappingEUshares.csv") %>%
     as.quitte()

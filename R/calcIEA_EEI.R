@@ -7,6 +7,7 @@
 #' and modern biomass w.r.t. to income per capita.
 #'
 #' @param subtype sector name
+#' @param mixData logical indicating whether to mix res/com data points if both are not given
 #'
 #' @return data.frame containing enduse- and carrier-resoluted energy data
 #'
@@ -21,7 +22,8 @@
 #' @importFrom mrcommons toolSplitBiomass
 
 
-calcIEA_EEI <- function(subtype = c("buildings")) { #nolint object_name_linter
+calcIEA_EEI <- function(subtype = c("buildings"), #nolint object_name_linter
+                        mixData = FALSE) {
 
   # PARAMETERS -----------------------------------------------------------------
 
@@ -71,7 +73,7 @@ calcIEA_EEI <- function(subtype = c("buildings")) { #nolint object_name_linter
                      enduse  = enduseMap) %>%
       # sum up service and residential data
       group_by(across(-all_of("value"))) %>%
-      summarise(value = sum(.data[["value"]]),
+      summarise(value = sum(.data$value, na.rm = isTRUE(mixData)),
                 .groups = "drop") %>%
       # only keep region/periods with data
       group_by(across(all_of(c("region", "period", "enduse")))) %>%

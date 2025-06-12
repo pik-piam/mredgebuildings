@@ -11,8 +11,19 @@
 #' @export
 
 calcShareWEO <- function() {
+
+  # WEO mapping
+  regionmappingWEO <- toolGetMapping(name  = "regionmappingWEO.csv",
+                                     type  = "regional",
+                                     where = "mredgebuildings")
+  # calculate shares
   weo <- readSource("WEO", subtype = "Buildings", convert = FALSE)
   shares <- weo / dimSums(weo)
+
+  shares <- shares["World", , , invert = TRUE]
+  shares <- toolAggregate(shares, rel = regionmappingWEO, from = "RegionCode", to = "CountryCode")
+
+
 
   return(list(x = shares,
               min = 0,
