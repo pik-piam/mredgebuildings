@@ -428,8 +428,9 @@ calcSharesEU <- function(thermal = FALSE,
         arrange(.data$period) %>%
         mutate(
           idx = findInterval(.data$period, knownPeriods),
-          nearestEarlier = ifelse(.data$idx > 0, knownPeriods[.data$idx], NA_real_),
-          nearestLater = ifelse(.data$idx < length(knownPeriods), knownPeriods[.data$idx + 1], NA_real_),
+          nearestEarlier = ifelse(.data$idx > 0, knownPeriods[.data$idx], NA),
+          nearestLater = ifelse(.data$idx < length(knownPeriods), knownPeriods[.data$idx + 1], NA),
+
           # Get corresponding values for nearest periods
           earlierValue = ifelse(is.na(.data$nearestEarlier), NA,
                                 knownData$value[match(.data$nearestEarlier, knownData$period)]),
