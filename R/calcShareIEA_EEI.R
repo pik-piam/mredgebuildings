@@ -11,6 +11,9 @@
 #' @author Hagen Tockhorn
 #'
 #' @importFrom dplyr %>% as_tibble group_by across all_of mutate reframe ungroup
+#' @importFrom madrat calcOutput
+#' @importFrom magclass as.magpie
+#' @importFrom quitte as.quitte
 
 calcShareIEA_EEI <- function(subtype = c("enduse", "carrier")) { #nolint object_name_linter
 

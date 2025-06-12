@@ -73,9 +73,7 @@ calcIEA_EEI <- function(subtype = c("buildings"), #nolint object_name_linter
                      enduse  = enduseMap) %>%
       # sum up service and residential data
       group_by(across(-all_of("value"))) %>%
-      summarise(value = ifelse(isTRUE(mixData),
-                               sum(.data[["value"]], na.rm = TRUE),
-                               sum(.data[["value"]])),
+      summarise(value = sum(.data$value, na.rm = isTRUE(mixData)),
                 .groups = "drop") %>%
       # only keep region/periods with data
       group_by(across(all_of(c("region", "period", "enduse")))) %>%

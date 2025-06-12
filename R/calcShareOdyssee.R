@@ -181,11 +181,9 @@ calcShareOdyssee <- function(subtype = c("enduse", "carrier", "enduse_carrier"),
     regShare <- odyssee %>%
       complete(!!!syms(c("region", "period", "sector", "carrier", "enduse"))) %>%
       interpolate_missing_periods(expand.values = TRUE) %>%
-      group_by(across(all_of(c("region", "period",
-                               if (subtype == "enduse_carrier") shareOf else tail(shareOf, 1))))) %>%
+      group_by(across(all_of(c("region", "period", shareOf)))) %>%
       summarise(value = sum(.data[["value"]], na.rm = TRUE), .groups = "drop") %>%
-      group_by(across(all_of(c("period",
-                               if (subtype == "enduse_carrier") shareOf else tail(shareOf, 1))))) %>%
+      group_by(across(all_of(c("period", shareOf)))) %>%
       mutate(value = .data[["value"]] / sum(.data[["value"]], na.rm = TRUE))
 
 
