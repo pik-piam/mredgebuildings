@@ -1,8 +1,4 @@
-<<<<<<< Updated upstream
 ValidationKey: '2044543'
-=======
-ValidationKey: '2065602'
->>>>>>> Stashed changes
 AutocreateReadme: yes
 AcceptedWarnings:
 - 'Warning: package ''.*'' was built under R version'
