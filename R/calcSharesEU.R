@@ -1,15 +1,16 @@
 #' Calculate historical energy end-use shares based on final energy demands
 #'
-#' Merges and transforms the calculated shares from the datasets/reports:
+#' Merges and transforms the calculated shares from the datasets:
 #' Odyssee 2024
 #' IEA Energy Efficiency Indicators 2024
 #' IEA Tracking Clean Energy Progress
 #' IEA World Energy Outlook 2014
-#' IEA "An Energy Sector Roadmap to Carbon Neutrality in China" 2021
 #'
+#' End-use shares are extrapolated using a log-linear regression on the existing
+#' data points while values in-between existing data are interpolated linearly.
 #' Data is merged following a strict priority hierarchy:
 #' 1. Odyssee - Provides detailed European data
-#' 2. IEA Energy Efficiency Indicators (EEI) - Global coverage
+#' 2. IEA Energy Efficiency Indicators (EEI) - Selected countries, global scope
 #' 3. IEA China data
 #' 4. IEA World Energy Outlook (WEO) - Only used if EEI has fewer than 2 data points
 #'       for a particular region-enduse combination
@@ -18,7 +19,7 @@
 #'
 #' For specific regions (Africa, Middle East), data points from WEO
 #' are prioritized due to their regional specificity. These data points are extrapolated using
-#' growth factors determined by TCEP (Tracking Clean Energy Progress) to ensure consistent
+#' growth factors determined by Tracking Clean Energy Progress (TCEP) to ensure consistent
 #' time series extension.
 #'
 #' End-use shares are extrapolated using a log-linear regression on existing data points,
@@ -30,11 +31,11 @@
 #' using the region-specific refrigerator share used in EDGE-B. Higher resolved
 #' data was not available.
 #'
-#' @param thermal A logical specifying if end-use "appliances" shall be transformed
+#' @param thermal logical, if \code{TRUE}, the end-use "appliances" shall be transformed
 #' into "refrigerators" with appropriate share
 #' @param endOfHistory An integer specifying the upper temporal boundary for historical data
 #'
-#' @returns data.frame with historic end-use shares relative to final energy demands
+#' @returns data.frame with historic end-use shares for each energy carrier
 #'
 #' @author Hagen Tockhorn, Robin Hasse
 #'
@@ -43,7 +44,7 @@
 #' @importFrom tidyr replace_na unite complete
 #' @importFrom madrat toolGetMapping calcOutput readSource toolCountryFill
 #' @importFrom magclass time_interpolate as.magpie dimSums getItems
-#' @importFrom quitte  as.quitte interpolate_missing_periods
+#' @importFrom quitte as.quitte interpolate_missing_periods
 #'
 #' @export
 
@@ -137,7 +138,7 @@ calcSharesEU <- function(thermal = FALSE,
     regmap <- regmap %>%
       select(region = "CountryCode", regionAgg = !!regionAgg)
 
-    result <- df %>%
+    df %>%
       left_join(regmap, by = "region") %>%
       # Filter out rows where regionAgg is NA
       filter(!is.na(.data[["regionAgg"]])) %>%
@@ -150,8 +151,6 @@ calcSharesEU <- function(thermal = FALSE,
       filter(!is.na(.data[["growth"]])) %>%
       left_join(regmap, by = "regionAgg", relationship = "many-to-many") %>%
       select(-"regionAgg")
-
-    return(result)
   }
 
 
@@ -175,23 +174,18 @@ calcSharesEU <- function(thermal = FALSE,
   # FE demand. While this might be reasonable, IEA TCEP estimates the same share
   # for Africa & Middle East to approx. 12% in 2011. While this might be overestimated
   # for Africa due to sig. lower AC penetration, around 3-4% might be within a reasonable range.
-  # This is only a temporary solution until some more data can be found.
-  coolShareAFR <- 0.03
-
-  sharesWEO <- left_join(sharesWEO, regmappingWEO, by = c("region" = "CountryCode"))
-
-  sharesWEOcorrect <- sharesWEO %>%
-    filter(.data$RegionCode == "Africa" & .data$enduse == "space_cooling") %>%
-    mutate(value = coolShareAFR)
+  # Further, the 2016 IEA report "The Future of Cooling" states that most african countries
+  # have a space cooling share of <5%.
 
   sharesWEO <- sharesWEO %>%
-    filter(.data$RegionCode == "Africa" & .data$enduse != "space_cooling") %>%
-    group_by(across(all_of(c("region", "period")))) %>%
-    mutate(value = .data$value * 0.96) %>%
-    rbind(sharesWEOcorrect,
-          sharesWEO %>%
-            filter(.data$RegionCode != "Africa")) %>%
-    select(-"RegionCode")
+    mutate(coolShareAFR = 0.03) %>%
+    left_join(regmappingWEO, by = c("region" = "CountryCode")) %>%
+    mutate(value = case_when(
+      (.data$RegionCode == "Africa" & .data$enduse == "space_cooling") ~ .data$coolShareAFR,
+      (.data$RegionCode == "Africa" & .data$enduse != "space_cooling") ~ .data$value * (1 - .data$coolShareAFR),
+      .default = .data$value
+    )) %>%
+    select(-"RegionCode", -"coolShareAFR")
 
 
   # ----------------------------------------------------------------------------
@@ -203,6 +197,10 @@ calcSharesEU <- function(thermal = FALSE,
     left_join(regmappingWEO, by = c("region" = "CountryCode")) %>%
     filter(.data$RegionCode %in% regWEO) %>%
     select(-"RegionCode")
+
+  # fill zero values with NAs in IEA EEI
+  sharesEEI <- sharesEEI %>%
+    mutate(value = ifelse(.data$value == 0, NA, .data$value))
 
 
   # Combine multiple datasets
@@ -229,6 +227,9 @@ calcSharesEU <- function(thermal = FALSE,
     left_join(sharesWEO %>%
                 filter(.data$region != "CHN") %>%
                 rename("valueWEO" = "value"),
+              by = c("region", "period", "enduse")) %>%
+    left_join(sharesTCEP %>%
+                rename("valueTCEP" = "value"),
               by = c("region", "period", "enduse")) %>%
 
     # Find region-enduse pairs that have data in any non-ETP dataset
@@ -259,7 +260,7 @@ calcSharesEU <- function(thermal = FALSE,
       !is.na(.data$valueChina)                                          ~ .data$valueChina, # 3. IEA China
       (!is.na(.data$valueWEO) & .data$eeiCount < 2)                     ~ .data$valueWEO,   # 4. IEA WEO
       (!is.na(.data$valueETP) & .data$eeiCount < 2)                     ~ .data$valueETP,   # 5. IEA ETP
-      TRUE                                                              ~ .data$value       # Fallback to Odyssee
+      .default                                                          = .data$value       # Fallback to Odyssee
     )) %>%
     select("region", "period", "enduse", "value")
 
@@ -270,7 +271,7 @@ calcSharesEU <- function(thermal = FALSE,
     .normalize("enduse")
 
 
-  # Transform end-use "appliances" into "refrigerator" is specified
+  # Transform end-use "appliances" into "refrigerator" if specified
   if (isTRUE(thermal)) {
     sharesFilled <- sharesFilled %>%
       toolAddThermal(regmappingEDGE, fridgeShare, feOnly = FALSE, "enduse") %>%
@@ -287,8 +288,8 @@ calcSharesEU <- function(thermal = FALSE,
                  rename("share" = "value"),
                by = c("region", "period")) %>%
     mutate(value = .data$value * .data$share) %>%
-    select(-"share")
-
+    select(-"share") %>%
+    replace_na(list(value = 0))
 
 
   # OUTPUT ---------------------------------------------------------------------
@@ -400,92 +401,69 @@ calcSharesEU <- function(thermal = FALSE,
       if (!useExternalGrowth) {
         # Calculate appropriate growth rate based on available data points
         if (nrow(nonZero) >= 3) {
-          # For 3+ data points: use log-linear regression model
-          tryCatch({
-            fit <- lm(log(.data$value) ~ .data$period, data = nonZero)
+          # For 3+ data points: use log-linear regression model.
+          # Default to growth rate of 1.0 if model fitting fails.
+          try({
+            fit <- lm(log(value) ~ period, data = nonZero)
             growthRate <- exp(coef(fit)[2])
-
-            # Validate growth rate and use default if invalid
-            if (is.na(growthRate) || !is.finite(growthRate) || growthRate <= 0) growthRate <- 1.0
-          }, error = function(e) {
-            # Default to growth rate of 1.0 if model fitting fails
           })
 
         } else if (nrow(nonZero) == 2) {
-          # For exactly 2 data points: calculate simple compound growth rate
-          nonZero <- nonZero %>%
-            arrange(.data$period)
-
           # Calculate annual growth rate between the two points
           growthRate <- (nonZero$value[2] / nonZero$value[1]) ^ (1 / (nonZero$period[2] - nonZero$period[1]))
-
-          # Validate growth rate and use default if invalid
-          if (is.na(growthRate) || !is.finite(growthRate) || growthRate <= 0) growthRate <- 1.0
         } else {
-          stop("Not sufficient data points for trend fitting and no external growth factors given.")
+          stop(paste("Not sufficient data points for trend fitting and no external growth factors given.",
+                     " Region: ", regionName, " Enduse: ", enduseName))
         }
+
+        # Validate growth rate and use default if invalid
+        if (is.na(growthRate) || !is.finite(growthRate) || growthRate <= 0) growthRate <- 1.0
       }
+
+      # Vectorized filling of missing values
+      knownPeriods <- knownData$period
 
       # Fill missing values using interpolation or extrapolation
-      for (i in seq_len(nrow(data))) {
+      data <- data %>%
+        arrange(.data$period) %>%
+        mutate(
+          idx = findInterval(.data$period, knownPeriods),
+          nearestEarlier = ifelse(.data$idx > 0, knownPeriods[.data$idx], NA_real_),
+          nearestLater = ifelse(.data$idx < length(knownPeriods), knownPeriods[.data$idx + 1], NA_real_),
+          # Get corresponding values for nearest periods
+          earlierValue = ifelse(is.na(.data$nearestEarlier), NA,
+                                knownData$value[match(.data$nearestEarlier, knownData$period)]),
+          laterValue = ifelse(is.na(.data$nearestLater), NA,
+                              knownData$value[match(.data$nearestLater, knownData$period)])
+        ) %>%
+        mutate(
+          value = case_when(
+            # Keep existing values
+            !is.na(.data$value) ~ .data$value,
 
-        # Skip if value already exists
-        if (!is.na(data$value[i])) next
+            # Linear interpolation between known values
+            !is.na(.data$nearestEarlier) & !is.na(.data$nearestLater) ~ {
+              ifelse(.data$earlierValue == 0 | .data$laterValue == 0,
+                     0,
+                     .data$earlierValue +
+                       ((.data$period - .data$nearestEarlier) / (.data$nearestLater - .data$nearestEarlier)) *
+                         (.data$laterValue - .data$earlierValue))
+            },
 
-        currentPeriod <- data$period[i]
+            # Forward and backward extrapolation
+            !is.na(.data$nearestEarlier) | !is.na(.data$nearestLater) ~ {
+              baseValue <- ifelse(!is.na(.data$nearestEarlier), .data$earlierValue, .data$laterValue)
+              refPeriod <- ifelse(!is.na(.data$nearestEarlier), .data$nearestEarlier, .data$nearestLater)
+              ifelse(baseValue == 0,
+                     0,
+                     baseValue * (growthRate ^ (.data$period - refPeriod)))
+            },
 
-        # Find known periods before and after current period
-        earlierPeriods <- knownData$period[knownData$period < currentPeriod]
-        laterPeriods   <- knownData$period[knownData$period > currentPeriod]
-
-        if (length(earlierPeriods) > 0 && length(laterPeriods) > 0) {
-          # INTERPOLATION case: missing value is between known values
-
-          # Find nearest known periods
-          nearestEarlier <- max(earlierPeriods)
-          nearestLater   <- min(laterPeriods)
-
-          # Get corresponding values
-          earlierValue   <- knownData$value[knownData$period == nearestEarlier]
-          laterValue     <- knownData$value[knownData$period == nearestLater]
-
-          if (earlierValue == 0 || laterValue == 0) {
-            # If either bounding value is zero, assume zero
-            data$value[i] <- 0
-          } else {
-            # Linear interpolation between values
-            timeSpan      <- nearestLater - nearestEarlier
-            position      <- (currentPeriod - nearestEarlier) / timeSpan
-            data$value[i] <- earlierValue + position * (laterValue - earlierValue)
-          }
-        } else if (length(earlierPeriods) > 0) {
-          # EXTRAPOLATION FORWARD case: missing value is after all known values
-          nearest   <- max(earlierPeriods)
-          baseValue <- knownData$value[knownData$period == nearest]
-
-          if (baseValue == 0) {
-            # Maintain zero values
-            data$value[i] <- 0
-          } else {
-            # Apply growth rate for forward projection
-            yearsAhead    <- currentPeriod - nearest
-            data$value[i] <- baseValue * (growthRate^yearsAhead)
-          }
-        } else if (length(laterPeriods) > 0) {
-          # EXTRAPOLATION BACKWARD case: missing value is before all known values
-          nearest   <- min(laterPeriods)
-          baseValue <- knownData$value[knownData$period == nearest]
-
-          if (baseValue == 0) {
-            # Maintain zero values
-            data$value[i] <- 0
-          } else {
-            # Apply inverse growth rate for backward projection
-            yearsBack     <- nearest - currentPeriod
-            data$value[i] <- baseValue / (growthRate^yearsBack)
-          }
-        }
-      }
+            # Default case
+            .default = NA
+          )
+        ) %>%
+        select(-"nearestEarlier", -"nearestLater", -"earlierValue", -"laterValue", -"idx")
 
       return(data)
     }) %>%

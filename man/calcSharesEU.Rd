@@ -7,27 +7,28 @@
 calcSharesEU(thermal = FALSE, endOfHistory = 2025)
 }
 \arguments{
-\item{thermal}{A logical specifying if end-use "appliances" shall be transformed
+\item{thermal}{logical, if \code{TRUE}, the end-use "appliances" shall be transformed
 into "refrigerators" with appropriate share}
 
 \item{endOfHistory}{An integer specifying the upper temporal boundary for historical data}
 }
 \value{
-data.frame with historic end-use shares relative to final energy demands
+data.frame with historic end-use shares for each energy carrier
 }
 \description{
-Merges and transforms the calculated shares from the datasets/reports:
+Merges and transforms the calculated shares from the datasets:
 Odyssee 2024
 IEA Energy Efficiency Indicators 2024
 IEA Tracking Clean Energy Progress
 IEA World Energy Outlook 2014
-IEA "An Energy Sector Roadmap to Carbon Neutrality in China" 2021
 }
 \details{
+End-use shares are extrapolated using a log-linear regression on the existing
+data points while values in-between existing data are interpolated linearly.
 Data is merged following a strict priority hierarchy:
 \enumerate{
 \item Odyssee - Provides detailed European data
-\item IEA Energy Efficiency Indicators (EEI) - Global coverage
+\item IEA Energy Efficiency Indicators (EEI) - Selected countries, global scope
 \item IEA China data
 \item IEA World Energy Outlook (WEO) - Only used if EEI has fewer than 2 data points
 for a particular region-enduse combination
@@ -37,7 +38,7 @@ and no WEO data is available
 
 For specific regions (Africa, Middle East), data points from WEO
 are prioritized due to their regional specificity. These data points are extrapolated using
-growth factors determined by TCEP (Tracking Clean Energy Progress) to ensure consistent
+growth factors determined by Tracking Clean Energy Progress (TCEP) to ensure consistent
 time series extension.
 
 End-use shares are extrapolated using a log-linear regression on existing data points,
