@@ -148,7 +148,8 @@ calcHDDCDD <- function(scenario = "SSPs",
 
   pop <- pop %>%
     as.quitte() %>%
-    as.magpie()
+    as.magpie() %>%
+    toolCountryFill(fill = 0)
 
 
   return(list(x = data,
