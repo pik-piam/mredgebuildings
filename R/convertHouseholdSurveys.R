@@ -27,17 +27,24 @@ convertHouseholdSurveys <- function(x) {
                                type  = "sectoral",
                                where = "mredgebuildings")
 
+  # region mapping
+  regionmap <- toolGetMapping("regionmappingHouseholdSurveys.csv",
+                              type = "regional",
+                              where = "mredgebuildings")
+
 
   # PROCESS DATA ---------------------------------------------------------------
 
-  # aggregate carrier shares
+  # rename regions to ISO alpha3 codes and aggregate carrier shares
   data <- x %>%
     as_tibble() %>%
+    mutate(region = toolCountry2isocode(country = .data$region,
+                                        mapping = setNames(as.list(regionmap$regionTarget),
+                                                           regionmap$region))) %>%
     filter(!is.na(.data$value)) %>%
     left_join(carrierMap, by = "carrier") %>%
-    group_by(across(all_of(c("region", "period", "carrierTarget", "enduse")))) %>%
-    reframe(value = sum(.data$value, na.rm = TRUE)) %>%
-    rename("carrier" = "carrierTarget")
+    group_by(across(all_of(c("region", "period", carrier = "carrierTarget", "enduse")))) %>%
+    reframe(value = sum(.data$value, na.rm = TRUE))
 
 
   # shares that could not be allocated to a carrier type will be distributed among the others
@@ -51,7 +58,7 @@ convertHouseholdSurveys <- function(x) {
     left_join(dataDistribute, by = c("region", "period", "enduse")) %>%
     mutate(valueDis = replace_na(.data$valueDis, 0)) %>%
     group_by(across(all_of(c("region", "period")))) %>%
-    mutate(value = .data$value + .data$valueDis / n()) %>%
+    mutate(value = .data$value + .data$valueDis *.data$value) %>%
     ungroup() %>%
     select(-"valueDis")
 

@@ -29,11 +29,8 @@ readHouseholdSurveys <- function(subtype = c("cooking", "lighting")) {
 
   # change country codes
   data <- data %>%
-    mutate(region = toolCountry2isocode(country = .data$country_long,
-                                        mapping = setNames(as.list(regionmap$regionTarget),
-                                                           regionmap$region))) %>%
-    select(-"country_long") %>%
-    rename("period" = "year") %>%
+    rename("period" = "year",
+           "region" = "country_long") %>%
     pivot_longer(cols = -all_of(c("region", "period")), names_to = "carrier", values_to = "value") %>%
     mutate(carrier = sub("\\.", "_", .data$carrier),
            enduse = subtype,
