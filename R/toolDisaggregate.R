@@ -453,7 +453,7 @@ toolDisaggregate <- function(data,
 #' @param estimate data frame with energy carrier demand estimates
 #' @param forceShares data frame with shares to enforce for carrier-enduse combinations
 #'
-#' @return data frame with adjusted estimates preserving carrier totals
+#' @returns data frame with adjusted estimates preserving carrier totals
 #'
 #' @author Hagen Tockhorn
 #'
