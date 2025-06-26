@@ -14,7 +14,9 @@ Calculate the regression parameters for the projection of final (FE)
 to useful (UE) energy conversion projection for all combinations of
 energy enduses and carriers. The regression parameters correspond to an
 asymptotic regression model and encompass the parameters Asym, R0 and lrc.
-The are determined using a nonlinear least-squares regression.
+For electric space cooling, a bounded logistic function is used with parameters
+k and x0.
+All parameters are determined using a nonlinear least-squares regression.
 }
 \details{
 This approach closely follows the model by De Stercke et al. which is
