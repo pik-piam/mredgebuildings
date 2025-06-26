@@ -4,7 +4,9 @@
 #' to useful (UE) energy conversion projection for all combinations of
 #' energy enduses and carriers. The regression parameters correspond to an
 #' asymptotic regression model and encompass the parameters Asym, R0 and lrc.
-#' The are determined using a nonlinear least-squares regression.
+#' For electric space cooling, a bounded logistic function is used with parameters
+#' k and x0.
+#' All parameters are determined using a nonlinear least-squares regression.
 #'
 #' This approach closely follows the model by De Stercke et al. which is
 #' mainly driven by GDP per Capita.
@@ -45,8 +47,14 @@ calcEfficiencyRegression <- function(gasBioEquality = TRUE) {
       min(dataHist[dataHist[var] != 0, var]) / 10
 
     # Create Estimation Object for Non-Linear Model
-    estimate <- nls(as.formula(paste(var, "~ SSasymp(gdppop, Asym, R0, lrc)")),
-                    dataHist)
+    if (var == "space_cooling.elec") {
+      estimate <- nls("space_cooling.elec ~ min + (max - min) / (1 + exp(-k * (gdppop - x0)))",
+                      data = dataHist,
+                      start = list(k = 0.0001, x0 = 17000))
+    } else {
+      estimate <- nls(as.formula(paste(var, "~ SSasymp(gdppop, Asym, R0, lrc)")),
+                      data = dataHist)
+    }
 
     return(estimate$m$getPars())
   }
@@ -61,6 +69,11 @@ calcEfficiencyRegression <- function(gasBioEquality = TRUE) {
   pfu <- calcOutput("PFUDB", aggregate = FALSE) %>%
     as.quitte()
 
+  # Electric space cooling efficiencies
+  coolingEfficiencies <- readSource("IEA_coolingEfficiencies") %>%
+    as_tibble() %>%
+    filter(!is.na(.data$value))
+
   # GDP per capita
   gdppop <- calcOutput("GDPpc",
                        scenario = "SSP2",
@@ -68,9 +81,21 @@ calcEfficiencyRegression <- function(gasBioEquality = TRUE) {
                        aggregate = FALSE) %>%
     as.quitte()
 
+  gdppopGLO <- calcOutput("GDPpc",
+                          scenario = "SSP2",
+                          average2020 = FALSE,
+                          aggregate = TRUE,
+                          regionmapping = "regionalmappingGLO.csv") %>%
+    as.quitte()
+
   # Population
   pop <- calcOutput("PopulationPast", aggregate = FALSE) %>%
     as.quitte()
+
+  # Cooling COP boundaries
+  coolingBounds <- toolGetMapping("coolingEfficiencyBoundaries.csv",
+                                  type = "sectoral",
+                                  where = "mredgebuildings")
 
 
   # --- Mappings
@@ -99,6 +124,11 @@ calcEfficiencyRegression <- function(gasBioEquality = TRUE) {
 
   # PROCESS DATA ---------------------------------------------------------------
 
+  coolingBounds <- coolingBounds %>%
+    select("variable", "value") %>%
+    pivot_wider(names_from = "variable", values_from = "value")
+
+
   #--- Calculate existing FE-EU efficiencies
 
   # Aggregate PFU Data to PFU Country Code
@@ -119,17 +149,20 @@ calcEfficiencyRegression <- function(gasBioEquality = TRUE) {
                     rename(weight = "value"),
                   weight_item_col = "region",
                   weight_val_col = "weight") %>%
-    select(-"model", -"scenario", -"unit", -"variable")
+    rbind(gdppopGLO) %>%
+    select(-"model", -"scenario", -"unit", -"variable") %>%
+    rename("gdppop" = "value")
 
 
-  # Combine with GDP per Cap
-  data <- pfuAggregate %>%
-    left_join(gdppopAggregate %>%
-                rename(gdppop = "value"),
-              by = c("region", "period"))
+  # Take average of commercial and residential ACs in stock
+  coolingEfficiencies <- coolingEfficiencies %>%
+    filter(grepl("stock", .data$variable)) %>%
+    group_by(across(-all_of(c("variable", "value")))) %>%
+    reframe(value = mean(.data$value)) %>%
+    ungroup()
 
 
-  histEfficiencies <- data %>%
+  histEfficiencies <- pfuAggregate %>%
     # Calculate efficiencies from UE/FE data
     select(-"model", -"scenario") %>%
     spread(.data[["unit"]], .data[["value"]]) %>%
@@ -137,17 +170,31 @@ calcEfficiencyRegression <- function(gasBioEquality = TRUE) {
     select(-"fe", -"ue") %>%
 
     # Filter out unrealistic efficiencies
-    filter(.data[["value"]] >= minEfficiency)
+    filter(.data[["value"]] >= minEfficiency) %>%
+
+    # Replace space_cooling.elec data
+    filter(.data$variable != "space_cooling.elec") %>%
+    rbind(coolingEfficiencies %>%
+            unite("variable", c("enduse", "carrier"), sep = ".") %>%
+            select("region", "period", "variable", "value")) %>%
+
+    # join GDP per capita
+    left_join(gdppopAggregate, by = c("region", "period")) %>%
+
+    # append min/max AC COPs
+    cross_join(coolingBounds)
 
 
   euecCombinations <- unique(histEfficiencies$variable)
-
 
   #--- Calculate regression parameter
   fitPars <- do.call(rbind, lapply(euecCombinations, function(euec) {
     pars <- getRegressionPars(histEfficiencies, euec)
     as.data.frame(do.call(cbind, as.list(pars))) %>%
-      mutate(variable = euec)
+      mutate(variable = euec) %>%
+      pivot_longer(cols = -"variable",
+                   names_to = "fitVariable",
+                   values_to = "value")
   }))
 
 
@@ -156,11 +203,13 @@ calcEfficiencyRegression <- function(gasBioEquality = TRUE) {
 
   # Replace regression parameters to account for RH/HP mix in electric heating end-uses
   fitPars <- fitPars %>%
-    left_join(parsCorrections, by = "variable", suffix = c("", ".corr")) %>%
-    mutate(Asym = coalesce(.data[["Asym.corr"]], .data[["Asym"]]),
-           R0   = coalesce(.data[["R0.corr"]],   .data[["R0"]]),
-           lrc  = coalesce(.data[["lrc.corr"]],  .data[["lrc"]])) %>%
-    select(-ends_with(".corr"))
+    left_join(parsCorrections %>%
+                pivot_longer(cols = -"variable",
+                             names_to = "fitVariable",
+                             values_to = "correction"),
+              by = c("variable", "fitVariable")) %>%
+    mutate(value = coalesce(.data$correction, .data$value)) %>%
+    select(-"correction")
 
 
   # Correct efficiencies of enduse.carrier combinations assumed to be of equal efficiency
@@ -168,11 +217,9 @@ calcEfficiencyRegression <- function(gasBioEquality = TRUE) {
     fitPars <- fitPars %>%
       left_join(equalEfficiencies, by = "variable") %>%
       left_join(fitPars,
-                by = c("equalTo" = "variable"),
+                by = c("equalTo" = "variable", "fitVariable"),
                 suffix = c("", ".target")) %>%
-      mutate(Asym = ifelse(!is.na(.data[["equalTo"]]), .data[["Asym.target"]], .data[["Asym"]]),
-             R0   = ifelse(!is.na(.data[["equalTo"]]), .data[["R0.target"]],   .data[["R0"]]),
-             lrc  = ifelse(!is.na(.data[["equalTo"]]), .data[["lrc.target"]],  .data[["lrc"]])) %>%
+      mutate(value = ifelse(!is.na(.data$equalTo), .data[["value.target"]], .data$value)) %>%
       select(-"equalTo", -ends_with(".target"))
   }
 
@@ -183,8 +230,8 @@ calcEfficiencyRegression <- function(gasBioEquality = TRUE) {
   # Trim Dataframe
   fitPars <- fitPars %>%
     separate("variable", c("enduse", "carrier"), sep = "\\.") %>%
-    pivot_longer(cols = c("Asym", "R0", "lrc"), names_to = "variable", values_to = "value") %>%
     mutate(region = "GLO") %>%
+    rename("variable" = "fitVariable") %>%
     select("region", "carrier", "enduse", "variable", "value") %>%
     as.magpie()
 
