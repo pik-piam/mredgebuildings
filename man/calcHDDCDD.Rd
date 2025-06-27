@@ -2,39 +2,29 @@
 % Please edit documentation in R/calcHDDCDD.R
 \name{calcHDDCDD}
 \alias{calcHDDCDD}
-\title{Calculate HDD and CDD based on outdoor/indoor temperature difference}
+\title{Calculate Heating and Cooling Degree Days (HDD/CDD)}
 \usage{
-calcHDDCDD(
-  mappingFile,
-  bait = FALSE,
-  multiscen = FALSE,
-  rasDir = NULL,
-  cacheDir = NULL,
-  fromSource = FALSE
-)
+calcHDDCDD(scenario = "SSPs", fromSource = TRUE, endOfHistory = 2025)
 }
 \arguments{
-\item{mappingFile}{file name of sectoral mapping containing input data file names and directories}
+\item{scenario}{Character vector specifying the socio-economic scenario(s), e.g., \code{"ssp2"}.}
 
-\item{bait}{boolean, use BAIT instead of raw temperature}
+\item{fromSource}{Logical. If \code{TRUE}, loads HDD/CDD data from source.
+If \code{FALSE}, computes them using the \strong{CLIMBED} package.}
 
-\item{multiscen}{boolean, does \code{mappingFile} cover more than one scenario?}
-
-\item{rasDir}{absolute path to directory for saving raster files}
-
-\item{cacheDir}{absolute path to directory for pre-calculated BAIT regression parameters}
-
-\item{fromSource}{logical, if TRUE, read the previously calculated data that
-is temporarily saved as a source}
+\item{endOfHistory}{Integer. Upper temporal boundary for historical data.
+If it deviates from 2025, \code{fromSource} needs to be set to \code{FALSE}.}
 }
 \value{
-magpie object of heating and cooling degree days
+A magclass object with annual degree-day values.
 }
 \description{
-Heating and cooling degree days based on raw outside temperature
-or bias-adjusted internal temperature (BAIT), driver for space heating and
-cooling demand in buildings.
+Computes or loads annual heating and cooling degree days (HDDs and CDDs)
+for given socio-economic scenarios.
+}
+\note{
+For \code{fromSource = FALSE}, the job requires a runtime of >24h and memory > 100G.
 }
 \author{
-Robin Hasse, Hagen Tockhorn
+Hagen Tockhorn
 }

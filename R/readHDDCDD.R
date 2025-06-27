@@ -1,61 +1,45 @@
-#' Read HDD CDD
+#' Read historical and projected degree-day data
 #'
-#' Read heating and cooling degree days; past and scenario data as magclass
-#' objects
+#' @param subtype specifies SSP scenarios (e.g. "ssp2" or "ssp1|ssp2")
 #'
-#' @param subtype Temperature threshold for computing HDD and CDD
-#' @return magpie object HDD CDD
-#' @author Antoine Levesque
-#' @seealso \code{\link[madrat]{readSource}}
-#' @examples
+#' @author Hagen Tockhorn
 #'
-#' \dontrun{ a <- readSource(type="HDDCDD")
-#' }
-#' @importFrom utils read.csv
-#' @importFrom tidyr gather
-#' @importFrom dplyr mutate rename .data
-#' @importFrom quitte as.quitte removeColNa
+#' @importFrom dplyr filter mutate pull
+#' @importFrom tidyr replace_na
+#' @importFrom quitte as.quitte
+#' @importFrom magclass as.magpie
 
-readHDDCDD <- function(subtype = 18) {
+readHDDCDD <- function(subtype = "ssp2") {
+  # READ-IN DATA ---------------------------------------------------------------
 
-  rcps <- paste0("rcp", c("2p6", "4p5", "6p0", "8p5"))
-  variables <- c("HDD", "CDD")
-  ssps <- paste0("ssp", 1:5)
+  files <- list.files(pattern = subtype, full.names = TRUE)
 
-  dfFuture <- do.call("rbind", do.call("rbind", do.call("rbind",
-    lapply(rcps, function(rcp) {
-      lapply(variables, function(var) {
-        lapply(ssps, function(ssp) {
-          paste0("GFDL-ESM2M_", rcp, "_", var, "_", subtype, "_", ssp, ".csv") %>%
-            read.csv(na.strings = "--") %>%
-            removeColNa() %>%
-            gather("region", "value", -.data[["year"]]) %>%
-            mutate(scenario = ssp,
-                   rcp      = rcp,
-                   variable = var,
-                   tlimit   = subtype) %>%
-            rename(period = "year") %>%
-            as.quitte()
-        })
-      })
-    })
-  )))
+  data <- do.call(rbind, lapply(files, function(f) {
+    # read file
+    df <- read.csv(f)
 
-  dfPast <- do.call("rbind", lapply(variables, function(var) {
-    paste0("GSWP3_historical_", var, "_", subtype, ".csv") %>%
-      read.csv(na.strings = "--") %>%
-      removeColNa() %>%
-      gather("region", "value", -"year") %>%
-      mutate(scenario = "history",
-             rcp      = "history",
-             variable = var,
-             tlimit   = subtype) %>%
-      rename(period = "year") %>%
-      as.quitte()
+    # get SSP scenario
+    scen <- df %>%
+      getElement("ssp") %>%
+      setdiff("historical")
+
+    # overwrite "historical" in ssp column with scenario
+    df %>%
+      filter(.data$period >= 1990) %>%
+      mutate(ssp = scen,
+             rcp = sub("\\.", "_", .data$rcp),
+             value = replace_na(.data$value, 0))
   }))
 
-  mdata <- rbind(dfPast, dfFuture) %>%
+  # average historical data to avoid duplicates
+  data <- data %>%
+    group_by(across(-all_of("value"))) %>%
+    reframe(value = mean(.data$value, na.rm = TRUE))
+
+  # prepare for output
+  data <- data %>%
+    as.quitte() %>%
     as.magpie()
 
-  return(mdata)
+  return(data)
 }
