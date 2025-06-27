@@ -48,7 +48,7 @@ calcShareETP <- function(subtype = c("enduse", "carrier"), feOnly = FALSE) {
   shareOf <- subtype
 
   # Filtered Periods and Scenarios
-  periods <- c("2014")
+  periods <- c("2014", "2025")
   scen <- c("RTS")
 
   # Convert Unit to EJ

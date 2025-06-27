@@ -17,6 +17,10 @@ convertOdyssee <- function(x) {
 
   data <- x
 
+  # filter problematic/unnecessary regions
+  problematicRegions <- c("EU", "XK")
+  data <- data[!getItems(data, 1) %in% problematicRegions, , ]
+
   # rename regions: ISO2 -> ISO3
   data <- data[c("EU", "XK"), , invert = TRUE]
   getItems(data, 1) <- toolCountry2isocode(getItems(data, 1))
