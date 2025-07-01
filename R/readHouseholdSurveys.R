@@ -19,11 +19,6 @@ readHouseholdSurveys <- function(subtype = c("cooking", "lighting")) {
                  cooking  = read.xlsx("Cooking_fuels.xlsx"),
                  lighting = read.xlsx("Lighting_fuels.xlsx"))
 
-  # region mapping
-  regionmap <- toolGetMapping("regionmappingHouseholdSurveys.csv",
-                              type = "regional",
-                              where = "mredgebuildings")
-
   # standardize column names
   colnames(data) <- tolower(colnames(data))
 

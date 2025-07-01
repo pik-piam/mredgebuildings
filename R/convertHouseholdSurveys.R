@@ -58,7 +58,7 @@ convertHouseholdSurveys <- function(x) {
     left_join(dataDistribute, by = c("region", "period", "enduse")) %>%
     mutate(valueDis = replace_na(.data$valueDis, 0)) %>%
     group_by(across(all_of(c("region", "period")))) %>%
-    mutate(value = .data$value + .data$valueDis *.data$value) %>%
+    mutate(value = .data$value + .data$valueDis * .data$value) %>%
     ungroup() %>%
     select(-"valueDis")
 
