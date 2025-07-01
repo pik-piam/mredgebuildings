@@ -28,6 +28,8 @@
 #'   \code{enduseShares}.
 #' @param outliers list of regions where naive disaggregation estimate shall
 #'   be used.
+#' @param forceShares data frame with shares to enforce for carrier-enduse combinations
+#' with single year data points per region.
 #'
 #' @author Hagen Tockhorn, Robin Hasse
 #'
@@ -42,7 +44,8 @@ toolDisaggregate <- function(data,
                              outliers = NULL,
                              exclude = NULL,
                              dataDisagg = NULL,
-                             regionMapping = NULL) {
+                             regionMapping = NULL,
+                             forceShares = NULL) {
 
 
   # CHECK AND PREPARE INPUT ----------------------------------------------------
@@ -171,6 +174,19 @@ toolDisaggregate <- function(data,
   }
 
 
+  # enforce existing end-use specific carrier shares if given
+  if (!is.null(forceShares)) {
+    # exclude unwanted enduse-carrier combinations and re-normalize
+    forceShares <- forceShares %>%
+      anti_join(exclude, by = c("enduse", "carrier")) %>%
+      filter(!is.na(.data$value)) %>%
+      group_by(across(all_of(c("region", "period", "enduse")))) %>%
+      mutate(value = proportions(.data$value)) %>%
+      ungroup()
+
+    estimate <- .enforceShares(estimate, forceShares)
+  }
+
 
   # DISAGGREGATE  --------------------------------------------------------------
 
@@ -263,14 +279,18 @@ toolDisaggregate <- function(data,
   #   - total demand per carrier in each region has to be met
   #   - total demand per end use in each agg. region has to be met
   #   - all disaggregated quantities have to be larger or equal zero
-  constraints <- list(carrier = c("region", "carrier"),
-                      enduse  = "enduse",
-                      zero    = c("region", "carrier", "enduse"))
+  constraints <- list(carrier    = c("region", "carrier"),
+                      enduse     = "enduse",
+                      lowerBound = c("region", "carrier", "enduse"))
 
   # weight that increases the importance of minimising the deviation from given
   # end use quantities over minimising the deviations from the estimate
   # the estimate is often times rather arbitrary -> high weight
   weight <- 100
+
+  # percentage of naive estimate used as lower bound to avoid zero allocations for
+  # regions/periods where there is non-vanishing carrier and end-use demand
+  lowerBoundShare <- 0.05
 
 
   # PREPARE DATA ---------------------------------------------------------------
@@ -289,9 +309,9 @@ toolDisaggregate <- function(data,
   constraintRHS <- lapply(names(constraints), function(c) {
     subset %>%
       mutate(value = switch(c,
-                            carrier = .data[["value"]],
-                            enduse = .data[["enduseTotal"]],
-                            zero = 0)) %>%
+                            carrier    = .data[["value"]],
+                            enduse     = .data[["enduseTotal"]],
+                            lowerBound = lowerBoundShare * .data$estimate)) %>%
       unite("rhs", all_of(constraints[[c]]), sep = "-", remove = FALSE) %>%
       select("rhs", "value") %>%
       unique()
@@ -357,12 +377,12 @@ toolDisaggregate <- function(data,
 
       dvec <- t(objectiveMatrix) %*% objectiveRHS
 
-      aMat <- constraintMatrix[c("carrier", "zero")] %>%
+      aMat <- constraintMatrix[c("carrier", "lowerBound")] %>%
         reduce(full_join, by = c("region", "carrier", "enduse")) %>%
         select(-"region", -"carrier", -"enduse") %>%
         as.matrix()
 
-      bvec <- constraintRHS[c("carrier", "zero")] %>%
+      bvec <- constraintRHS[c("carrier", "lowerBound")] %>%
         do.call(what = rbind) %>%
         getElement("value")
 
@@ -413,4 +433,158 @@ toolDisaggregate <- function(data,
             "pred"] <- 0
 
   return(subsetOut)
+}
+
+
+
+#' Enforce Shares into Energy Demand Estimates
+#'
+#' Adjusts energy demand estimates to meet specified carrier share targets
+#' within end-uses while preserving total carrier demands. This function applies
+#' proportional adjustments to align existing shares with target shares while
+#' maintaining energy balance constraints. It handles missing combinations, zero
+#' values, and special cases where target shares exist for carriers with no
+#' historical demand. The adjustments are applied consistently across all time
+#' periods with careful rescaling to ensure carrier totals remain unchanged.
+#'
+#' Note: This function requires \code{forceShares} data to contain only one
+#' period per region-enduse-carrier combination to work correctly.
+#'
+#' @param estimate data frame with energy carrier demand estimates
+#' @param forceShares data frame with shares to enforce for carrier-enduse combinations
+#'
+#' @returns data frame with adjusted estimates preserving carrier totals
+#'
+#' @author Hagen Tockhorn
+#'
+#' @importFrom dplyr left_join right_join semi_join group_by summarise filter mutate select
+#' bind_rows across all_of ungroup anti_join distinct
+#' @importFrom tidyr crossing
+
+.enforceShares <- function(estimate, forceShares) {
+  # add any region-carrier-enduse combinations from forceShares that are missing in estimate
+  missingCombinations <- forceShares %>%
+    select("region", "carrier", "enduse") %>%
+    distinct() %>%
+    anti_join(estimate %>% select("region", "carrier", "enduse") %>% distinct(),
+              by = c("region", "carrier", "enduse"))
+
+  if (nrow(missingCombinations) > 0) {
+    # create zero-value rows for all missing combinations across all periods
+    estimate <- bind_rows(
+      estimate,
+      missingCombinations %>%
+        left_join(estimate %>%
+                    select("region", "enduse", "unit") %>%
+                    distinct(),
+                  by = c("region", "enduse")) %>%
+        crossing(estimate %>%
+                   select("period") %>%
+                   distinct()) %>%
+        mutate(estimate = 0) %>%
+        select("region", "period", "unit", "carrier", "enduse", "estimate")
+    )
+  }
+
+  # calculate existing carrier shares within each end-use for reference periods
+  existingShares <- estimate %>%
+    semi_join(forceShares, by = c("region", "period", "enduse")) %>%
+    group_by(across(all_of(c("region", "enduse")))) %>%
+    mutate(existingShare = .data$estimate / sum(.data$estimate, na.rm = TRUE)) %>%
+    ungroup()
+
+  # combine with target shares, ensuring all forceShares combinations are included
+  combinedShares <- existingShares %>%
+    right_join(forceShares %>%
+                 rename("forceShare" = "value"),
+               by = c("region", "period", "carrier", "enduse")) %>%
+    filter(!is.na(.data$forceShare))
+
+  # handle normal cases where existing share > 0 or both shares are zero
+  normalCases <- combinedShares %>%
+    filter(.data$existingShare > 0 | (.data$existingShare == 0 & .data$forceShare == 0)) %>%
+    mutate(adjustmentFactor = .data$forceShare / .data$existingShare,
+           adjustmentFactor = replace_na(.data$adjustmentFactor, 0)) %>%
+    select("region", "carrier", "enduse", "adjustmentFactor")
+
+  # handle special cases where existing share = 0 but forced share > 0
+  specialCases <- combinedShares %>%
+    filter(.data$existingShare == 0 & .data$forceShare > 0) %>%
+    select("region", "carrier", "enduse", "forceShare")
+
+  # apply normal adjustment factors to all periods
+  if (nrow(normalCases) > 0) {
+    estimateWithFactors <- estimate %>%
+      left_join(normalCases, by = c("region", "carrier", "enduse")) %>%
+      mutate(adjustedEstimate = ifelse(!is.na(.data$adjustmentFactor),
+                                       .data$estimate * .data$adjustmentFactor,
+                                       .data$estimate)) %>%
+      select(-"adjustmentFactor")
+  } else {
+    estimateWithFactors <- estimate %>%
+      mutate(adjustedEstimate = .data$estimate)
+  }
+
+  # handle special cases by applying forced shares directly to total enduse demand
+  if (nrow(specialCases) > 0) {
+    # calculate total energy demand per enduse to apply forced shares
+    enduseTotals <- estimateWithFactors %>%
+      group_by(across(all_of(c("region", "period", "enduse", "unit")))) %>%
+      summarise(totalEnduse = sum(.data$adjustedEstimate, na.rm = TRUE), .groups = "drop")
+
+    # calculate estimates based on forced share of total enduse demand
+    estimateWithFactors <- estimateWithFactors %>%
+      left_join(specialCases, by = c("region", "carrier", "enduse")) %>%
+      left_join(enduseTotals, by = c("region", "period", "enduse", "unit")) %>%
+      mutate(adjustedEstimate = ifelse(!is.na(.data$forceShare),
+                                       .data$totalEnduse * .data$forceShare,
+                                       .data$adjustedEstimate)) %>%
+      select(-"forceShare", -"totalEnduse")
+  }
+
+  # rescale to preserve original carrier totals with exact preservation
+  finalEstimate <- estimateWithFactors %>%
+    # flag values that were adjusted by forced shares
+    left_join(bind_rows(normalCases %>%
+                          mutate(isAdjusted = TRUE) %>%
+                          select("region", "carrier", "enduse", "isAdjusted"),
+                        specialCases %>%
+                          mutate(isAdjusted = TRUE) %>%
+                          select("region", "carrier", "enduse", "isAdjusted")),
+              by = c("region", "carrier", "enduse")) %>%
+    mutate(isAdjusted = !is.na(.data$isAdjusted)) %>%
+    # group by carrier to preserve carrier totals
+    group_by(across(all_of(c("region", "period", "carrier", "unit")))) %>%
+    # calculate totals and determine how much to rescale non-adjusted values
+    mutate(
+      originalTotal  = sum(.data$estimate, na.rm = TRUE),
+      adjustedSum    = sum(.data$adjustedEstimate[.data$isAdjusted], na.rm = TRUE),
+      remainingTotal = .data$originalTotal - .data$adjustedSum,
+      nonAdjustedSum = sum(.data$adjustedEstimate[!.data$isAdjusted], na.rm = TRUE)
+    ) %>%
+    # rescale non-adjusted values to exactly match remaining total
+    mutate(
+      scaleFactor   = ifelse(.data$nonAdjustedSum > 0, .data$remainingTotal / .data$nonAdjustedSum, 0),
+      finalEstimate = ifelse(.data$isAdjusted,
+                             .data$adjustedEstimate,
+                             ifelse(.data$nonAdjustedSum > 0,
+                                    .data$adjustedEstimate * .data$scaleFactor,
+                                    0))
+
+    ) %>%
+    # handle edge cases where all values are adjusted or scaling would produce negative values
+    mutate(
+      needsSpecialHandling = (.data$nonAdjustedSum == 0 & .data$remainingTotal != 0) | (.data$scaleFactor < 0),
+      # if all values adjusted but totals don't match, rescale all proportionally
+      totalScaleFactor = ifelse(.data$needsSpecialHandling & sum(.data$adjustedEstimate) > 0,
+                                .data$originalTotal / sum(.data$adjustedEstimate),
+                                1),
+      finalEstimate = ifelse(.data$needsSpecialHandling,
+                             .data$adjustedEstimate * .data$totalScaleFactor,
+                             .data$finalEstimate)
+    ) %>%
+    ungroup() %>%
+    select("region", "period", "unit", "carrier", "enduse", "estimate" = "finalEstimate")
+
+  return(finalEstimate)
 }
