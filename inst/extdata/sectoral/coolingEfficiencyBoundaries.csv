@@ -1,3 +1,3 @@
 variable;description;value;source
 min;minimal historical COP for available AC systems;2;Eurovent Certita certification for ACs (Air to air, split, reversible (≤ 12 kW))
-max;maximal historical COP for available AC systems;5.5;Eurovent Certita certification for ACs (Air to air, split, reversible (≤ 12 kW))
+max;maximal historical COP for available AC systems;7;Eurovent Certita certification for ACs (Air to air, split, reversible (≤ 12 kW))

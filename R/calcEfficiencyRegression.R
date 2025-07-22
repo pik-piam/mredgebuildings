@@ -20,11 +20,12 @@
 #' @author Hagen Tockhorn
 #'
 #' @importFrom quitte aggregate_map removeColNa as.quitte
-#' @importFrom stats as.formula na.omit nls
+#' @importFrom stats as.formula na.omit nls nls.control
 #' @importFrom dplyr mutate select filter left_join group_by across all_of rename coalesce ends_with %>% .data
 #' @importFrom tidyr spread unite
 #' @importFrom madrat calcOutput toolGetMapping
 #' @importFrom magclass as.magpie
+#' @importFrom minpack.lm nlsLM
 #'
 #' @export
 
@@ -34,7 +35,7 @@ calcEfficiencyRegression <- function(gasBioEquality = TRUE) {
   # FUNCTIONS ------------------------------------------------------------------
 
   # Extrapolate historic FE-UE Efficiencies from Fit Function
-  getRegressionPars <- function(df, var) {
+  getRegressionPars <- function(df, var, weight) {
     # Prepare Historic Data
     dataHist <- df %>%
       removeColNa() %>%
@@ -48,9 +49,16 @@ calcEfficiencyRegression <- function(gasBioEquality = TRUE) {
 
     # Create Estimation Object for Non-Linear Model
     if (var == "space_cooling.elec") {
-      estimate <- nls("space_cooling.elec ~ min + (max - min) / (1 + exp(-k * (gdppop - x0)))",
-                      data = dataHist,
-                      start = list(k = 0.0001, x0 = 17000))
+      # calculate weighted input variable mix of GDP per cap and period
+      dataHist <- dataHist %>%
+        mutate(x = log(dataHist$gdppop) * weight + dataHist$period * (1 - weight))
+
+      estimate <- nlsLM(
+        "space_cooling.elec ~ min + (max - min) / (1 + exp(-k * (x + x0)))",
+        data = dataHist,
+        start = list(k = 0.0001, x0 = 1000),
+        control = nls.control(maxiter = 500)
+      )
     } else {
       estimate <- nls(as.formula(paste(var, "~ SSasymp(gdppop, Asym, R0, lrc)")),
                       data = dataHist)
@@ -120,6 +128,9 @@ calcEfficiencyRegression <- function(gasBioEquality = TRUE) {
   # Minimum Requirement to be considered
   minEfficiency <- 0.05
 
+  # Weight given to log(gdppop) for space_cooling.elec input variable
+  #   -> x = log(gdppop) * weight + period * (1 - weight)
+  gdppopWeight <- 0.95
 
 
   # PROCESS DATA ---------------------------------------------------------------
@@ -181,7 +192,7 @@ calcEfficiencyRegression <- function(gasBioEquality = TRUE) {
     # join GDP per capita
     left_join(gdppopAggregate, by = c("region", "period")) %>%
 
-    # append min/max AC COPs
+    # append AC COP boundaries
     cross_join(coolingBounds)
 
 
@@ -189,7 +200,7 @@ calcEfficiencyRegression <- function(gasBioEquality = TRUE) {
 
   #--- Calculate regression parameter
   fitPars <- do.call(rbind, lapply(euecCombinations, function(euec) {
-    pars <- getRegressionPars(histEfficiencies, euec)
+    pars <- getRegressionPars(histEfficiencies, euec, weight = gdppopWeight)
     as.data.frame(do.call(cbind, as.list(pars))) %>%
       mutate(variable = euec) %>%
       pivot_longer(cols = -"variable",

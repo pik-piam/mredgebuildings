@@ -73,6 +73,13 @@ calcFEUEefficiencies <- function(gasBioEquality = TRUE) {
                                   where = "mredgebuildings")
 
 
+  # PARAMETERS -----------------------------------------------------------------
+
+  # Weight given to log(gdppop) for space_cooling.elec input variable
+  #   -> x = log(gdppop) * weight + period * (1 - weight)
+  gdppopWeight <- 0.95
+
+
   # PROCESS DATA ---------------------------------------------------------------
 
   coolingBounds <- setNames(coolingBounds$value, coolingBounds$variable)
@@ -114,9 +121,10 @@ calcFEUEefficiencies <- function(gasBioEquality = TRUE) {
     group_by(across(all_of(c("carrier", "enduse")))) %>%
 
     # Distinguish between logistic and asymptotic model
-    mutate(pred = ifelse((.data$carrier == "elec" & .data$enduse == "space_cooling"),
+    mutate(x = log(.data$gdppop) * gdppopWeight + .data$period * (1 - gdppopWeight),
+           pred = ifelse((.data$carrier == "elec" & .data$enduse == "space_cooling"),
                          coolingBounds[["min"]] + (coolingBounds[["max"]] - coolingBounds[["min"]]) /
-                           (1 + exp(-.data$k * (.data$gdppop - .data$x0))),
+                           (1 + exp(-.data$k * (.data$x + .data$x0))),
                          SSasymp(.data[["gdppop"]], .data[["Asym"]], .data[["R0"]], .data[["lrc"]]))) %>%
     ungroup() %>%
     select("region", "period", "enduse", "carrier", "gdppop", "efficiency", "pred")
