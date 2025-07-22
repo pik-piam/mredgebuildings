@@ -1,6 +1,6 @@
 # Prepare data to be used by the EDGE-Buildings model
 
-R package **mredgebuildings**, version **0.10.3**
+R package **mredgebuildings**, version **0.10.4**
 
 [![CRAN status](https://www.r-pkg.org/badges/version/mredgebuildings)](https://cran.r-project.org/package=mredgebuildings) [![R build status](https://github.com/pik-piam/mredgebuildings/workflows/check/badge.svg)](https://github.com/pik-piam/mredgebuildings/actions) [![codecov](https://codecov.io/gh/pik-piam/mredgebuildings/branch/master/graph/badge.svg)](https://app.codecov.io/gh/pik-piam/mredgebuildings) [![r-universe](https://pik-piam.r-universe.dev/badges/mredgebuildings)](https://pik-piam.r-universe.dev/builds)
 
@@ -38,15 +38,15 @@ In case of questions / problems please contact Robin Hasse <robin.hasse@pik-pots
 
 To cite package **mredgebuildings** in publications use:
 
-Hasse R, Sauer P, Levesque A, Tockhorn H (2025). "mredgebuildings: Prepare data to be used by the EDGE-Buildings model - Version 0.10.3."
+Hasse R, Sauer P, Levesque A, Tockhorn H (2025). "mredgebuildings: Prepare data to be used by the EDGE-Buildings model - Version 0.10.4."
 
 A BibTeX entry for LaTeX users is
 
  ```latex
 @Misc{,
-  title = {mredgebuildings: Prepare data to be used by the EDGE-Buildings model - Version 0.10.3},
+  title = {mredgebuildings: Prepare data to be used by the EDGE-Buildings model - Version 0.10.4},
   author = {Robin Hasse and Pascal Sauer and Antoine Levesque and Hagen Tockhorn},
-  date = {2025-07-01},
+  date = {2025-07-22},
   year = {2025},
 }
 ```
