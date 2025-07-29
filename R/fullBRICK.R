@@ -30,7 +30,8 @@ fullBRICK <- function(rev = 0, granularity = NULL) {
 
   # floor-space specific cost
   calcOutput("CostConstruction", granularity = granularity, file = "f_costConstruction.cs4r")
-  calcOutput("CostRenovation", granularity = granularity,   file = "f_costRenovation.cs4r")
+  calcOutput("CostRenovationBS", granularity = granularity, file = "f_costRenovationBS.cs4r")
+  calcOutput("CostRenovationHS", granularity = granularity, file = "f_costRenovationHS.cs4r")
   calcOutput("CostDemolition",                              file = "f_costDemolition.cs4r")
 
   # components of operational cost
