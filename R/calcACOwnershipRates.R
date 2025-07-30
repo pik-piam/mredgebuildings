@@ -30,14 +30,13 @@ calcACOwnershipRates <- function() {
     as_tibble()
 
   # Odyssee
-  odysseeData <- rbind(readSource("Odyssee", subtype = "households") %>%
-                         as.quitte(na.rm = TRUE),
-                       readSource("Odyssee", subtype = "services") %>%
-                         as.quitte(na.rm = TRUE))
+  odysseeData <- readSource("Odyssee") %>%
+    as.quitte(na.rm = TRUE)
 
-  # FE demand (as aggregation weights)
-  feData <- calcOutput("FEbyEUEC", aggregate = FALSE) %>%
-    as_tibble()
+  # population (aggregation weights)
+  pop <- calcOutput("Population", scenario = "SSP2", aggregate = FALSE) %>%
+    as.quitte() %>%
+    removeColNa()
 
 
   ## Mappings ====
@@ -86,7 +85,7 @@ calcACOwnershipRates <- function() {
 
   # filter "AC equipment rate" and take most recent data point per region where necessary
   odysseeData <- odysseeData %>%
-    filter(.data$variable == "teqcli_1") %>%
+    filter(.data$variable == "teqcli") %>%
     select("region", "period", "value") %>%
     left_join(regionmapEDGE, by = c("region" = "CountryCode")) %>%
     group_by(.data$region) %>%
@@ -139,14 +138,8 @@ calcACOwnershipRates <- function() {
 
   ## Aggregation Weights ====
 
-  # total space_cooling fe demand per region
-  feCoolingData <- feData %>%
-    filter(.data$enduse == "space_cooling") %>%
-    group_by(across(all_of(c("region", "period")))) %>%
-    reframe(value = sum(.data$value)) %>%
-    filter(.data$value != 0) %>%
-    interpolate_missing_periods(min(unique(ownershipRates$period)):max(unique(ownershipRates$period)),
-                                expand.values = TRUE) %>%
+  pop <- pop %>%
+    select(-"variable") %>%
     semi_join(ownershipRates, by = c("region", "period"))
 
 
@@ -158,13 +151,13 @@ calcACOwnershipRates <- function() {
     as.magpie() %>%
     toolCountryFill(0, verbosity = 2)
 
-  feCoolingData <- feCoolingData %>%
+  pop <- pop %>%
     as.quitte() %>%
     as.magpie() %>%
     toolCountryFill(0, verbosity = 2)
 
   return(list(x = data,
-              weights = feCoolingData,
+              weights = pop,
               unit = "",
               min = 0,
               max = 1,
