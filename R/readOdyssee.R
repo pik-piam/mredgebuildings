@@ -15,6 +15,8 @@
 #' @note Variables are labels with the item code but full names can be found in
 #' the source data
 #'
+#' @param subtype dataset version
+#'
 #' @returns magpie object
 #'
 #' @author Pascal Führlich, Robin Hasse
@@ -25,18 +27,22 @@
 #' @importFrom magclass as.magpie
 #' @export
 
-readOdyssee <- function() {
+readOdyssee <- function(subtype = "090125") {
 
-  files <- c("Enerdata_Odyssee_250109_150210.csv", # households: 2010 - 2023
-             "Enerdata_Odyssee_250109_145827.csv", # households: 1990 - 2009
-             "Enerdata_Odyssee_250109_150428.csv") # services
+  files <- list("090125" = c("Enerdata_Odyssee_250109_150210.csv",  # households: 2010 - 2023
+                             "Enerdata_Odyssee_250109_145827.csv",  # households: 1990 - 2009
+                             "Enerdata_Odyssee_250109_150428.csv"), # services
+                "050422" = c("export_enerdata_9259_031531.csv",     # households
+                             "export_enerdata_9259_031431.csv"))    # services
 
-  files %>%
-    lapply(read.csv, na.strings = c("n.a.", "")) %>%
+  skipRows <- if (subtype == "050422") 1 else 0
+
+  files[[subtype]] %>%
+    lapply(read.csv, na.strings = c("n.a.", ""), skip = skipRows) %>%
     do.call(what = rbind) %>%
-    select(region = "ISO.Code",
+    select(region = if (subtype == "050422") "ISO.code" else "ISO.Code",
            period = "Year",
-           variable = "Item.Code",
+           variable = if (subtype == "050422") "Item.code" else "Item.Code",
            value = "Value",
            unit = "Unit") %>%
     mutate(value = as.numeric(.data[["value"]])) %>%

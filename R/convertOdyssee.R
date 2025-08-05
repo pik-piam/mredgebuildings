@@ -3,6 +3,7 @@
 #' Rename regions and convert unit
 #'
 #' @param x MAgPIE object with data from Odyssee Database
+#' @param subtype dataset version
 #' @return clean MAgPIE object
 #'
 #' @author Robin Hasse
@@ -13,13 +14,9 @@
 #'
 #' @export
 
-convertOdyssee <- function(x) {
+convertOdyssee <- function(x, subtype) {
 
   data <- x
-
-  # filter problematic/unnecessary regions
-  problematicRegions <- c("EU", "XK")
-  data <- data[!getItems(data, 1) %in% problematicRegions, , ]
 
   # rename regions: ISO2 -> ISO3
   data <- data[c("EU", "XK"), , invert = TRUE]
@@ -29,22 +26,31 @@ convertOdyssee <- function(x) {
   unitConversion <- inline.data.frame(
     "from;     to;       factor",
     "Mtoe;     EJ;       4.1868E-2",
+    "ktoe;     EJ;       4.1868E-5",
+    "Tj;       EJ;       1E-6",
     "TWh;      EJ;       3.6E-3",
     "k;        1;        1000",
+    "m2;       m2;       1",
     "Mm2;      m2;       1E6",
     "%;        1;        1E-2",
     "degree;   dK/yr;    1",
+    "MEUR2010; MEUR2010; 1",
     "MEUR2015; MEUR2015; 1"
   )
-  for (i in seq_len(nrow(unitConversion))) {
-    if (!unitConversion[[i, "from"]] %in% getItems(data, "unit")) next
-    tmp <- mselect(data, unit = unitConversion[[i, "from"]])
-    tmp <- tmp * unitConversion[[i, "factor"]]
-    getItems(tmp, "unit") <- unitConversion[[i, "to"]]
-    data <- data %>%
-      mselect(unit = setdiff(getItems(data, "unit"),
-                             unitConversion[[i, "from"]])) %>%
-      mbind(tmp)
+
+  if (subtype == "050422") {
+    data <- toolUnitConversion(data, unitConversion)
+  } else {
+    for (i in seq_len(nrow(unitConversion))) {
+      if (!unitConversion[[i, "from"]] %in% getItems(data, "unit")) next
+      tmp <- mselect(data, unit = unitConversion[[i, "from"]])
+      tmp <- tmp * unitConversion[[i, "factor"]]
+      getItems(tmp, "unit") <- unitConversion[[i, "to"]]
+      data <- data %>%
+        mselect(unit = setdiff(getItems(data, "unit"),
+                               unitConversion[[i, "from"]])) %>%
+        mbind(tmp)
+    }
   }
 
   # manually drop erroneous data points
