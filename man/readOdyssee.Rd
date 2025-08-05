@@ -7,7 +7,10 @@
 https://odyssee.enerdata.net/database/
 }
 \usage{
-readOdyssee()
+readOdyssee(subtype = "090125")
+}
+\arguments{
+\item{subtype}{dataset version}
 }
 \value{
 magpie object

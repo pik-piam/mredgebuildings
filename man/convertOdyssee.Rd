@@ -4,10 +4,12 @@
 \alias{convertOdyssee}
 \title{convertOdyssee}
 \usage{
-convertOdyssee(x)
+convertOdyssee(x, subtype)
 }
 \arguments{
 \item{x}{MAgPIE object with data from Odyssee Database}
+
+\item{subtype}{dataset version}
 }
 \value{
 clean MAgPIE object

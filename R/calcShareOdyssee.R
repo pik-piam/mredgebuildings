@@ -33,8 +33,13 @@ calcShareOdyssee <- function(subtype = c("enduse", "carrier", "enduse_carrier"),
   # READ-IN DATA ---------------------------------------------------------------
 
   # Read Buildings Data
-  odysseeData <- readSource("Odyssee") %>%
-    as.quitte()
+  odysseeData <- rbind(readSource("Odyssee", subtype = "090125") %>%
+                         as.quitte() %>%
+                         mutate(version = "new"),
+                       readSource("Odyssee", subtype = "050422") %>%
+                         as.quitte() %>%
+                         mutate(version = "old"))
+
 
   # Get GDP per Cap
   gdppop <- calcOutput("GDPpc",
@@ -86,6 +91,17 @@ calcShareOdyssee <- function(subtype = c("enduse", "carrier", "enduse_carrier"),
                    sector  = sectorMap,
                    enduse  = enduseMap) %>%
     interpolate_missing_periods(expand.values = TRUE)
+
+
+  # Use old data where new demand is zero
+  odyssee <- odyssee %>%
+    select(-"model", -"scenario", -"unit") %>%
+    pivot_wider(names_from = "version", values_from = "value") %>%
+    group_by(across(-all_of(c("new", "old")))) %>%
+    mutate(value = ifelse(all(.data$new == 0), .data$old, .data$new)) %>%
+    ungroup() %>%
+    select(-"old", -"new") %>%
+    as.quitte()
 
 
   # Split Biomass
