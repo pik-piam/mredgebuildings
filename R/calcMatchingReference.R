@@ -262,7 +262,8 @@ calcMatchingReference <- function(subtype) {
         unique() %>%
         left_join(data, by = c(.variable = "variable")) %>%
         select(-".variable") %>%
-        mutate(value = .data[["value"]] / 1E6) # m2 -> million m2
+        mutate(value = .data$value / 1E6) %>% # m2 -> million m2
+        as.quitte()
 
       minVal <- 0
       unit <- "million m2"
@@ -636,7 +637,7 @@ calcMatchingReference <- function(subtype) {
         interpolate_missing_periods(period = 1991:2014)
 
       minVal <- 0
-      minVal <- 1
+      maxVal <- 1
       unit <- "1"
       description <- "Share of boilers in sales"
 
@@ -703,7 +704,7 @@ calcMatchingReference <- function(subtype) {
         interpolate_missing_periods(period = 1999:2023, expand.values = TRUE)
 
       minVal <- 0
-      minVal <- 1
+      maxVal <- 1
       unit <- "1"
       description <- "Share of old heating systems during heating system replacement"
 
@@ -734,14 +735,35 @@ calcMatchingReference <- function(subtype) {
         as.quitte(na.rm = TRUE) %>%
         removeColNa()
       data <- refMap %>%
+        left_join(data, by = c(.typ = "typ", "hs")) %>%
+        group_by(across(all_of(c("region", "period", "variable", "refVarGroup")))) %>%
+        summarise(value = sum(.data$value), .groups = "drop") %>%
+        .calcShares()
+
+      minVal <- 0
+      maxVal <- 1
+      unit <- "1"
+      description <- "Share of heating systems in new construction"
+
+    },
+
+
+    ## Destatis_typ ====
+
+    Destatis_typ = {
+      data <- calcOutput("Construction", aggregate = FALSE) %>%
+        mselect(variable = "nBuildings", collapseNames = TRUE) %>%
+        as.quitte(na.rm = TRUE) %>%
+        removeColNa()
+      data <- refMap %>%
         left_join(data, by = c("typ", "hs")) %>%
         select(-"typ", -"hs") %>%
         .calcShares()
 
       minVal <- 0
-      minVal <- 1
+      maxVal <- 1
       unit <- "1"
-      description <- "Share of heating systems in new construction"
+      description <- "Share of heating systems in new construction by building type"
 
     },
 
@@ -749,8 +771,10 @@ calcMatchingReference <- function(subtype) {
 
     dummy_hsReplace = {
       lifetime <- 20
-      data <- calcOutput("MatchingReference", subtype = "OdysseeIDEES_typ",
-                         aggregate = FALSE) %>%
+      data <- mbind(calcOutput("MatchingReference", subtype = "OdysseeIDEES_typ",
+                               aggregate = FALSE),
+                    calcOutput("MatchingReference", subtype = "OdysseeIDEES_sec",
+                               aggregate = FALSE)) %>%
         as.quitte(na.rm = TRUE) %>%
         removeColNa() %>%
         interpolate_missing_periods((2000 - lifetime):2022,
