@@ -29,6 +29,7 @@ EHI_statusQuo;TRUE;TRUE;1;This is extrapolated far beyond the original data
 StatusQuo;TRUE;TRUE;1;Same shares assumed for all regions and periods
 Pulsen;TRUE;TRUE;1;applying appliance shares as floor area shares
 Destatis;TRUE;TRUE;1;
+Destatis_typ;TRUE;TRUE;1;
 dummy_hsReplace;FALSE;TRUE;1;Hot fix to cap total renovated floor space
 Eurostat_loc;FALSE;TRUE;1;
 Eurostat_hs_loc;FALSE;TRUE;1;
