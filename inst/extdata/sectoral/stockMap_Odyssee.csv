@@ -1,37 +1,37 @@
-quantityTitle,quantityCode,sizeTitle,sizeCode,ideesCode
-Total stock of dwellings,nbrlog,Floor area of dwellings (average),surlog,SurfaceArea.ksqm.Res.HH
-Stock of permanently occupied dwellings,nbrlpr,Floor area of dwellings (average),surlog,SurfaceArea.ksqm.Res.HH
-Stock of permanently occupied houses,nbrmpr,Floor area of single family dwellings,surmpr,SurfaceArea.ksqm.Res.HH
-Stock of permanently occupied multifamily dwellings,nbripr,Floor area of multifamily dwellings,suripr,SurfaceArea.ksqm.Res.HH
-Stock of permanently occupied dwellings with oil space heating,nbrlprpet,Floor area of dwellings (average),surlog,SurfaceArea.ksqm.Res.HH
-Stock of permanently occupied dwellings with gas space heating,nbrlprgaz,Floor area of dwellings (average),surlog,SurfaceArea.ksqm.Res.HH
-Stock of permanently occupied dwellings with district heating space heating,nbrlprvap,Floor area of dwellings (average),surlog,SurfaceArea.ksqm.Res.HH
-Stock of permanently occupied dwellings with wood space heating,nbrlprboi,Floor area of dwellings (average),surlog,SurfaceArea.ksqm.Res.HH
-Stock of permanently occupied dwellings with electric space heating,nbrlprele,Floor area of dwellings (average),surlog,SurfaceArea.ksqm.Res.HH
-Stock of permanently occupied dwellings with heat pump for space heating,nbrlprelehp,Floor area of dwellings (average),surlog,SurfaceArea.ksqm.Res.HH
-Stock of permanently occupied dwellings with resistive electric space heating (own calculation),nbrlprelerh,Floor area of dwellings (average),surlog,SurfaceArea.ksqm.Res.HH
-Stock of flats with oil space heating,nbriprpet,Floor area of multifamily dwellings,suripr,SurfaceArea.ksqm.Res.HH
-Stock of flats with gas space heating,nbriprgaz,Floor area of multifamily dwellings,suripr,SurfaceArea.ksqm.Res.HH
-Stock of flats with district heating space heating,nbriprvap,Floor area of multifamily dwellings,suripr,SurfaceArea.ksqm.Res.HH
-Stock of flats with wood space heating,nbriprboi,Floor area of multifamily dwellings,suripr,SurfaceArea.ksqm.Res.HH
-Stock of flats with electric space heating,nbriprele,Floor area of multifamily dwellings,suripr,SurfaceArea.ksqm.Res.HH
-Stock of permanently occupied flats with heat pumps for space heating,nbriprelehp,Floor area of multifamily dwellings,suripr,SurfaceArea.ksqm.Res.HH
-Stock of permanently occupied flats with resistive electric space heating (own calculation),nbriprelerh,Floor area of multifamily dwellings,suripr,SurfaceArea.ksqm.Res.HH
-Stock of permanently occupied houses with oil space heating,nbrmprpet,Floor area of single family dwellings,surmpr,SurfaceArea.ksqm.Res.HH
-Stock of permanently occupied houses with gas space heating,nbrmprgaz,Floor area of single family dwellings,surmpr,SurfaceArea.ksqm.Res.HH
-Stock of permanently occupied houses with district heating space heating,nbrmprvap,Floor area of single family dwellings,surmpr,SurfaceArea.ksqm.Res.HH
-Stock of permanently occupied houses with wood space heating,nbrmprboi,Floor area of single family dwellings,surmpr,SurfaceArea.ksqm.Res.HH
-Stock of permanently occupied houses with electric space heating,nbrmprele,Floor area of single family dwellings,surmpr,SurfaceArea.ksqm.Res.HH
-Stock of permanently occupied houses with heat pump for space heating,nbrmprelehp,Floor area of single family dwellings,surmpr,SurfaceArea.ksqm.Res.HH
-Stock of permanently occupied houses with resistive electric space heating (own calculation),nbrmprelerh,Floor area of single family dwellings,surmpr,SurfaceArea.ksqm.Res.HH
-Stock of permanently occupied dwellings with collective central heating,nbrlprccc,Floor area of dwellings (average),surlog,SurfaceArea.ksqm.Res.HH
-Stock of permanently occupied dwellings with individual central heating,nbrlprcci,Floor area of dwellings (average),surlog,SurfaceArea.ksqm.Res.HH
-Stock of permanently occupied dwellings with room heating,nbrlprcdi,Floor area of dwellings (average),surlog,SurfaceArea.ksqm.Res.HH
-Floor area of services,surter,,,SurfaceArea.ksqm.Ser.Bld
-Floor area of hotels and restaurants,surhcr,,,SurfaceArea.ksqm.Ser.Bld
-Floor area of health and social work,surhos,,,SurfaceArea.ksqm.Ser.Bld
-Floor area of education and research,suredu,,,SurfaceArea.ksqm.Ser.Bld
-Floor area of public and private offices,surbup,,,SurfaceArea.ksqm.Ser.Bld
-Floor area of public offices and administrations,surgov,,,SurfaceArea.ksqm.Ser.Bld
-Floor area of private offices,surbur,,,SurfaceArea.ksqm.Ser.Bld
-Floor area of trade (wholesale and retail),surcom,,,SurfaceArea.ksqm.Ser.Bld
+quantityTitle,quantityCode,sizeTitle,sizeCode,ideesCode,ideesFill,ideesFactor
+Total stock of dwellings,nbrlog,Floor area of dwellings (average),surlog,SurfaceArea.ksqm.Res.HH,TRUE,1000
+Stock of permanently occupied dwellings,nbrlpr,Floor area of dwellings (average),surlog,SurfaceArea.ksqm.Res.HH,FALSE,1000
+Stock of permanently occupied houses,nbrmpr,Floor area of single family dwellings,surmpr,SurfaceArea.ksqm.Res.HH,FALSE,1000
+Stock of permanently occupied multifamily dwellings,nbripr,Floor area of multifamily dwellings,suripr,SurfaceArea.ksqm.Res.HH,FALSE,1000
+Stock of permanently occupied dwellings with oil space heating,nbrlprpet,Floor area of dwellings (average),surlog,SurfaceArea.ksqm.Res.HH,FALSE,1000
+Stock of permanently occupied dwellings with gas space heating,nbrlprgaz,Floor area of dwellings (average),surlog,SurfaceArea.ksqm.Res.HH,FALSE,1000
+Stock of permanently occupied dwellings with district heating space heating,nbrlprvap,Floor area of dwellings (average),surlog,SurfaceArea.ksqm.Res.HH,FALSE,1000
+Stock of permanently occupied dwellings with wood space heating,nbrlprboi,Floor area of dwellings (average),surlog,SurfaceArea.ksqm.Res.HH,FALSE,1000
+Stock of permanently occupied dwellings with electric space heating,nbrlprele,Floor area of dwellings (average),surlog,SurfaceArea.ksqm.Res.HH,FALSE,1000
+Stock of permanently occupied dwellings with heat pump for space heating,nbrlprelehp,Floor area of dwellings (average),surlog,SurfaceArea.ksqm.Res.HH,FALSE,1000
+Stock of permanently occupied dwellings with resistive electric space heating (own calculation),nbrlprelerh,Floor area of dwellings (average),surlog,SurfaceArea.ksqm.Res.HH,FALSE,1000
+Stock of flats with oil space heating,nbriprpet,Floor area of multifamily dwellings,suripr,SurfaceArea.ksqm.Res.HH,FALSE,1000
+Stock of flats with gas space heating,nbriprgaz,Floor area of multifamily dwellings,suripr,SurfaceArea.ksqm.Res.HH,FALSE,1000
+Stock of flats with district heating space heating,nbriprvap,Floor area of multifamily dwellings,suripr,SurfaceArea.ksqm.Res.HH,FALSE,1000
+Stock of flats with wood space heating,nbriprboi,Floor area of multifamily dwellings,suripr,SurfaceArea.ksqm.Res.HH,FALSE,1000
+Stock of flats with electric space heating,nbriprele,Floor area of multifamily dwellings,suripr,SurfaceArea.ksqm.Res.HH,FALSE,1000
+Stock of permanently occupied flats with heat pumps for space heating,nbriprelehp,Floor area of multifamily dwellings,suripr,SurfaceArea.ksqm.Res.HH,FALSE,1000
+Stock of permanently occupied flats with resistive electric space heating (own calculation),nbriprelerh,Floor area of multifamily dwellings,suripr,SurfaceArea.ksqm.Res.HH,FALSE,1000
+Stock of permanently occupied houses with oil space heating,nbrmprpet,Floor area of single family dwellings,surmpr,SurfaceArea.ksqm.Res.HH,FALSE,1000
+Stock of permanently occupied houses with gas space heating,nbrmprgaz,Floor area of single family dwellings,surmpr,SurfaceArea.ksqm.Res.HH,FALSE,1000
+Stock of permanently occupied houses with district heating space heating,nbrmprvap,Floor area of single family dwellings,surmpr,SurfaceArea.ksqm.Res.HH,FALSE,1000
+Stock of permanently occupied houses with wood space heating,nbrmprboi,Floor area of single family dwellings,surmpr,SurfaceArea.ksqm.Res.HH,FALSE,1000
+Stock of permanently occupied houses with electric space heating,nbrmprele,Floor area of single family dwellings,surmpr,SurfaceArea.ksqm.Res.HH,FALSE,1000
+Stock of permanently occupied houses with heat pump for space heating,nbrmprelehp,Floor area of single family dwellings,surmpr,SurfaceArea.ksqm.Res.HH,FALSE,1000
+Stock of permanently occupied houses with resistive electric space heating (own calculation),nbrmprelerh,Floor area of single family dwellings,surmpr,SurfaceArea.ksqm.Res.HH,FALSE,1000
+Stock of permanently occupied dwellings with collective central heating,nbrlprccc,Floor area of dwellings (average),surlog,SurfaceArea.ksqm.Res.HH,FALSE,1000
+Stock of permanently occupied dwellings with individual central heating,nbrlprcci,Floor area of dwellings (average),surlog,SurfaceArea.ksqm.Res.HH,FALSE,1000
+Stock of permanently occupied dwellings with room heating,nbrlprcdi,Floor area of dwellings (average),surlog,SurfaceArea.ksqm.Res.HH,FALSE,1000
+Floor area of services,surter,,,SurfaceArea.ksqm.Ser.Bld,TRUE,1000
+Floor area of hotels and restaurants,surhcr,,,SurfaceArea.ksqm.Ser.Bld,FALSE,1000
+Floor area of health and social work,surhos,,,SurfaceArea.ksqm.Ser.Bld,FALSE,1000
+Floor area of education and research,suredu,,,SurfaceArea.ksqm.Ser.Bld,FALSE,1000
+Floor area of public and private offices,surbup,,,SurfaceArea.ksqm.Ser.Bld,FALSE,1000
+Floor area of public offices and administrations,surgov,,,SurfaceArea.ksqm.Ser.Bld,FALSE,1000
+Floor area of private offices,surbur,,,SurfaceArea.ksqm.Ser.Bld,FALSE,1000
+Floor area of trade (wholesale and retail),surcom,,,SurfaceArea.ksqm.Ser.Bld,FALSE,1000
