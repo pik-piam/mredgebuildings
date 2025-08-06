@@ -34,7 +34,10 @@ toolCountryFillAvg <- function(x, ...) {
   x[is.na(x)] <- avg[is.na(x)]
 
   # restore set names
-  getSets(x)[3] <- getSets(avg)[3]
+  dx <- ndim(x)
+  if (dx >= 3) {
+    getSets(x)[3:dx] <- getSets(avg)[3:dx]
+  }
 
   return(x)
 }
