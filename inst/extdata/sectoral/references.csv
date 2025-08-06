@@ -26,6 +26,7 @@ OdysseeIDEES_heating;FALSE;TRUE;1;
 HeatingSystemSales;TRUE;TRUE;1;applying appliance shares as floor area shares is a simplification - one could use type-specific weights
 VHK;TRUE;TRUE;1;applying appliance shares as floor area shares is a simplification - one could/should use type-specific weights
 EHI_statusQuo;TRUE;TRUE;1;This is extrapolated far beyond the original data
+Pulsen;TRUE;TRUE;1;applying appliance shares as floor area shares
 Destatis;TRUE;TRUE;1;
 dummy_hsReplace;FALSE;TRUE;1;Hot fix to cap total renovated floor space
 Eurostat_loc;FALSE;TRUE;1;

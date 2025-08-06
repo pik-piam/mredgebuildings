@@ -665,6 +665,23 @@ calcMatchingReference <- function(subtype) {
 
     },
 
+    ## Pulsen ====
+
+    Pulsen = {
+      data <- readSource("Pulsen") %>%
+        as.quitte(na.rm = TRUE)
+      data <- refMap %>%
+        select("variable", ".variable") %>%
+        left_join(data, by = c(.variable = "variable")) %>%
+        group_by(across(all_of(c("region", "period", "variable")))) %>%
+        summarise(value = sum(.data$value) / 100, .groups = "drop")
+
+      minVal <- 0
+      maxVal <- 1
+      unit <- "1"
+      description <- "Share of previous heating system in heat pump installations"
+    },
+
     ## Destatis ====
 
     Destatis = {
