@@ -50,8 +50,7 @@ calcEfficiencyRegression <- function(gasBioEquality = TRUE) {
     # Create Estimation Object for Non-Linear Model
     if (var == "space_cooling.elec") {
       # calculate weighted input variable mix of GDP per cap and period
-      dataHist <- dataHist %>%
-        mutate(x = log(dataHist$gdppop) * weight + dataHist$period * (1 - weight))
+      dataHist$x <- log(dataHist$gdppop) * weight + dataHist$period * (1 - weight)
 
       estimate <- nlsLM(
         "space_cooling.elec ~ min + (max - min) / (1 + exp(-k * (x + x0)))",
@@ -101,9 +100,9 @@ calcEfficiencyRegression <- function(gasBioEquality = TRUE) {
     as.quitte()
 
   # Cooling COP boundaries
-  coolingBounds <- toolGetMapping("coolingEfficiencyBoundaries.csv",
-                                  type = "sectoral",
-                                  where = "mredgebuildings")
+  coolingPars <- toolGetMapping("coolingEfficiencyParameters.csv",
+                                type = "sectoral",
+                                where = "mredgebuildings")
 
 
   # --- Mappings
@@ -128,16 +127,16 @@ calcEfficiencyRegression <- function(gasBioEquality = TRUE) {
   # Minimum Requirement to be considered
   minEfficiency <- 0.05
 
-  # Weight given to log(gdppop) for space_cooling.elec input variable
-  #   -> x = log(gdppop) * weight + period * (1 - weight)
-  gdppopWeight <- 0.95
-
 
   # PROCESS DATA ---------------------------------------------------------------
 
-  coolingBounds <- coolingBounds %>%
+  coolingPars <- coolingPars %>%
     select("variable", "value") %>%
     pivot_wider(names_from = "variable", values_from = "value")
+
+  # Weight given to log(gdppop) for space_cooling.elec input variable
+  #   -> x = log(gdppop) * weight + period * (1 - weight)
+  gdppopWeight <- coolingPars$gdppopWeight
 
 
   #--- Calculate existing FE-EU efficiencies
@@ -193,7 +192,7 @@ calcEfficiencyRegression <- function(gasBioEquality = TRUE) {
     left_join(gdppopAggregate, by = c("region", "period")) %>%
 
     # append AC COP boundaries
-    cross_join(coolingBounds)
+    cross_join(coolingPars)
 
 
   euecCombinations <- unique(histEfficiencies$variable)

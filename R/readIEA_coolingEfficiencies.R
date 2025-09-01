@@ -6,7 +6,7 @@
 #' @importFrom quitte as.quitte
 #' @importFrom magclass as.magpie
 
-readIEA_coolingEfficiencies <- function() { #nolint object_name_linter
+readIEA_coolingEfficiencies <- function() { # nolint: object_name_linter.
 
   data <- read.csv("coolingEfficienciesGLO.csv")
 

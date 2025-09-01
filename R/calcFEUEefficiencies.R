@@ -68,21 +68,19 @@ calcFEUEefficiencies <- function(gasBioEquality = TRUE) {
 
 
   # Cooling COP boundaries
-  coolingBounds <- toolGetMapping("coolingEfficiencyBoundaries.csv",
-                                  type = "sectoral",
-                                  where = "mredgebuildings")
+  coolingPars <- toolGetMapping("coolingEfficiencyParameters.csv",
+                                type = "sectoral",
+                                where = "mredgebuildings")
 
-
-  # PARAMETERS -----------------------------------------------------------------
-
-  # Weight given to log(gdppop) for space_cooling.elec input variable
-  #   -> x = log(gdppop) * weight + period * (1 - weight)
-  gdppopWeight <- 0.95
 
 
   # PROCESS DATA ---------------------------------------------------------------
 
-  coolingBounds <- setNames(coolingBounds$value, coolingBounds$variable)
+  coolingPars <- setNames(coolingPars$value, coolingPars$variable)
+
+  # Weight given to log(gdppop) for space_cooling.elec input variable
+  #   -> x = log(gdppop) * weight + period * (1 - weight)
+  gdppopWeight <- coolingPars[["gdppopWeight"]]
 
   # Upper temporal boundary of data set
   maxPeriod <- max(pfu$period)
@@ -123,9 +121,10 @@ calcFEUEefficiencies <- function(gasBioEquality = TRUE) {
     # Distinguish between logistic and asymptotic model
     mutate(x = log(.data$gdppop) * gdppopWeight + .data$period * (1 - gdppopWeight),
            pred = ifelse((.data$carrier == "elec" & .data$enduse == "space_cooling"),
-                         coolingBounds[["min"]] + (coolingBounds[["max"]] - coolingBounds[["min"]]) /
+                         coolingPars$min + (coolingPars$max - coolingPars$min) /
                            (1 + exp(-.data$k * (.data$x + .data$x0))),
-                         SSasymp(.data[["gdppop"]], .data[["Asym"]], .data[["R0"]], .data[["lrc"]]))) %>%
+                         SSasymp(.data$gdppop, .data$Asym, .data$R0, .data$lrc))) %>%
+
     ungroup() %>%
     select("region", "period", "enduse", "carrier", "gdppop", "efficiency", "pred")
 
