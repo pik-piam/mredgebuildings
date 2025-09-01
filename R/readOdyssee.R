@@ -27,22 +27,22 @@
 #' @importFrom magclass as.magpie
 #' @export
 
-readOdyssee <- function(subtype = "090125") {
+readOdyssee <- function(subtype = "250109") {
 
-  files <- list("090125" = c("Enerdata_Odyssee_250109_150210.csv",  # households: 2010 - 2023
+  files <- list("250109" = c("Enerdata_Odyssee_250109_150210.csv",  # households: 2010 - 2023
                              "Enerdata_Odyssee_250109_145827.csv",  # households: 1990 - 2009
                              "Enerdata_Odyssee_250109_150428.csv"), # services
-                "050422" = c("export_enerdata_9259_031531.csv",     # households
+                "220405" = c("export_enerdata_9259_031531.csv",     # households
                              "export_enerdata_9259_031431.csv"))    # services
 
-  skipRows <- if (subtype == "050422") 1 else 0
+  skipRows <- if (subtype == "220405") 1 else 0
 
   files[[subtype]] %>%
     lapply(read.csv, na.strings = c("n.a.", ""), skip = skipRows) %>%
     do.call(what = rbind) %>%
-    select(region = if (subtype == "050422") "ISO.code" else "ISO.Code",
+    select(region = if (subtype == "220405") "ISO.code" else "ISO.Code",
            period = "Year",
-           variable = if (subtype == "050422") "Item.code" else "Item.Code",
+           variable = if (subtype == "220405") "Item.code" else "Item.Code",
            value = "Value",
            unit = "Unit") %>%
     mutate(value = as.numeric(.data[["value"]])) %>%

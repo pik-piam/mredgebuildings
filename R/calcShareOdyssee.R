@@ -98,9 +98,8 @@ calcShareOdyssee <- function(subtype = c("enduse", "carrier", "enduse_carrier"),
     select(-"model", -"scenario", -"unit") %>%
     pivot_wider(names_from = "version", values_from = "value") %>%
     group_by(across(-all_of(c("new", "old")))) %>%
-    mutate(value = ifelse(all(.data$new == 0), .data$old, .data$new)) %>%
+    mutate(value = ifelse(all(.data$new == 0), .data$old, .data$new), .keep = "unused") %>%
     ungroup() %>%
-    select(-"old", -"new") %>%
     as.quitte()
 
 
