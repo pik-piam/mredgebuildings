@@ -100,7 +100,7 @@ calcFEUEefficiencies <- function(gasBioEquality = TRUE) {
 
 
 
-  #--- Calculate Efficiency Estimates
+  ## Calculate Efficiency Estimates ====
 
   # Regression Parameters for enduse.carrier Combinations
   regPars <- regPars %>%
@@ -121,7 +121,7 @@ calcFEUEefficiencies <- function(gasBioEquality = TRUE) {
     # Distinguish between logistic and asymptotic model
     mutate(x = log(.data$gdppop) * gdppopWeight + .data$period * (1 - gdppopWeight),
            pred = ifelse((.data$carrier == "elec" & .data$enduse == "space_cooling"),
-                         coolingPars$min + (coolingPars$max - coolingPars$min) /
+                         coolingPars[["min"]] + (coolingPars[["max"]] - coolingPars[["min"]]) /
                            (1 + exp(-.data$k * (.data$x + .data$x0))),
                          SSasymp(.data$gdppop, .data$Asym, .data$R0, .data$lrc))) %>%
 
@@ -129,7 +129,7 @@ calcFEUEefficiencies <- function(gasBioEquality = TRUE) {
     select("region", "period", "enduse", "carrier", "gdppop", "efficiency", "pred")
 
 
-  #--- Match predictions with existing historical data points
+  ## Match predictions with existing historical data points ====
 
   # Correction factor to adjust projections
   correctionFactors <- histEfficiencies %>%
