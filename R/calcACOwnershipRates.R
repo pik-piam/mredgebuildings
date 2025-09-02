@@ -10,7 +10,6 @@
 #'
 #' @importFrom magclass as.magpie
 #' @importFrom dplyr filter select rename mutate group_by slice_max ungroup coalesce anti_join full_join semi_join
-#' @importFrom tidyr as_tibble
 #' @importFrom quitte as.quitte
 #' @importFrom madrat toolCountryFill toolGetMapping
 #' @importFrom quitte interpolate_missing_periods
@@ -87,18 +86,6 @@ calcACOwnershipRates <- function() {
   odysseeData <- odysseeData %>%
     filter(.data$variable == "teqcli") %>%
     select("region", "period", "value") %>%
-    left_join(regionmapEDGE, by = c("region" = "CountryCode")) %>%
-    group_by(.data$region) %>%
-    (\(x) {
-      # split data into (non-)single-country regions
-      nonSingleCountry <- filter(x, .data$region != .data$RegionCodeEUR_ETP)
-      singleCountry    <- filter(x, .data$region == .data$RegionCodeEUR_ETP)
-      # take only max period for non-single-country regions
-      nonSingleCountry <- nonSingleCountry %>%
-        slice_max(order_by = .data$period, n = 1, with_ties = FALSE)
-      bind_rows(nonSingleCountry, singleCountry)
-    })() %>%
-    ungroup() %>%
     rename("valueOdyssee" = "value") %>%
 
     # Montenegro (MNE) shows an ownership rate of 100% which seems unrealistic
@@ -111,13 +98,8 @@ calcACOwnershipRates <- function() {
   # merge priority : odyssee > iea > surveys
 
   ownershipRates <- odysseeData %>%
-    full_join(ieaSingleCountry %>%
-                anti_join(odysseeData, by = "region"),
-              by = c("region", "period")) %>%
-    full_join(surveyData %>%
-                anti_join(odysseeData, by = "region") %>%
-                anti_join(ieaSingleCountry, by = "region"),
-              by = c("region", "period")) %>%
+    full_join(ieaSingleCountry, by = c("region", "period")) %>%
+    full_join(surveyData, by = c("region", "period")) %>%
     mutate(value = coalesce(.data$valueOdyssee, .data$valueIEASingle, .data$valueSurvey)) %>%
     select("region", "period", "value")
 
@@ -126,12 +108,20 @@ calcACOwnershipRates <- function() {
   ownershipRates <- ownershipRates %>%
     left_join(regionmapEDGE, by = c("region" = "CountryCode")) %>%
     group_by(across(all_of("RegionCodeEUR_ETP"))) %>%
-    mutate(period = ifelse(.data$region == .data$RegionCodeEUR_ETP,
-                           .data$period,
-                           as.integer(median(.data$period))),
-           variable = "ac ownership rate") %>%
+    mutate(
+      # For regions != RegionCodeEUR_ETP: filter max period and assign median period
+      # For regions == RegionCodeEUR_ETP: keep all entries with original periods
+      keepRow = ifelse(.data$region != .data$RegionCodeEUR_ETP,
+                       .data$period == max(.data$period),
+                       TRUE),
+      period = ifelse(.data$region != .data$RegionCodeEUR_ETP,
+                      as.integer(median(.data$period)),
+                      .data$period),
+      variable = "ac ownership rate"
+    ) %>%
     ungroup() %>%
-    select(-"RegionCodeEUR_ETP") %>%
+    filter(.data$keepRow) %>%
+    select(-"RegionCodeEUR_ETP", -"keepRow") %>%
     filter(!is.na(.data$value)) %>%
     interpolate_missing_periods()
 
