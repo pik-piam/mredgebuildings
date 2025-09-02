@@ -53,7 +53,8 @@ readHouseholdSurveys <- function(subtype = c("cooking", "lighting", "appliances"
   }
 
   data <- data %>%
-    mutate(period = ifelse(is.na(.data$period), median(.data$period, na.rm = TRUE), .data$period)) %>%
+    mutate(period = as.integer(.data$period),
+           period = ifelse(is.na(.data$period), median(.data$period, na.rm = TRUE), .data$period)) %>%
     as.quitte() %>%
     as.magpie()
 

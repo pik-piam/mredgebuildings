@@ -7,12 +7,11 @@
 #' @importFrom quitte as.quitte
 #' @importFrom magclass as.magpie
 
-readIEA_acOwnership <- function() { #nolint object_name_linter
+readIEA_acOwnership <- function() { # nolint: object_name_linter
 
-  data <- read.csv2("iea_ac-ownership-rates.csv")
+  data <- read.csv2("iea_ac-ownership-rates.csv", check.names = FALSE)
 
-  colnames(data) <- gsub("\\.", " ", colnames(data)) %>%
-    tolower()
+  colnames(data) <- tolower(colnames(data))
 
   data <- data %>%
     select(-"source") %>%
