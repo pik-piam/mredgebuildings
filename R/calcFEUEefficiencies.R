@@ -67,7 +67,20 @@ calcFEUEefficiencies <- function(gasBioEquality = TRUE) {
                                       where = "mredgebuildings")
 
 
+  # Cooling COP boundaries
+  coolingPars <- toolGetMapping("coolingEfficiencyParameters.csv",
+                                type = "sectoral",
+                                where = "mredgebuildings")
+
+
+
   # PROCESS DATA ---------------------------------------------------------------
+
+  coolingPars <- setNames(coolingPars$value, coolingPars$variable)
+
+  # Weight given to log(gdppop) for space_cooling.elec input variable
+  #   -> x = log(gdppop) * weight + period * (1 - weight)
+  gdppopWeight <- coolingPars[["gdppopWeight"]]
 
   # Upper temporal boundary of data set
   maxPeriod <- max(pfu$period)
@@ -87,7 +100,7 @@ calcFEUEefficiencies <- function(gasBioEquality = TRUE) {
 
 
 
-  #--- Calculate Efficiency Estimates
+  ## Calculate Efficiency Estimates ====
 
   # Regression Parameters for enduse.carrier Combinations
   regPars <- regPars %>%
@@ -104,17 +117,25 @@ calcFEUEefficiencies <- function(gasBioEquality = TRUE) {
     # Calculate missing efficiencies from regression parameters
     left_join(regPars, by = c("enduse", "carrier")) %>%
     group_by(across(all_of(c("carrier", "enduse")))) %>%
-    mutate(pred = SSasymp(.data[["gdppop"]], .data[["Asym"]], .data[["R0"]], .data[["lrc"]])) %>%
+
+    # Distinguish between logistic and asymptotic model
+    mutate(x = log(.data$gdppop) * gdppopWeight + .data$period * (1 - gdppopWeight),
+           pred = ifelse((.data$carrier == "elec" & .data$enduse == "space_cooling"),
+                         coolingPars[["min"]] + (coolingPars[["max"]] - coolingPars[["min"]]) /
+                           (1 + exp(-.data$k * (.data$x + .data$x0))),
+                         SSasymp(.data$gdppop, .data$Asym, .data$R0, .data$lrc))) %>%
+
     ungroup() %>%
-    select(-"Asym", -"R0", -"lrc", -"fe", -"ue")
+    select("region", "period", "enduse", "carrier", "gdppop", "efficiency", "pred")
 
 
-  #--- Match predictions with existing historical data points
+  ## Match predictions with existing historical data points ====
 
   # Correction factor to adjust projections
   correctionFactors <- histEfficiencies %>%
     mutate(factor = .data[["efficiency"]] / .data[["pred"]]) %>%
     select(-"gdppop", -"efficiency", -"pred") %>%
+    filter((.data$enduse != "space_cooling" & .data$carrier != "elec")) %>%
     group_by(across(all_of(c("region", "enduse", "carrier")))) %>%
 
     # Linearly extrapolate factors for all periods
@@ -128,7 +149,7 @@ calcFEUEefficiencies <- function(gasBioEquality = TRUE) {
   # NOTE: Since we correct some regression parameters, we need to adopt the projections
   #       for the respective enduse.carrier combination for all regions to not induce
   #       inconsistencies due to existing or non-existing data points.
-  euecToOverwrite <- unique(regParsCorrections$variable)
+  euecToOverwrite <- c(unique(regParsCorrections$variable), "space_cooling.elec")
 
 
   # NOTE: Countries missing the entire period range for a EC-EU-combination
