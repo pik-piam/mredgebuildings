@@ -90,7 +90,7 @@ calcOdysseeStock <- function(interpolate = FALSE) {
                                      sep = "*"),
                                .data$quantityCode),
              ideesCode = dot2Dash(.data$ideesCode)) %>%
-      select("variable", "ideesCode")
+      select("variable", "ideesCode", "ideesFill", "ideesFactor")
 
     ideesCodes <- dot2Dash(unique(m[["ideesCode"]]))
 
@@ -102,7 +102,8 @@ calcOdysseeStock <- function(interpolate = FALSE) {
       as.quitte() %>%
       removeColNa() %>%
       left_join(m, by = c(code = "ideesCode"),
-                relationship = "many-to-many")
+                relationship = "many-to-many") %>%
+      mutate(value = .data$value * .data$ideesFactor, .keep = "unused")
 
 
     x <- x %>%
@@ -129,9 +130,10 @@ calcOdysseeStock <- function(interpolate = FALSE) {
                               .data$before,
                               .data$after)) %>%
       ungroup() %>%
-      mutate(value = ifelse(is.na(.data$valueOdyssee),
-                            ifelse(is.na(.data$valueIDEES), NA, .data$fill),
-                            .data$valueOdyssee)) %>%
+      mutate(value = case_when(!is.na(.data$valueOdyssee) ~ .data$valueOdyssee,
+                               !is.na(.data$fill)         ~ .data$fill,
+                               .data$ideesFill            ~ .data$valueIDEES,
+                               .default                   = NA)) %>%
       select("region", "period", "variable", "value") %>%
       as.magpie(spatial = "region", temporal = "period", datacol = "value")
   }
