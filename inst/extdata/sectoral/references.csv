@@ -19,15 +19,15 @@ EuropeanCommissionRenovation;FALSE;FALSE;100;
 Hotmaps_typ_vin;TRUE;TRUE;100;
 Hotmaps_sec_vin;TRUE;TRUE;100;
 CensusHub_typ_vin;TRUE;TRUE;100;
-CensusHub_vin;TRUE;TRUE;1;
+CensusHub_vin;TRUE;TRUE;100;
 OdysseeIDEES_typ;FALSE;TRUE;100;
 OdysseeIDEES_sec;FALSE;TRUE;100;
 OdysseeIDEES_heating;FALSE;TRUE;50;
-HeatingSystemSales;TRUE;TRUE;100;applying appliance shares as floor area shares is a simplification - one could use type-specific weights
-VHK;TRUE;TRUE;10;applying appliance shares as floor area shares is a simplification - one could/should use type-specific weights
+HeatingSystemSales;TRUE;TRUE;200;applying appliance shares as floor area shares is a simplification - one could use type-specific weights
+VHK;TRUE;TRUE;200;applying appliance shares as floor area shares is a simplification - one could/should use type-specific weights
 EHI_statusQuo;TRUE;FALSE;100;This is extrapolated far beyond the original data
-StatusQuo;TRUE;TRUE;200;Same shares assumed for all regions and periods
-Pulsen;TRUE;TRUE;300;applying appliance shares as floor area shares
+StatusQuo;TRUE;TRUE;1000;Same shares assumed for all regions and periods
+Pulsen;TRUE;TRUE;5000;applying appliance shares as floor area shares
 Destatis;TRUE;TRUE;500;
 Destatis_typ;TRUE;TRUE;500;
 dummy_hsReplace;FALSE;FALSE;70;Hot fix to cap total renovated floor space
