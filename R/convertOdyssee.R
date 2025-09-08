@@ -14,7 +14,7 @@
 #'
 #' @export
 
-convertOdyssee <- function(x, subtype) {
+convertOdyssee <- function(x, subtype = "250109") {
 
   data <- x
 
@@ -38,7 +38,7 @@ convertOdyssee <- function(x, subtype) {
     "MEUR2015; MEUR2015; 1"
   )
 
-  if (subtype == "050422") {
+  if (subtype == "220405") {
     data <- toolUnitConversion(data, unitConversion)
   } else {
     for (i in seq_len(nrow(unitConversion))) {
