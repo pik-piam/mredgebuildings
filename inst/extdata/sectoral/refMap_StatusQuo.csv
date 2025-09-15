@@ -1,0 +1,65 @@
+variable,refVarGroup,hs,hsr,sec,.comment
+_biom->x,biom,biom,reel,Res,
+_biom->x,biom,biom,ehp1,Res,
+biom->biom,biom,biom,biom,Res,
+#_biom->x,biom,biom,sobo,Res,replacement not allowed
+_biom->x,biom,biom,gabo,Res,
+_biom->x,biom,biom,dihe,Res,
+#_biom->x,biom,biom,libo,Res,replacement not allowed
+_biom->x,biom,biom,h2bo,Res,
+_dihe->x,dihe,dihe,reel,Res,
+_dihe->x,dihe,dihe,ehp1,Res,
+_dihe->x,dihe,dihe,biom,Res,
+#_dihe->x,dihe,dihe,sobo,Res,replacement not allowed
+_dihe->x,dihe,dihe,gabo,Res,
+dihe->dihe,dihe,dihe,dihe,Res,
+#_dihe->x,dihe,dihe,libo,Res,replacement not allowed
+_dihe->x,dihe,dihe,h2bo,Res,
+_ehp1->x,ehp1,ehp1,reel,Res,
+ehp1->ehp1,ehp1,ehp1,ehp1,Res,
+_ehp1->x,ehp1,ehp1,biom,Res,
+#_ehp1->x,ehp1,ehp1,sobo,Res,replacement not allowed
+_ehp1->x,ehp1,ehp1,gabo,Res,
+_ehp1->x,ehp1,ehp1,dihe,Res,
+#_ehp1->x,ehp1,ehp1,libo,Res,replacement not allowed
+_ehp1->x,ehp1,ehp1,h2bo,Res,
+_gabo->x,gabo,gabo,reel,Res,
+_gabo->x,gabo,gabo,ehp1,Res,
+_gabo->x,gabo,gabo,biom,Res,
+#_gabo->x,gabo,gabo,sobo,Res,replacement not allowed
+gabo->gabo,gabo,gabo,gabo,Res,
+_gabo->x,gabo,gabo,dihe,Res,
+#_gabo->x,gabo,gabo,libo,Res,replacement not allowed
+_gabo->x,gabo,gabo,h2bo,Res,
+_h2bo->x,h2bo,h2bo,reel,Res,
+_h2bo->x,h2bo,h2bo,ehp1,Res,
+_h2bo->x,h2bo,h2bo,biom,Res,
+#_h2bo->x,h2bo,h2bo,sobo,Res,replacement not allowed
+_h2bo->x,h2bo,h2bo,gabo,Res,
+_h2bo->x,h2bo,h2bo,dihe,Res,
+#_h2bo->x,h2bo,h2bo,libo,Res,replacement not allowed
+h2bo->h2bo,h2bo,h2bo,h2bo,Res,
+_libo->x,libo,libo,reel,Res,
+_libo->x,libo,libo,ehp1,Res,
+_libo->x,libo,libo,biom,Res,
+#_libo->x,libo,libo,sobo,Res,replacement not allowed
+_libo->x,libo,libo,gabo,Res,
+_libo->x,libo,libo,dihe,Res,
+libo->libo,libo,libo,libo,Res,
+_libo->x,libo,libo,h2bo,Res,
+reel->reel,reel,reel,reel,Res,
+_reel->x,reel,reel,ehp1,Res,
+_reel->x,reel,reel,biom,Res,
+#_reel->x,reel,reel,sobo,Res,replacement not allowed
+_reel->x,reel,reel,gabo,Res,
+_reel->x,reel,reel,dihe,Res,
+#_reel->x,reel,reel,libo,Res,replacement not allowed
+_reel->x,reel,reel,h2bo,Res,
+_sobo->x,sobo,sobo,reel,Res,
+_sobo->x,sobo,sobo,ehp1,Res,
+_sobo->x,sobo,sobo,biom,Res,
+sobo->sobo,sobo,sobo,sobo,Res,
+_sobo->x,sobo,sobo,gabo,Res,
+_sobo->x,sobo,sobo,dihe,Res,
+_sobo->x,sobo,sobo,libo,Res,
+_sobo->x,sobo,sobo,h2bo,Res,

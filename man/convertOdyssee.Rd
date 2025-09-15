@@ -4,7 +4,7 @@
 \alias{convertOdyssee}
 \title{convertOdyssee}
 \usage{
-convertOdyssee(x, subtype)
+convertOdyssee(x, subtype = "250109")
 }
 \arguments{
 \item{x}{MAgPIE object with data from Odyssee Database}

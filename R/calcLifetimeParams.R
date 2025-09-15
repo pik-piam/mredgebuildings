@@ -4,10 +4,14 @@
 #' detailed EIA publication for building sector appliances and equipment. The
 #' range of the building shell lifetime is taken from Skarning et al. 2017.
 #'
+#' The standing lifetime is estimated assuming a steady state, i.e. constant
+#'   flows and stock. For shape parameters > 2, it is roughly half of scale
+#'   parameter.
+#'
 #' @source https://www.eia.gov/analysis/studies/buildings/equipcosts/pdf/full.pdf
 #' @source http://dx.doi.org/10.1016/j.enbuild.2017.01.080
 #'
-#' @param subtype character, type of asset (either `building`, 'heatingSystem'
+#' @param subtype character, type of asset (either 'building', 'heatingSystem'
 #'   or 'buildingShell')
 #' @param granularity character, name of BRICK granularity
 #' @returns MagPIE object with Weibull lifetime distribution parameters
@@ -16,6 +20,7 @@
 #'
 #' @importFrom madrat readSource calcOutput toolGetMapping
 #' @importFrom magclass add_dimension as.magpie mselect getSets mbind
+#'   add_columns
 #' @importFrom quitte inline.data.frame
 #' @importFrom dplyr .data %>% mutate filter everything pull
 #'   right_join
@@ -53,6 +58,31 @@ calcLifetimeParams <- function(subtype, granularity = NULL) {
     }
 
     return(list(scale = scale, shape = shape))
+  }
+
+  # find Weibull parameters that result in given percentiles
+  weibullFromRange <- function(x, probFrom, probTo) {
+    x$shape <- log(log(1 - probTo) / log(1 - probFrom), x$to / x$from)
+    x$scale <- x$from / (-log(1 - probFrom))^(1 / x$shape)
+    x
+  }
+
+  # calculate standing life time assuming steady state
+  calcStandingLt <- function(x, factors = NULL) {
+    scale <- mselect(x, variable = "scale", collapseNames = TRUE)
+    shape <- mselect(x, variable = "shape", collapseNames = TRUE)
+
+    nm <- "standingLt"
+    x <- add_columns(x, addnm = nm, dim = "variable")
+    x[, , nm] <- scale * gamma(2 / shape) / gamma(1 / shape)
+
+    if (!is.null(factors)) {
+      for (item in names(factors)) {
+        x[, , item] <- x[, , item] * factors[[item]]
+      }
+    }
+
+    x
   }
 
 
@@ -157,31 +187,27 @@ calcLifetimeParams <- function(subtype, granularity = NULL) {
       ### derive Weibull parameters ####
 
       # we assume probabilities of the lower and upper value respectively
-      prob <- c(from = 0.25, to = 0.75)
-      ranges <- ranges %>%
-        mutate(shape = log(log(1 - prob[["to"]]) / log(1 - prob[["from"]]),
-                           .data[["to"]] / .data[["from"]]),
-               scale = .data[["from"]] / (-log(1 - prob[["from"]]))^(1 / .data[["shape"]]))
+      ranges <- weibullFromRange(ranges, probFrom = 0.2, probTo = 0.8)
       params <- rbind(params, ranges[, colnames(params)])
 
       # average coefficient of variance (cv)
       cv <- params %>%
-        mutate(var = .data[["scale"]]^2 * (gamma(1 + 2 / .data[["shape"]]) -
-                                             gamma(1 + 1 / .data[["shape"]])^2),
-               mean = .data[["scale"]] * gamma(1 + 1 / .data[["shape"]]),
-               cv = sqrt(.data[["var"]]) / .data[["mean"]]) %>%
+        mutate(var = .data$scale^2 * (gamma(1 + 2 / .data$shape) -
+                                        gamma(1 + 1 / .data$shape)^2),
+               mean = .data$scale * gamma(1 + 1 / .data$shape),
+               cv = sqrt(.data$var) / .data$mean) %>%
         getElement("cv") %>%
         mean()
 
       # for central values, we assume they have the average cv of the other
       # technologies' lifetime distribution
       central <- central %>%
-        mutate(sd = cv * .data[["mean"]])
+        mutate(sd = cv * .data$mean)
       central <- do.call(rbind,
                          Map(approxWeibull, m = central$mean, s = central$sd)) %>%
         cbind(central) %>%
-        mutate(shape = as.numeric(.data[["shape"]]),
-               scale = as.numeric(.data[["scale"]]))
+        mutate(shape = as.numeric(.data$shape),
+               scale = as.numeric(.data$scale))
 
       params <- rbind(params, central[, colnames(params)])
 
@@ -191,14 +217,14 @@ calcLifetimeParams <- function(subtype, granularity = NULL) {
       # assume residential biomass value for commercial
       params <- params %>%
         rbind(params %>%
-                filter(.data[["subsector"]] == "Res",
-                       .data[["hs"]] == "biom") %>%
+                filter(.data$subsector == "Res",
+                       .data$hs == "biom") %>%
                 mutate(subsector = "Com"))
 
       # assume biomass values for coal
       params <- params %>%
         rbind(params %>%
-                filter(.data[["hs"]] == "biom") %>%
+                filter(.data$hs == "biom") %>%
                 mutate(hs = "sobo"))
 
       # all technologies included?
@@ -216,7 +242,6 @@ calcLifetimeParams <- function(subtype, granularity = NULL) {
       typMap <- toolGetMapping("dim_typ.csv",
                                type = "sectoral", where = "brick") %>%
         pull("subsector", "typ")
-
       params <- params %>%
         pivot_longer(c("scale", "shape"), names_to = "variable") %>%
         as.magpie(datacol = "value")
@@ -226,6 +251,11 @@ calcLifetimeParams <- function(subtype, granularity = NULL) {
           mselect(subsector = typMap[typ], collapseNames = TRUE) %>%
           add_dimension(add = "typ", nm = typ)
       }))
+
+      # we assume heat pumps to be less old and oil and coal heaters to be older
+      # then steady state case
+      params <- calcStandingLt(params,
+                               factors = c(ehp1 = 0.5, libo = 1.4, sobo = 1.6))
 
       description <- "Weibull lifetime distribution parameters for heating systems"
     },
@@ -244,15 +274,12 @@ calcLifetimeParams <- function(subtype, granularity = NULL) {
       )
 
       # we assume probabilities of the lower and upper value respectively
-      prob <- c(from = 0.25, to = 0.75)
-      params <- params %>%
-        mutate(shape = log(log(1 - prob[["to"]]) / log(1 - prob[["from"]]),
-                           .data[["to"]] / .data[["from"]]),
-               scale = .data[["from"]] /
-                 (-log(1 - prob[["from"]]))^(1 / .data[["shape"]])) %>%
+      params <- weibullFromRange(params, probFrom = 0.1, probTo = 0.9) %>%
         select(-"from", -"to") %>%
         pivot_longer(everything(), names_to = "variable") %>%
         as.magpie(datacol = "value")
+
+      params <- calcStandingLt(params)
 
       description <- "Weibull lifetime distribution parameters for the building shell"
     },
@@ -286,6 +313,6 @@ calcLifetimeParams <- function(subtype, granularity = NULL) {
   return(list(x = agg$x,
               weight = agg$weight,
               min = 0,
-              unit = "[scale] = yr; [shape] = 1",
+              unit = "[scale,standingLt] = yr; [shape] = 1",
               description = description))
 }
