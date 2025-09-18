@@ -78,7 +78,7 @@ calcLifetimeParams <- function(subtype, granularity = NULL) {
 
     if (!is.null(factors)) {
       for (item in names(factors)) {
-        x[, , item] <- x[, , item] * factors[[item]]
+        x[, , paste(item, nm, sep = ".")] <- x[, , paste(item, nm, sep = ".")] * factors[[item]]
       }
     }
 
