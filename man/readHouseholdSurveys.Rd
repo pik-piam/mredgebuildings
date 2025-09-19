@@ -2,15 +2,15 @@
 % Please edit documentation in R/readHouseholdSurveys.R
 \name{readHouseholdSurveys}
 \alias{readHouseholdSurveys}
-\title{Read household survey data on energy carrier use for cooking and lighting}
+\title{Read household survey data on energy carrier use for cooking, lighting and appliances ownership rates}
 \usage{
-readHouseholdSurveys(subtype = c("cooking", "lighting"))
+readHouseholdSurveys(subtype = c("cooking", "lighting", "appliances"))
 }
 \arguments{
 \item{subtype}{Character specifying end-use}
 }
 \description{
-Read household survey data on energy carrier use for cooking and lighting
+Read household survey data on energy carrier use for cooking, lighting and appliances ownership rates
 }
 \references{
 https://hdl.handle.net/10419/301069

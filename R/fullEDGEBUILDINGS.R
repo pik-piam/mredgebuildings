@@ -32,6 +32,7 @@ fullEDGEBUILDINGS <- function(rev = 0) {
              file = "f_gdp.cs4r")
   calcOutput("Surface",                           file = "f_surface.cs4r")
   calcOutput("Urban",       scenario = scenarios, naming = "scenario", file = "f_urban.cs4r")
+  calcOutput("ACOwnershipRates",                  file = "f_acOwnershipRates.cs4r")
 
   # climate data ---------------------------------------------------------------
   calcOutput("HDDCDD", fromSource = TRUE, file = "f_hddcdd.cs4r")
