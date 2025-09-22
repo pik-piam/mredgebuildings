@@ -71,16 +71,17 @@ calcLifetimeParams <- function(subtype, granularity = NULL) {
   calcStandingLt <- function(x, factors = NULL) {
     scale <- mselect(x, variable = "scale", collapseNames = TRUE)
     shape <- mselect(x, variable = "shape", collapseNames = TRUE)
-
-    nm <- "standingLt"
-    x <- add_columns(x, addnm = nm, dim = "variable")
-    x[, , nm] <- scale * gamma(2 / shape) / gamma(1 / shape)
+    mFactors <- new.magpie(names = getNames(scale), fill = 1, sets = getSets(scale))
 
     if (!is.null(factors)) {
       for (item in names(factors)) {
-        x[, , paste(item, nm, sep = ".")] <- x[, , paste(item, nm, sep = ".")] * factors[[item]]
+        mFactors[, , item] <- factors[[item]]
       }
     }
+
+    nm <- "standingLt"
+    x <- add_columns(x, addnm = nm, dim = "variable")
+    x[, , nm] <- scale * gamma(2 / shape) / gamma(1 / shape) * mFactors
 
     x
   }
