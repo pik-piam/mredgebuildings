@@ -13,21 +13,32 @@ toolAggregateBrick <- function(x, granularity = NULL, weight = NULL) {
 
   # FUNCTIONS ------------------------------------------------------------------
 
+  # select elements in given dimension
+  .mselect <- function(m, dim, rel) {
+    args <- c(list(m), magclass::setNames(list(rel$dim), dim))
+    do.call(magclass::mselect, args)
+  }
+
+
   .aggregate <- function(m, maps, dim, w) {
     if (is.null(m)) {
       return(NULL)
     }
 
     rel <- maps[[dim]]
+    m <- .mselect(m, dim, rel)
 
     if (identical(rel$dim, rel$dimAgg)) {
-      args <- c(list(m), setNames(list(rel$dimAgg), dim))
-      return(do.call(mselect, args))
+      return(m)
     }
 
-    if (!is.null(w) && !dim %in% magclass::getSets(w)) {
-      warning("Dimension ", dim, " is missing in weight. Using unweighted average.")
-      w <- 1
+    if (!is.null(w)) {
+      w <- if (dim %in% magclass::getSets(w)) {
+        .mselect(w, dim, rel)
+      } else {
+        warning("Dimension ", dim, " is missing in weight. Using unweighted average.")
+        1
+      }
     }
 
     toolAggregate(m, rel = rel, weight = w,
