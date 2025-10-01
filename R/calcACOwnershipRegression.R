@@ -22,13 +22,15 @@
 #'   \item Non-linear regression using nls() to estimate final parameters
 #' }
 #'
-#' @return data.frame with regression parameters
+#' @return magpie object with global regression parameters (alpha, beta, gamma, delta)
 #'
 #' @author Hagen Tockhorn
 #'
 #' @importFrom dplyr select filter left_join group_by reframe across all_of
 #' @importFrom tibble as_tibble
 #' @importFrom quitte as.quitte
+#' @importFrom magclass as.magpie
+#' @importFrom madrat calcOutput
 #' @importFrom stats lm nls coef
 
 calcACOwnershipRegression <- function() {
@@ -59,22 +61,22 @@ calcACOwnershipRegression <- function() {
     select("region", "period", "penetration" = "value") %>%
     filter(!is.na(.data$penetration),
            .data$penetration != 0) %>%
-
     left_join(gdppop %>%
                 select("region", "period", "gdppop" = "value"),
               by = c("region", "period")) %>%
-
     left_join(hddcdd %>%
                 filter(.data$variable == "CDD",
                        .data$tlim == 20,
                        .data$rcp == "historical") %>%
                 group_by(across(all_of(c("region", "period")))) %>%
-                reframe(CDD = mean(.data$value)))
+                reframe(CDD = mean(.data$value)),
+              by = c("region", "period")) %>%
 
+    # filter outlier data points for stable regression
+    filter(.data$region != "RUS")
 
-  # linear fit to obtain start values for non-linear fit
+  # linear fit
   estimateLin <- lm("log(1/penetration - 1) ~ gdppop:CDD", data = fitData)
-
 
   # assign start values
   startValues <- list(a = estimateLin$coefficients[["(Intercept)"]],

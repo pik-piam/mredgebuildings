@@ -2,17 +2,18 @@
 #'
 #' Calculates air conditioning ownership rates per household by combining
 #' data from household surveys, IEA, and Odyssee. Data sources are prioritized in the
-#' following order: Odyssee > IEA > household surveys.
+#' following order: Odyssee > IEA > household surveys. Returns all available historical
+#' data points without period harmonization.
 #'
-#' @return A data frame with one data point per region
+#' @return magpie object with all available historical data points per region
 #'
 #' @author Hagen Tockhorn
 #'
 #' @importFrom magclass as.magpie
-#' @importFrom dplyr filter select rename mutate group_by slice_max ungroup coalesce anti_join full_join semi_join
-#' @importFrom quitte as.quitte
-#' @importFrom madrat toolCountryFill toolGetMapping
-#' @importFrom quitte interpolate_missing_periods
+#' @importFrom tibble as_tibble
+#' @importFrom dplyr filter select rename mutate coalesce full_join semi_join
+#' @importFrom quitte as.quitte removeColNa
+#' @importFrom madrat readSource calcOutput toolCountryFill toolGetMapping toolCountry2isocode
 
 calcACOwnershipRates <- function() {
 
@@ -43,10 +44,6 @@ calcACOwnershipRates <- function() {
   regionmapIEA <- toolGetMapping("regionmappingIEA_acOwnership.csv",
                                  type = "regional",
                                  where = "mredgebuildings")
-
-  regionmapEDGE <- toolGetMapping("regionmappingISO-EDGE_EUR_ETP.csv",
-                                  type = "regional",
-                                  where = "mredgebuildings")
 
 
 
@@ -94,36 +91,16 @@ calcACOwnershipRates <- function() {
 
   ## Merge Datasets ====
 
-  # target : obtain merged data set with one data point per region
+  # target : obtain merged data set keeping all historical data points
   # merge priority : odyssee > iea > surveys
 
   ownershipRates <- odysseeData %>%
     full_join(ieaSingleCountry, by = c("region", "period")) %>%
     full_join(surveyData, by = c("region", "period")) %>%
-    mutate(value = coalesce(.data$valueOdyssee, .data$valueIEASingle, .data$valueSurvey)) %>%
-    select("region", "period", "value")
-
-
-  # ensure all countries within EDGE region have the same period to avoid aggregation issues
-  ownershipRates <- ownershipRates %>%
-    left_join(regionmapEDGE, by = c("region" = "CountryCode")) %>%
-    group_by(across(all_of("RegionCodeEUR_ETP"))) %>%
-    mutate(
-      # For regions != RegionCodeEUR_ETP: filter max period and assign median period
-      # For regions == RegionCodeEUR_ETP: keep all entries with original periods
-      keepRow = ifelse(.data$region != .data$RegionCodeEUR_ETP,
-                       .data$period == max(.data$period),
-                       TRUE),
-      period = ifelse(.data$region != .data$RegionCodeEUR_ETP,
-                      as.integer(median(.data$period)),
-                      .data$period),
-      variable = "ac ownership rate"
-    ) %>%
-    ungroup() %>%
-    filter(.data$keepRow) %>%
-    select(-"RegionCodeEUR_ETP", -"keepRow") %>%
-    filter(!is.na(.data$value)) %>%
-    interpolate_missing_periods()
+    mutate(value = coalesce(.data$valueOdyssee, .data$valueIEASingle, .data$valueSurvey),
+           variable = "ac ownership rate") %>%
+    select("region", "period", "variable", "value") %>%
+    filter(!is.na(.data$value))
 
 
   ## Aggregation Weights ====

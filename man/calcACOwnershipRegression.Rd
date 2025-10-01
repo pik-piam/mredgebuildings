@@ -7,7 +7,7 @@
 calcACOwnershipRegression()
 }
 \value{
-data.frame with regression parameters
+magpie object with global regression parameters (alpha, beta, gamma, delta)
 }
 \description{
 This function estimates global regression parameters for air conditioner (AC)

@@ -7,12 +7,13 @@
 calcACOwnershipRates()
 }
 \value{
-A data frame with one data point per region
+magpie object with all available historical data points per region
 }
 \description{
 Calculates air conditioning ownership rates per household by combining
 data from household surveys, IEA, and Odyssee. Data sources are prioritized in the
-following order: Odyssee > IEA > household surveys.
+following order: Odyssee > IEA > household surveys. Returns all available historical
+data points without period harmonization.
 }
 \author{
 Hagen Tockhorn
