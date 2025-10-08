@@ -44,6 +44,11 @@ calcPopulationBuildings <- function(granularity = NULL) {
   # split population in SFH/MFH
   pop <- pop * typShare
 
+  # add theoretical 'commercial' population
+  pop <- dimSums(pop, "typ") %>%
+    add_dimension(dim = 3.3, add = "typ", nm = "Com") %>%
+    mbind(pop)
+
   # aggregate to BRICK granularity
   agg <- toolAggregateBrick(pop, granularity, NULL)
 
