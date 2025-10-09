@@ -116,7 +116,7 @@ calcACOwnershipRates <- function() {
   data <- ownershipRates %>%
     as.quitte() %>%
     as.magpie() %>%
-    toolCountryFill(0, verbosity = 2)
+    toolCountryFill(NA, verbosity = 2)
 
   pop <- pop %>%
     as.quitte() %>%

@@ -92,13 +92,12 @@ calcACOwnershipRatesFilled <- function(endOfHistory = 2025) {
     group_by(across(all_of(c("region")))) %>%
     slice_max(order_by = .data$period, n = 1, with_ties = FALSE) %>%
     ungroup() %>%
-    mutate(betaReg = (alpha - log(1 / .data$penetration - 1)) / (.data$gdppop^delta * .data$CDD^gamma),
-           betaReg = ifelse(.data$betaReg < 0, NA, .data$betaReg)) %>%
+    mutate(betaReg = (alpha - log(1 / .data$penetration - 1)) / (.data$gdppop^delta * .data$CDD^gamma)) %>%
     select("region", "betaReg") %>%
 
     # fill missing regions with global beta
     right_join(allRegions, by = "region") %>%
-    mutate(betaReg = ifelse(is.na(.data$betaReg), beta, .data$betaReg))
+    mutate(betaReg = ifelse(is.na(.data$betaReg) | is.infinite(.data$betaReg), beta, .data$betaReg))
 
 
   ## Fill Historical Timeline 1990-endOfHistory ====
@@ -136,7 +135,7 @@ calcACOwnershipRatesFilled <- function(endOfHistory = 2025) {
   data <- filledRates %>%
     as.quitte() %>%
     as.magpie() %>%
-    toolCountryFill(0, verbosity = 2)
+    toolCountryFill(NA, verbosity = 2)
 
   pop <- pop %>%
     as.quitte() %>%

@@ -35,6 +35,12 @@
 
 calcACOwnershipRegression <- function() {
 
+  # PARAMETERS -----------------------------------------------------------------
+
+  # Minimum AC ownership rate
+  minOwnershipRate <- 0.02
+
+
   # READ-IN DATA ---------------------------------------------------------------
 
   # AC ownership rates
@@ -70,10 +76,7 @@ calcACOwnershipRegression <- function() {
                        .data$rcp == "historical") %>%
                 group_by(across(all_of(c("region", "period")))) %>%
                 reframe(CDD = mean(.data$value)),
-              by = c("region", "period")) %>%
-
-    # filter outlier data points for stable regression
-    filter(.data$region != "RUS")
+              by = c("region", "period"))
 
   # linear fit
   estimateLin <- lm("log(1/penetration - 1) ~ gdppop:CDD", data = fitData)
@@ -91,11 +94,24 @@ calcACOwnershipRegression <- function() {
                         control = list(maxiter = 1000))
 
 
+
+  # ASSUMPTIONS ----------------------------------------------------------------
+
+  ## Minimum AC Ownership Rate ====
+
+  # Accounting for cultural/behavioral influences reflected in disproportionally
+  # low historical reference values, the alpha parameter from the global fit is
+  # is corrected by an exogeneous lower boundary that has been chosen in accordance
+  # with the available reference data.
+
+  alpha <- log(1/minOwnershipRate - 1)
+
+
   # extract fit parameters to data frame
   fitPars <- data.frame(region   = "GLO",
                         variable = c("alpha", "beta", "gamma", "delta"),
                         value    = c(
-                          coef(estimateNonLin)[["a"]],
+                          alpha,
                           (-1) * coef(estimateNonLin)[["b"]],
                           coef(estimateNonLin)[["c"]],
                           coef(estimateNonLin)[["d"]]
