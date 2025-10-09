@@ -6,19 +6,21 @@
 #'
 #' @author Hagen Tockhorn
 #'
-#' @importFrom dplyr mutate select
-#' @importFrom tidyr pivot_longer
+#' @importFrom dplyr %>% .data all_of mutate pull rename select
 #' @importFrom madrat toolCountry2isocode toolGetMapping
-#' @importFrom quitte as.quitte
 #' @importFrom magclass as.magpie
+#' @importFrom openxlsx read.xlsx
+#' @importFrom quitte as.quitte
+#' @importFrom tidyr pivot_longer replace_na
 
 readHouseholdSurveys <- function(subtype = c("cooking", "lighting", "appliances")) {
 
   # read data sheet
   data <- switch(subtype,
-                 cooking    = read.xlsx("Cooking_fuels.xlsx"),
-                 lighting   = read.xlsx("Lighting_fuels.xlsx"),
-                 appliances = read.xlsx("Appliances.xlsx"))
+                 cooking    = "Cooking_fuels.xlsx",
+                 lighting   = "Lighting_fuels.xlsx",
+                 appliances = "Appliances.xlsx") %>%
+    read.xlsx(sep.names = " ")
 
   # region mapping
   regionmap <- toolGetMapping("regionmappingHouseholdSurveys.csv",
@@ -31,8 +33,7 @@ readHouseholdSurveys <- function(subtype = c("cooking", "lighting", "appliances"
   # change country codes
   data <- data %>%
     mutate(region = toolCountry2isocode(country = .data$country_long,
-                                        mapping = setNames(as.list(regionmap$regionTarget),
-                                                           regionmap$region))) %>%
+                                        mapping = pull(regionmap, "regionTarget", "region"))) %>%
     select(-"country_long") %>%
     rename("period" = "year")
 
@@ -41,14 +42,14 @@ readHouseholdSurveys <- function(subtype = c("cooking", "lighting", "appliances"
       pivot_longer(cols = -all_of(c("region", "period")),
                    names_to = "variable",
                    values_to = "value") %>%
-      mutate(variable = sub(".01", "", .data$variable),
+      mutate(variable = sub("\\.01$", "", .data$variable),
              value = replace_na(.data$value, 0))
   } else {
     data %>%
       pivot_longer(cols = -all_of(c("region", "period")),
                    names_to = "carrier",
                    values_to = "value") %>%
-      mutate(carrier = sub(".\\", "", .data$carrier),
+      mutate(carrier = sub("\\.", "", .data$carrier),
              enduse  = subtype)
   }
 

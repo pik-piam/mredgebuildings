@@ -7,10 +7,13 @@
 #'
 #' @author Hagen Tockhorn
 #'
-#' @importFrom dplyr left_join mutate group_by across all_of ungroup reframe as_tibble
-#' @importFrom quitte as.quitte
+#' @importFrom dplyr %>% .data across all_of as_tibble filter group_by left_join
+#'   mutate reframe rename select ungroup
+#' @importFrom madrat calcOutput toolCountry2isocode toolCountryFill
+#'   toolGetMapping
 #' @importFrom magclass as.magpie
-#' @importFrom madrat toolGetMapping
+#' @importFrom quitte as.quitte
+#' @importFrom tidyr replace_na
 
 convertHouseholdSurveys <- function(x, subtype) {
 

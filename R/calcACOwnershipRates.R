@@ -5,15 +5,17 @@
 #' following order: Odyssee > IEA > household surveys. Returns all available historical
 #' data points without period harmonization.
 #'
-#' @return magpie object with all available historical data points per region
+#' @returns magpie object with all available historical data points per region
 #'
 #' @author Hagen Tockhorn
 #'
+#' @importFrom dplyr %>% .data coalesce filter full_join mutate rename select
+#'   semi_join
+#' @importFrom madrat calcOutput readSource toolCountry2isocode toolCountryFill
+#'   toolGetMapping
 #' @importFrom magclass as.magpie
-#' @importFrom tibble as_tibble
-#' @importFrom dplyr filter select rename mutate coalesce full_join semi_join
 #' @importFrom quitte as.quitte removeColNa
-#' @importFrom madrat readSource calcOutput toolCountryFill toolGetMapping toolCountry2isocode
+#' @importFrom tibble as_tibble
 
 calcACOwnershipRates <- function() {
 

@@ -7,16 +7,16 @@
 #'
 #' @param endOfHistory last period of historical data (default: 2025)
 #'
-#' @return magpie object with filled AC ownership rates for all regions (1990-endOfHistory)
+#' @returns magpie object with filled AC ownership rates for all regions (1990-endOfHistory)
 #'
 #' @author Hagen Tockhorn
 #'
-#' @importFrom dplyr select filter left_join group_by across all_of mutate ungroup
-#'   slice_max right_join semi_join
-#' @importFrom tibble as_tibble
-#' @importFrom quitte as.quitte removeColNa
+#' @importFrom dplyr %>% .data across all_of filter group_by left_join mutate
+#'   reframe right_join select semi_join slice_max ungroup
+#' @importFrom madrat calcOutput toolCountryFill
 #' @importFrom magclass as.magpie
-#' @importFrom madrat toolCountryFill calcOutput
+#' @importFrom quitte as.quitte removeColNa
+#' @importFrom tibble as_tibble
 
 calcACOwnershipRatesFilled <- function(endOfHistory = 2025) {
 

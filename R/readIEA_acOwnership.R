@@ -2,10 +2,10 @@
 #'
 #' @author Hagen Tockhorn
 #'
-#' @importFrom dplyr select mutate rename
-#' @importFrom tidyr pivot_longer
-#' @importFrom quitte as.quitte
+#' @importFrom dplyr %>% .data all_of mutate rename select
 #' @importFrom magclass as.magpie
+#' @importFrom quitte as.quitte
+#' @importFrom tidyr pivot_longer
 
 readIEA_acOwnership <- function() { # nolint: object_name_linter
 

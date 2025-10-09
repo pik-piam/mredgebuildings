@@ -22,16 +22,17 @@
 #'   \item Non-linear regression using nls() to estimate final parameters
 #' }
 #'
-#' @return magpie object with global regression parameters (alpha, beta, gamma, delta)
+#' @returns magpie object with global regression parameters (alpha, beta, gamma, delta)
 #'
 #' @author Hagen Tockhorn
 #'
-#' @importFrom dplyr select filter left_join group_by reframe across all_of
-#' @importFrom tibble as_tibble
-#' @importFrom quitte as.quitte
-#' @importFrom magclass as.magpie
+#' @importFrom dplyr %>% .data across all_of filter group_by left_join reframe
+#'   select
 #' @importFrom madrat calcOutput
-#' @importFrom stats lm nls coef
+#' @importFrom magclass as.magpie
+#' @importFrom quitte as.quitte
+#' @importFrom stats coef lm nls
+#' @importFrom tibble as_tibble
 
 calcACOwnershipRegression <- function() {
 
@@ -104,7 +105,7 @@ calcACOwnershipRegression <- function() {
   # is corrected by an exogeneous lower boundary that has been chosen in accordance
   # with the available reference data.
 
-  alpha <- log(1/minOwnershipRate - 1)
+  alpha <- log(1 / minOwnershipRate - 1)
 
 
   # extract fit parameters to data frame
