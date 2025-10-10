@@ -8,7 +8,7 @@
 #'
 #' @importFrom madrat readSource
 #' @importFrom dplyr %>% .data select mutate group_by across all_of any_of
-#'   summarise left_join full_join cross_join rename
+#'   summarise left_join full_join cross_join rename as_tibble
 #' @importFrom tidyr pivot_longer complete
 #' @importFrom quitte as.quitte inline.data.frame interpolate_missing_periods
 #' @importFrom madrat toolGetMapping
@@ -32,6 +32,9 @@ calcCarrierPrices <- function() {
 
   # prices w/o VAT w/o CO2 price
 
+  # assume coarse VAT of 1.2
+  vat <- 1.2
+
 
   ## district heating ====
 
@@ -40,7 +43,7 @@ calcCarrierPrices <- function() {
     as.quitte(na.rm = TRUE) %>%
     select("region", "period", "value") %>%
     mutate(carrier = "heat",
-           value = .data[["value"]] * 3.6E-3 / usd2eur) # EUR/GJ to USD/kWh
+           value = .data[["value"]] * 3.6E-3 / usd2eur / vat) # EUR/GJ to USD/kWh
 
   # extrapolate prices linearly for past periods, constant in future
   extrapolate <- function(p, v, until) {
@@ -58,7 +61,36 @@ calcCarrierPrices <- function() {
     filter(.data[["period"]] %in% periods)
 
 
-  ## other carriers ====
+  ## liquids, elec, gas, coal ====
+
+  oecdPrices <- readSource("IEA_OECD_Prices", "EPT_prices_NC_per_toe") %>%
+    mselect(V3 = "HOUSEHOLDS",
+            V4 = "NCPRICE/TOE",
+            collapseNames = TRUE) %>%
+    as_tibble()
+
+  # map carriers
+  carrierMap  <- toolGetMapping("carrierMapping_IEA_OECD.csv",
+                                type = "sectoral",
+                                where = "mredgebuildings")
+  oecdPrices <- oecdPrices %>%
+    right_join(carrierMap, by = c(V2 = "carrier2")) %>%
+    select(-"V2", -"carrier1")
+
+  # convert to USD
+  lcu2usd <- data.frame(region = unique(oecdPrices$region)) %>%
+    mutate(lcu2usd =   GDPuc::toolConvertSingle(1, .data$region, 2021,
+                                                unit_in = "current LCU",
+                                                unit_out = "current US$MER"))
+  oecdPrices <- oecdPrices %>%
+    left_join(lcu2usd, by = "region") %>%
+    mutate(value = .data$value / vat * .data$lcu2usd / 1.163E4, # lcu/toe -> usd/kWh
+           .keep = "unused") %>%
+    interpolate_missing_periods(periods) %>%
+    filter(.data$period %in% periods)
+
+
+  ## project with ECEMF ====
 
   # map ECEMF carriers
   # assumption: liquids and gases remain fossil
@@ -90,10 +122,22 @@ calcCarrierPrices <- function() {
     filter(.data[["period"]] %in% periods)
 
   # all prices
-  prices <- rbind(ecemfPrices, dhPrices) %>%
-    mutate(variable = "price",
+  prices <- rbind(oecdPrices, dhPrices) %>%
+    full_join(ecemfPrices,
+              by = c("region", "period", "carrier"),
+              suffix = c("", "ECEMF")) %>%
+    group_by(across(all_of(c("region", "carrier")))) %>%
+    mutate(eod = if (all(is.na(.data$value))) NA else  max(.data$period[!is.na(.data$value)]),
+           value = case_when(!is.na(.data$value) ~ .data$value,
+                             all(is.na(.data$value)) ~ .data$valueECEMF,
+                             .default = .data$valueECEMF *
+                               (.data$value / .data$valueECEMF)[.data$period == .data$eod]),
+           variable = "price",
            unit = "USD/kWh",
-           level = "central")
+           level = "central") %>%
+    ungroup() %>%
+    select(-"valueECEMF", -"eod") %>%
+    filter(.data$period %in% periods)
 
 
 
@@ -187,11 +231,11 @@ calcCarrierPrices <- function() {
                             type = "sectoral", where = "brick") %>%
     select("carrier") %>%
     unique()
-  data <- data %>%
-    right_join(carrier, by = "carrier")
-  if (any(is.na(data))) {
-    stop("Incomplete mapping of energy carriers.")
-  }
+  # data <- data %>%
+  #   right_join(carrier, by = "carrier")
+  # if (any(is.na(data))) {
+  #   stop("Incomplete mapping of energy carriers.")
+  # }
 
   data <- data  %>%
     as.quitte() %>%
@@ -200,7 +244,8 @@ calcCarrierPrices <- function() {
   # weight: FE demand
   feBuildings <- calcOutput("WeightFeBuildings", aggregate = FALSE) %>%
     dimSums("typ") %>%
-    time_interpolate(periods, extrapolation_type = "constant")
+    time_interpolate(periods, extrapolation_type = "constant") %>%
+    toolCountryFillAvg()
 
   return(list(x = data,
               unit = "USD2020/kWh or t_CO2/kWh",
