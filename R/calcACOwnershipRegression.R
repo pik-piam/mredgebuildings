@@ -39,7 +39,7 @@ calcACOwnershipRegression <- function() {
   # PARAMETERS -----------------------------------------------------------------
 
   # Minimum AC ownership rate
-  minOwnershipRate <- 0.02
+  minOwnershipRate <- 0.013
 
 
   # READ-IN DATA ---------------------------------------------------------------
