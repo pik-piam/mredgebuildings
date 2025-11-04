@@ -76,7 +76,6 @@ calcUvalueParameters <- function(endOfHistory = 2025) {
     as_tibble()
 
 
-  #TODO: improve this with new HDDCDD function   #nolint: todo_comment_linter
   # Heating / Cooling Degree-Days
   hddcdd <- calcOutput("HDDCDD", fromSource = TRUE, aggregate = FALSE) %>%
     as_tibble()
@@ -355,10 +354,9 @@ calcUvalueParameters <- function(endOfHistory = 2025) {
 
   # Filter correct historical limit temperatures
   hddcdd <- hddcdd %>%
-    filter(.data$variable %in% c("HDD_14", "CDD_20"),
-           .data$scenario == "SSP1_2_6") %>%
-    separate(col = "variable", into = c("variable", "tlim"), sep = "_") %>%
-    filter(.data$period <= endOfHistory) %>%
+    filter((.data$variable == "HDD" & .data$tlim == 14) | (.data$variable == "CDD" & .data$tlim == 20),
+           .data$ssp == "SSP2",
+           .data$rcp == "historical") %>%
     select("region", "period", "variable", "value")
 
 

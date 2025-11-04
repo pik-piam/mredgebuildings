@@ -22,20 +22,13 @@ readHouseholdSurveys <- function(subtype = c("cooking", "lighting", "appliances"
                  appliances = "Appliances.xlsx") %>%
     read.xlsx(sep.names = " ")
 
-  # region mapping
-  regionmap <- toolGetMapping("regionmappingHouseholdSurveys.csv",
-                              type = "regional",
-                              where = "mredgebuildings")
-
   # standardize column names
   colnames(data) <- tolower(colnames(data))
 
   # change country codes
   data <- data %>%
-    mutate(region = toolCountry2isocode(country = .data$country_long,
-                                        mapping = pull(regionmap, "regionTarget", "region"))) %>%
-    select(-"country_long") %>%
-    rename("period" = "year")
+    rename("region" = "country_long",
+           "period" = "year")
 
   data <- if (subtype == "appliances") {
     data %>%
