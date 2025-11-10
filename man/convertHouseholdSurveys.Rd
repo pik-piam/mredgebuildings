@@ -2,15 +2,17 @@
 % Please edit documentation in R/convertHouseholdSurveys.R
 \name{convertHouseholdSurveys}
 \alias{convertHouseholdSurveys}
-\title{Convert household survey data on energy carrier use for cooking and lighting}
+\title{Convert household survey data on energy carrier use for cooking, lighting and appliances ownership rates}
 \usage{
-convertHouseholdSurveys(x)
+convertHouseholdSurveys(x, subtype)
 }
 \arguments{
 \item{x}{data.frame containing survey data}
+
+\item{subtype}{specifies data subset}
 }
 \description{
-Convert household survey data on energy carrier use for cooking and lighting
+Convert household survey data on energy carrier use for cooking, lighting and appliances ownership rates
 }
 \references{
 https://hdl.handle.net/10419/301069
