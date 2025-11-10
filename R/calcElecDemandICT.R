@@ -148,7 +148,7 @@ calcElecDemandICT <- function(endOfHistory = 2025) {
     replace_na(list("value" = 0))
 
 
-  # extrapolate data using exponential fit for history, linear for scenarios
+  # extrapolate scenario data to 2100 using linear fit over last two periods (here: 2045-50)
   data <- data %>%
     group_by(across(all_of(c("region", "scenario", "variable")))) %>%
     group_modify(~ {
