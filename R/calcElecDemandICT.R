@@ -1,7 +1,7 @@
 #' Calculate Electricity Demand for ICT from Data Center Demands
 #'
-#' This function processes historical and scenario electricity demand data for ICT
-#' (Information and Communication Technology) and data centers. The initial data
+#' This function processes historical and scenario electricity demand data for
+#' Information and Communication Technology (ICT) and data centers (DC). The initial data
 #' comes from exogenous projections using the Digital Transformation Level (DGI)
 #' as the primary driver of demand, with IEA data serving as the historical baseline.
 #'
@@ -12,14 +12,14 @@
 #'   \item Upper demand boundary (DGI elasticity from historical service dominant phases)
 #' }
 #'
-#' Data is downscaled from R5 to country-level using historical data center counts,
+#' Data is downscaled from R5 to country-level using historical DC counts,
 #' with fixed network shares calculated at the end of the historical period. Historical
 #' data (IEA Base) is separated and harmonized with SSP scenario projections.
 #'
 #' @param endOfHistory upper temporal boundary for historical data
 #'
 #' @returns A magpie object containing ICT electricity demand data calculated from
-#'   data center demands across regions, time periods, and scenarios.
+#'   DC demands across regions, time periods, and scenarios.
 #'
 #' @author Hagen Tockhorn
 #'
@@ -39,6 +39,22 @@ calcElecDemandICT <- function(endOfHistory = 2025) {
 
   # TWh to EJ conversion factor
   twh2ej <- 3600 * 10^12 / 10^18
+
+  # variable mapping
+  variableMap <- c("dc lower bound"      = "dc lower",
+                   "dc upper bound"      = "dc upper",
+                   "dc mean"             = "dc mean",
+                   "dc central estimate" = "dc central",
+                   "lower bound dc"      = "dc lower",
+                   "upper bound dc"      = "dc upper",
+                   "mean dc"             = "dc mean",
+                   "central estimate dc" = "dc central",
+                   "ict lower"           = "ict lower",
+                   "ict upper"           = "ict upper",
+                   "mean"                = "ict mean",
+                   "central estimate"    = "ict central",
+                   "lower ict"           = "ict lower",
+                   "upper ict"           = "ict upper")
 
 
 
@@ -69,20 +85,23 @@ calcElecDemandICT <- function(endOfHistory = 2025) {
 
   # PROCESS DATA ---------------------------------------------------------------
 
-  # calculate global network share from R12 data
-  networkShare <- dataR12 %>%
-    filter(.data$period == endOfHistory) %>%
-    group_by(across(all_of("variable"))) %>%
+  # re-map variables in R5 and R12
+  dataR12 <- dataR12 %>%
+    mutate(variable = recode(.data$variable, !!!variableMap)) %>%
+    separate(col = "variable", into = c("variable", "estimate"), sep = " ")
+
+  dataR5 <- dataR5 %>%
+    mutate(variable = recode(.data$variable, !!!variableMap)) %>%
+    separate(col = "variable", into = c("variable", "estimate"), sep = " ")
+
+
+  # calculate global network/DC ratio from R12 data
+  networkDCRatio <- dataR12 %>%
+    group_by(across(all_of(c("variable", "estimate", "period")))) %>%
     reframe(value = sum(.data$value)) %>%
     ungroup() %>%
     pivot_wider(names_from = "variable", values_from = "value") %>%
-    mutate(
-      lowerShare   = .data[["lower ict"]] / .data[["dc lower bound"]] - 1,
-      upperShare   = .data[["upper ict"]] / .data[["dc upper bound"]] - 1,
-      meanShare    = .data[["mean"]] / .data[["dc mean"]] - 1,
-      centralShare = .data[["central estimate"]] / .data[["dc central estimate"]] - 1,
-      .keep = "unused"
-    )
+    mutate(ratio = .data$ict / .data$dc - 1, .keep = "unused")
 
 
   data <- dataR5 %>%
@@ -97,7 +116,7 @@ calcElecDemandICT <- function(endOfHistory = 2025) {
                             .data$period > endOfHistory)
 
       # append IEA future data to each SSP scenario
-      ieaScenarioExpanded <- map_dfr(unique(df$scenario[grepl("^SSP", df$scenario)]), function(ssp) {
+      ieaScenarioExpanded <- map_dfr(grep("^SSP", unique(df$scenario), value = TRUE), function(ssp) {
         ieaScenario %>%
           mutate(scenario = ssp)
       })
@@ -121,27 +140,18 @@ calcElecDemandICT <- function(endOfHistory = 2025) {
               by = "region") %>%
 
     # disaggregate to ISO country level
-    group_by(across(all_of(c("regionTarget", "period", "variable", "scenario")))) %>%
+    group_by(across(all_of(c("regionTarget", "period", "variable", "scenario", "estimate")))) %>%
     mutate(value = .data$value * .data$weight / sum(.data$weight, na.rm = TRUE)) %>%
     ungroup() %>%
     select(-"regionTarget", -"weight") %>%
 
     # calculate ICT (DC + Network) demand using global network share
-    pivot_wider(names_from = "variable", values_from = "value") %>%
-    cross_join(networkShare) %>%
-    mutate(
-      "lower"   = .data[["lower bound dc"]]      * (1 + .data[["lowerShare"]]),
-      "upper"   = .data[["upper bound dc"]]      * (1 + .data[["upperShare"]]),
-      "mean"    = .data[["mean dc"]]             * (1 + .data[["meanShare"]]),
-      "central" = .data[["central estimate dc"]] * (1 + .data[["centralShare"]])
-    ) %>%
-    pivot_longer(cols = -all_of(c("region", "period", "scenario", "unit")),
-                 names_to = "variable",
-                 values_to = "value") %>%
+    left_join(networkDCRatio, by = c("estimate", "period")) %>%
+    mutate(value = .data$value * (1 + .data$ratio), .keep = "unused") %>%
+    select(-"variable", -"unit") %>%
+    rename("variable" = "estimate") %>%
 
     # convert TWh/yr to EJ/yr
-    filter(.data$variable %in% c("lower", "upper", "mean", "central")) %>%
-    select(-"unit") %>%
     mutate(value = .data$value * twh2ej,
            carrier = "elec",
            enduse = "ict") %>%
