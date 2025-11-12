@@ -47,5 +47,5 @@ fullEDGEBUILDINGS <- function(rev = 0) {
   calcOutput("FEUEefficiencies",                                   file = "f_feue_efficiencies.cs4r")
   calcOutput("EfficiencyRegression",            aggregate = FALSE, file = "f_feue_efficiencyPars.cs4r")
   calcOutput("UvalueParameters",                                   file = "f_uvaluePars.cs4r")
-
+  calcOutput("ElecDemandICT",                                      file = "f_elecICT.cs4r")
 }
