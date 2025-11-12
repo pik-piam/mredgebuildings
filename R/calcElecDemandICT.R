@@ -40,22 +40,6 @@ calcElecDemandICT <- function(endOfHistory = 2025) {
   # TWh to EJ conversion factor
   twh2ej <- 3600 * 10^12 / 10^18
 
-  # variable mapping
-  variableMap <- c("dc lower bound"      = "dc lower",
-                   "dc upper bound"      = "dc upper",
-                   "dc mean"             = "dc mean",
-                   "dc central estimate" = "dc central",
-                   "lower bound dc"      = "dc lower",
-                   "upper bound dc"      = "dc upper",
-                   "mean dc"             = "dc mean",
-                   "central estimate dc" = "dc central",
-                   "ict lower"           = "ict lower",
-                   "ict upper"           = "ict upper",
-                   "mean"                = "ict mean",
-                   "central estimate"    = "ict central",
-                   "lower ict"           = "ict lower",
-                   "upper ict"           = "ict upper")
-
 
 
   # READ-IN DATA ---------------------------------------------------------------
@@ -80,6 +64,12 @@ calcElecDemandICT <- function(endOfHistory = 2025) {
   regionmap <- toolGetMapping("regionmappingIEA_R5.csv",
                               type = "regional",
                               where = "mredgebuildings")
+
+  # variable mapping
+  variableMap <- toolGetMapping("variableMapping_ICT.csv",
+                                type = "sectoral",
+                                where = "mredgebuildings")
+  variableMap <- setNames(variableMap$variableTarget, variableMap$variable)
 
 
 
