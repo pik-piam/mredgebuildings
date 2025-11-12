@@ -7,15 +7,15 @@
 calcElecDemandICT(endOfHistory = 2025)
 }
 \arguments{
-\item{endOfHistory}{upper temporal boundary for histocial data}
+\item{endOfHistory}{upper temporal boundary for historical data}
 }
 \value{
 A magpie object containing ICT electricity demand data calculated from
-data center demands across regions, time periods, and scenarios.
+DC demands across regions, time periods, and scenarios.
 }
 \description{
-This function processes historical and scenario electricity demand data for ICT
-(Information and Communication Technology) and data centers. The initial data
+This function processes historical and scenario electricity demand data for
+Information and Communication Technology (ICT) and data centers (DC). The initial data
 comes from exogenous projections using the Digital Transformation Level (DGI)
 as the primary driver of demand, with IEA data serving as the historical baseline.
 }
@@ -27,7 +27,7 @@ The function processes multiple demand estimates:
 \item Upper demand boundary (DGI elasticity from historical service dominant phases)
 }
 
-Data is downscaled from R5 to country-level using historical data center counts,
+Data is downscaled from R5 to country-level using historical DC counts,
 with fixed network shares calculated at the end of the historical period. Historical
 data (IEA Base) is separated and harmonized with SSP scenario projections.
 }
