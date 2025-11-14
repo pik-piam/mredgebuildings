@@ -27,7 +27,6 @@ calcFloorspacePerCap <- function(scenarios, granularity = NULL) {
   getSets(pop)[3] <- getSets(fs)[3]
   getItems(pop, "scenario") <- sub("pop_", "", getItems(pop, "scenario"))
 
-  # scale residential floor space to match stock in 2000
   # TODO: get rid of this calculated building stock # nolint: todo_comment_linter.
   stockRes <- calcOutput("BuildingStock", aggregate = FALSE) %>%
     mselect(variable = "floor") %>%
@@ -35,10 +34,9 @@ calcFloorspacePerCap <- function(scenarios, granularity = NULL) {
     time_interpolate(t, extrapolation_type = "constant") %>%
     toolCountryFillAvg(verbosity = 2)
   getSets(stockRes)[2] <- getSets(fs)[2]
-  fsRes <- mselect(fs, variable = "residential", collapseNames = TRUE)
-  fsRes <- fsRes * collapseDim(dimSums(stockRes[, 2000, ]) / fsRes[, 2000, ])
 
   # split floor space into typ and loc
+  fsRes <- mselect(fs, variable = "residential", collapseNames = TRUE)
   fsRes <- fsRes * (stockRes / dimSums(stockRes))
   fsCom <- mselect(fs, variable = "commercial", collapseNames = TRUE) *
     (dimSums(stockRes, "typ") / dimSums(stockRes))
