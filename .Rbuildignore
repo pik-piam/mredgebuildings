@@ -12,4 +12,3 @@
 ^Makefile$
 ^.*CITATION.cff$
 ^\.git$
-^.claude$
