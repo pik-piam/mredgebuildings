@@ -18,8 +18,7 @@ calcFloorspacePerCap <- function(scenarios, granularity = NULL) {
   scenarios <- mrdrivers::toolReplaceShortcuts(scenarios) %>% unique()
 
   # TODO: get rid of the mrremind dependency # nolint: todo_comment_linter
-  fs <- readSource("EdgeBuildings", subtype = "Floorspace", subset = scenarios) %>%
-    mselect(variable = "residential", collapseNames = TRUE)
+  fs <- readSource("EdgeBuildings", subtype = "Floorspace", subset = scenarios)
 
   t <- getItems(fs, 2)
 
@@ -28,17 +27,21 @@ calcFloorspacePerCap <- function(scenarios, granularity = NULL) {
   getSets(pop)[3] <- getSets(fs)[3]
   getItems(pop, "scenario") <- sub("pop_", "", getItems(pop, "scenario"))
 
-  # scale floor space to match stock in 2000
-  stock <- calcOutput("BuildingStock", aggregate = FALSE) %>%
+  # TODO: get rid of this calculated building stock # nolint: todo_comment_linter.
+  stockRes <- calcOutput("BuildingStock", aggregate = FALSE) %>%
     mselect(variable = "floor") %>%
     dimSums(c("variable", "vin", "hs", "bs")) %>%
     time_interpolate(t, extrapolation_type = "constant") %>%
     toolCountryFillAvg(verbosity = 2)
-  getSets(stock)[2] <- getSets(fs)[2]
-  fs <- fs * collapseDim(dimSums(stock[, 2000, ]) / fs[, 2000, ])
+  getSets(stockRes)[2] <- getSets(fs)[2]
 
   # split floor space into typ and loc
-  fs <- fs * (stock / dimSums(stock))
+  fsRes <- mselect(fs, variable = "residential", collapseNames = TRUE)
+  fsRes <- fsRes * (stockRes / dimSums(stockRes))
+  fsCom <- mselect(fs, variable = "commercial", collapseNames = TRUE) *
+    (dimSums(stockRes, "typ") / dimSums(stockRes))
+  fsCom <- add_dimension(fsCom, dim = 3.2, add = "typ", nm = "Com")
+  fs <- mbind(fsRes, fsCom)
 
   # filter common scenarios
   s <- intersect(getItems(fs, "scenario"), getItems(pop, "scenario"))
@@ -55,6 +58,6 @@ calcFloorspacePerCap <- function(scenarios, granularity = NULL) {
   return(list(x = agg$x,
               weight = agg$weight,
               min = 0,
-              description = "Residential floor space per capita",
+              description = "Floor space per capita",
               unit = "m2/cap"))
 }
