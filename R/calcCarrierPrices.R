@@ -39,6 +39,14 @@ calcCarrierPrices <- function() {
         } else {
           e
         }
+      },
+      warning = function(w) {
+        if (grepl("NAs have been generated for countries lacking conversion factors",
+                  w$message)) {
+          x
+        } else {
+          w
+        }
       }
     )
   }
@@ -165,7 +173,7 @@ calcCarrierPrices <- function() {
            value = case_when(!is.na(.data$value) ~ .data$value,
                              all(is.na(.data$value)) ~ .data$valueECEMF,
                              .default = .data$valueECEMF *
-                                (.data$value / .data$valueECEMF)[.data$period == .data$eod]),
+                               (.data$value / .data$valueECEMF)[.data$period == .data$eod]),
            variable = "price",
            unit = "USD/kWh",
            level = "central") %>%
