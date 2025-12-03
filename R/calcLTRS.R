@@ -10,7 +10,7 @@
 #' reliable references assure overall consistency.
 #'
 #' @param refGranularity character, for \code{"typ"}, you get the most granular
-#'   data with residential buildings split by SFh and MFH. However, this data is
+#'   data with residential buildings split by SFH and MFH. However, this data is
 #'   less reliable and incomplete. \code{"sec"} will aggregate residential
 #'   buildings to Res. It should be complete for EU27.
 #' @returns MagPIE object
@@ -22,7 +22,8 @@
 #' @importFrom utils read.csv
 #' @importFrom tidyr pivot_wider replace_na
 #' @importFrom dplyr %>% .data filter left_join select group_by summarise all_of
-#'   across group_modify mutate ungroup pull rename matches
+#'   across group_modify mutate ungroup pull rename matches semi_join right_join
+#'   reframe
 
 calcLTRS <- function(refGranularity = c("typ", "sec")) {
 
@@ -132,13 +133,17 @@ calcLTRS <- function(refGranularity = c("typ", "sec")) {
   mapCensusHub <- toolGetMapping("CensusHub_typ_vin2LTRS.csv",
                                  type = "sectoral", where = "mredgebuildings")
   mapOdysseeIDEESheating <- toolGetMapping("OdysseeIDEES_heating2LTRS.csv",
-                                           type = "sectoral", where = "mredgebuildings")
+                                           type = "sectoral", where = "mredgebuildings",
+                                           returnPathOnly = TRUE) %>%
+    read.csv(encoding = "UTF-8")
   mapOdysseeIDEEStyp <- toolGetMapping("OdysseeIDEES_typ2LTRS.csv",
                                        type = "sectoral", where = "mredgebuildings")
   mapHotmaps <- toolGetMapping("Hotmaps_sec_vin2LTRS.csv",
                                type = "sectoral", where = "mredgebuildings")
   mapIDEES <- toolGetMapping("IDEES_heatingShare2LTRS.csv",
-                             type = "sectoral", where = "mredgebuildings")
+                             type = "sectoral", where = "mredgebuildings",
+                             returnPathOnly = TRUE) %>%
+    read.csv(encoding = "UTF-8")
 
 
   ## reference data ====

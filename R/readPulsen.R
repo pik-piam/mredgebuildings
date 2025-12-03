@@ -12,7 +12,7 @@
 #' @export
 
 readPulsen <- function() {
-  read.csv2("pulsen_2023_hpReplace.csv") %>%
+  read.csv2("pulsen_2023_hpReplace.csv", encoding = "UTF-8") %>%
     mutate(across(.data$value, as.numeric)) %>%
     as.quitte() %>%
     as.magpie()

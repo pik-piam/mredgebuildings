@@ -4,12 +4,15 @@
 #'
 #' @param subtype character, matching reference
 #'
-#' @importFrom magclass mbind as.magpie collapseDim
+#' @importFrom magclass mbind as.magpie collapseDim mselect
 #' @importFrom madrat readSource toolCountryFill toolGetMapping
-#' @importFrom quitte as.quitte interpolate_missing_periods
+#' @importFrom quitte as.quitte interpolate_missing_periods removeColNa
 #' @importFrom dplyr group_by filter mutate .data across all_of reframe distinct
+#'   left_join %>% summarise select ungroup inner_join semi_join left_join
+#'   right_join
 #' @importFrom tidyr complete expand_grid
 #' @importFrom zoo rollmean
+#' @importFrom utils read.csv
 #'
 calcMatchingReference <- function(subtype) {
 
@@ -24,7 +27,7 @@ calcMatchingReference <- function(subtype) {
   refMap <- toolGetMapping(paste0("refMap_", subtype, ".csv"),
                            type = "sectoral", where = "mredgebuildings",
                            returnPathOnly = TRUE) %>%
-    read.csv(comment.char = "#") %>%
+    read.csv(comment.char = "#", encoding = "UTF-8") %>%
     filter(!is.na(.data[["variable"]]))
 
 
