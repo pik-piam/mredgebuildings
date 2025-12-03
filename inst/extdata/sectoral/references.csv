@@ -34,3 +34,5 @@ dummy_hsReplace;FALSE;FALSE;70;Hot fix to cap total renovated floor space
 Eurostat_loc;FALSE;TRUE;50;
 Eurostat_hs_loc;FALSE;TRUE;50;
 Eurostat_typ_loc;TRUE;TRUE;300;
+LTRS_typ;TRUE;TRUE;100;
+LTRS_sec;TRUE;TRUE;200;

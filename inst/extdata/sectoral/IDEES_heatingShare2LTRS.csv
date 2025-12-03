@@ -1,0 +1,17 @@
+variable,typ,technology
+Res_AdvElc,Res,Wärmepumpe
+Res_Biomass,Res,Biomasse
+Res_ConvElc,Res,Sonstige
+Res_DistrHeat,Res,Fernwärme
+Res_Gas,Res,Erdgas
+Res_H2,Res,Sonstige
+Res_LPG+Oil,Res,Heizöl
+Res_Solids,Res,Sonstige
+Com_AdvElc,Com,Wärmepumpe
+Com_Biomass,Com,Biomasse
+Com_ConvElc,Com,Sonstige
+Com_DistrHeat,Com,Fernwärme
+Com_GasHP+GasTH,Com,Erdgas
+Com_H2,Com,Sonstige
+Com_LPG+Oil,Com,Heizöl
+Com_Solids,Com,Sonstige

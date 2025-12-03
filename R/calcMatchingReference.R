@@ -957,10 +957,57 @@ calcMatchingReference <- function(subtype) {
 
     },
 
+    ## LTRS_typ ====
+
+    LTRS_typ = {
+      data <- calcOutput("LTRS", refGranularity = "typ", aggregate = FALSE) %>%
+        as.quitte(na.rm = TRUE) %>%
+        removeColNa()
+      # map to BRICK reference variables
+      data <- refMap %>%
+        select("variable", "refVarGroup", "typ", ".hs", "vin") %>%
+        unique() %>%
+        inner_join(data, by = c(.hs = "technology", "typ", "vin")) %>%
+        .calcShares() %>%
+        select("region", "period", "variable", "value")
+
+
+      minVal <- 0
+      maxVal <- 1
+      unit <- "1"
+      description <- "Share of heating systems in each vintage"
+    },
+
+
+    ## LTRS_sec ====
+
+    LTRS_sec = {
+      data <- calcOutput("LTRS", refGranularity = "sec", aggregate = FALSE) %>%
+        as.quitte(na.rm = TRUE) %>%
+        removeColNa()
+      # map to BRICK reference variables
+      data <- refMap %>%
+        select("variable", "refVarGroup", "sec", ".hs", "vin") %>%
+        unique() %>%
+        inner_join(data, by = c(.hs = "technology", sec = "typ", "vin")) %>%
+        .calcShares() %>%
+        select("region", "period", "variable", "value")
+
+
+      minVal <- 0
+      maxVal <- 1
+      unit <- "1"
+      description <- "Share of heating systems in each vintage"
+    },
+
     stop("The subtype '", subtype, "' is an invalid matching reference.")
   )
 
   # nolint end: todo_comment_linter.
+
+
+
+  # OUTPUT ---------------------------------------------------------------------
 
   data <- data %>%
     as.magpie() %>%
