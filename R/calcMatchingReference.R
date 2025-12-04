@@ -971,7 +971,6 @@ calcMatchingReference <- function(subtype) {
         select("variable", "refVarGroup", "typ", ".hs", "vin") %>%
         unique() %>%
         inner_join(data, by = c(.hs = "technology", "typ", "vin")) %>%
-        .calcShares() %>%
         select("region", "period", "variable", "value")
 
 
@@ -993,7 +992,6 @@ calcMatchingReference <- function(subtype) {
         select("variable", "refVarGroup", "sec", ".hs", "vin") %>%
         unique() %>%
         inner_join(data, by = c(.hs = "technology", sec = "typ", "vin")) %>%
-        .calcShares() %>%
         select("region", "period", "variable", "value")
 
 
