@@ -992,7 +992,8 @@ calcMatchingReference <- function(subtype) {
         select("variable", "refVarGroup", "sec", ".hs", "vin") %>%
         unique() %>%
         inner_join(data, by = c(.hs = "technology", sec = "typ", "vin")) %>%
-        select("region", "period", "variable", "value")
+        select("region", "period", "variable", "value") %>%
+        interpolate_missing_periods(2000:2023, expand.values = TRUE)
 
 
       minVal <- 0
