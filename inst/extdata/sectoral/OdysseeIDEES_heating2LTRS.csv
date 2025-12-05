@@ -1,0 +1,15 @@
+variable,typ,technology
+MFH_libo,MFH,Heizöl
+MFH_gabo,MFH,Erdgas
+MFH_dihe,MFH,Fernwärme
+MFH_biom,MFH,Biomasse
+MFH_elec,MFH,Sonstige
+MFH_ehp1,MFH,Wärmepumpe
+MFH_reel,MFH,Sonstige
+SFH_libo,SFH,Heizöl
+SFH_gabo,SFH,Erdgas
+SFH_dihe,SFH,Fernwärme
+SFH_biom,SFH,Biomasse
+SFH_elec,SFH,Sonstige
+SFH_ehp1,SFH,Wärmepumpe
+SFH_reel,SFH,Sonstige
