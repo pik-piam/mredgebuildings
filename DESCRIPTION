@@ -1,8 +1,8 @@
 Type: Package
 Package: mredgebuildings
 Title: Prepare data to be used by the EDGE-Buildings model
-Version: 0.10.15
-Date: 2025-11-25
+Version: 0.11.0
+Date: 2025-12-05
 Authors@R: c(
     person("Robin", "Hasse", , "robin.hasse@pik-potsdam.de", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0003-1818-3186")),
@@ -25,8 +25,9 @@ Imports:
     data.table,
     dplyr,
     GDPuc,
-    minpack.lm,
+    ipfp,
     lme4,
+    minpack.lm,
     openxlsx,
     purrr,
     rlang,
