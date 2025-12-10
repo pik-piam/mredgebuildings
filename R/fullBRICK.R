@@ -57,4 +57,12 @@ fullBRICK <- function(rev = 0, granularity = NULL) {
              file = "f_lifetimeHeatingSystem.cs4r")
   calcOutput("LifetimeParams", subtype = "buildingShell",
              file = "f_lifetimeBuildingShell.cs4r")
+
+
+
+  # Other ----------------------------------------------------------------------
+
+  calcOutput("StatusQuoShare",
+             aggregate = FALSE,
+             file = "f_statusQuoShare.cs4r")
 }
