@@ -5,7 +5,7 @@
 #' @param subtype character, matching reference
 #'
 #' @importFrom magclass mbind as.magpie collapseDim mselect
-#' @importFrom madrat readSource toolCountryFill toolGetMapping
+#' @importFrom madrat readSource toolCountryFill toolGetMapping getISOlist
 #' @importFrom quitte as.quitte interpolate_missing_periods removeColNa
 #' @importFrom dplyr group_by filter mutate .data across all_of reframe distinct
 #'   left_join %>% summarise select ungroup inner_join semi_join left_join
@@ -649,23 +649,11 @@ calcMatchingReference <- function(subtype) {
     ## StatusQuo ====
 
     StatusQuo = {
-      data <- calcOutput("HeatingSystemReplacement", aggregate = FALSE) %>%
+      data <- calcOutput("StatusQuoShare", aggregate = FALSE) %>%
         as.quitte(na.rm = TRUE) %>%
-        select("old", "new", "value") %>%
-        mutate(across(all_of(c("old", "new")), as.character)) %>%
-        group_by(.data$old) %>%
-        mutate(value = proportions(.data$value)) %>%
-        ungroup() %>%
-        filter(.data$old == .data$new)
+        select(old = "hs", new = "hs", "value")
       data <- refMap %>%
-        left_join(data, by = c(hs = "old", hsr = "new"))
-
-      data <- data %>%
-        # for technologies without data, we assume the minimum status quo bias
-        # seen among the technologies with data
-        mutate(value = ifelse(.data$hs == .data$hsr & is.na(.data$value),
-                              min(data$value, na.rm = TRUE),
-                              .data$value)) %>%
+        left_join(data, by = c(hs = "old", hsr = "new")) %>%
         distinct(.data$variable, .data$hs, .data$value, .keep_all = TRUE) %>%
         group_by(.data$hs) %>%
         # calculate probability for non-identical replacement
