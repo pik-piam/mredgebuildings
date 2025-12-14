@@ -1,9 +1,16 @@
-#' Calculate Filled Air Conditioning Ownership Rates with Regional Parameters
+#' Calculate Filled Air Conditioning Ownership Rates with Regional Calibration
 #'
 #' This function fills AC ownership rates for all regions from 1990 to endOfHistory using
-#' global regression parameters and calculates region-specific beta coefficients where
-#' historical data is available. Regional betas are derived to match the last historical
-#' data point per region.
+#' global regression parameters (alpha, beta, gamma, delta) with region-specific GDP shifts.
+#' The GDP shift (gdppopShift) is calculated for each region to horizontally shift the
+#' global S-curve along the GDP axis so that it passes through the region's most recent
+#' historical data point. This calibrates the global curve to match available historical
+#' data while maintaining the same functional form across all regions.
+#'
+#' The logistic formula used is:
+#' \deqn{penetration = 1 / (1 + \exp(\alpha - \beta \cdot (gdppop - gdppopShift)^\delta \cdot CDD^\gamma))}
+#'
+#' Regions without historical data use the global curve as-is (gdppopShift = 0).
 #'
 #' @param endOfHistory last period of historical data (default: 2025)
 #'
@@ -17,6 +24,7 @@
 #' @importFrom magclass as.magpie
 #' @importFrom quitte as.quitte removeColNa
 #' @importFrom tibble as_tibble
+#' @importFrom tidyr replace_na
 
 calcACOwnershipRatesFilled <- function(endOfHistory = 2025) {
 
@@ -38,7 +46,7 @@ calcACOwnershipRatesFilled <- function(endOfHistory = 2025) {
     as.quitte()
 
   # CDD
-  hddcdd <- calcOutput("HDDCDD", aggregate = FALSE) %>%
+  hddcdd <- calcOutput("HDDCDD", scenario = "ssp2", aggregate = FALSE) %>%
     as_tibble()
 
   # population (aggregation weights)
@@ -80,24 +88,36 @@ calcACOwnershipRatesFilled <- function(endOfHistory = 2025) {
               by = c("region", "period"))
 
 
-  ## Calculate Regional Betas ====
+  ## Calculate Regional Parameters ====
 
-  # prepare data with all regions
-  allRegions <- gdppop %>%
-    select("region") %>%
-    unique()
-
-  # calculate regional betas from last historical data point (non-linear approach)
-  betaReg <- fitData %>%
+  # Calculate regional gdppopShift from last historical data point
+  # gdppopShift shifts the S-curve horizontally to match the reference value
+  gdppopShift <- fitData %>%
     group_by(across(all_of(c("region")))) %>%
     slice_max(order_by = .data$period, n = 1, with_ties = FALSE) %>%
     ungroup() %>%
-    mutate(betaReg = (alpha - log(1 / .data$penetration - 1)) / (.data$gdppop^delta * .data$CDD^gamma)) %>%
-    select("region", "betaReg") %>%
 
-    # fill missing regions with global beta
-    right_join(allRegions, by = "region") %>%
-    mutate(betaReg = ifelse(is.na(.data$betaReg) | is.infinite(.data$betaReg), beta, .data$betaReg))
+    # Get CDD at endOfHistory for alpha calculation
+    select(-"CDD") %>%
+    left_join(hddcdd %>%
+                filter(.data$variable == "CDD",
+                       .data$tlim == 20,
+                       .data$rcp == "historical",
+                       .data$period == endOfHistory) %>%
+                group_by(across(all_of(c("region")))) %>%
+                reframe(CDD = mean(.data$value)),
+              by = "region") %>%
+
+    mutate(gdppopShift = .data$gdppop - ((alpha - log(1 / .data$penetration - 1)) /
+                                           (beta * .data$CDD^gamma))^(1 / delta)) %>%
+    select("region", "gdppopShift") %>%
+
+    # fill missing regions with zero shift (use global curve as-is)
+    right_join(gdppop %>%
+                 select("region") %>%
+                 unique(),
+               by = "region") %>%
+    mutate(gdppopShift = ifelse(is.na(.data$gdppopShift) | is.infinite(.data$gdppopShift), 0, .data$gdppopShift))
 
 
   ## Fill Historical Timeline 1990-endOfHistory ====
@@ -114,10 +134,13 @@ calcACOwnershipRatesFilled <- function(endOfHistory = 2025) {
                 reframe(CDD = mean(.data$value)),
               by = c("region", "period")) %>%
 
-    left_join(betaReg, by = "region") %>%
+    left_join(gdppopShift, by = "region") %>%
+    replace_na(list("gdppopShift" = 0)) %>%
 
-    mutate(value = 1 / (1 + exp(alpha - .data$betaReg * .data$gdppop^delta * .data$CDD^gamma)),
-           variable = "ac ownership rate") %>%
+    mutate(
+      value = 1 / (1 + exp(alpha - beta * (.data$gdppop - .data$gdppopShift)^delta * .data$CDD^gamma)),
+      variable = "ac ownership rate"
+    ) %>%
 
     select("region", "period", "variable", "value")
 
