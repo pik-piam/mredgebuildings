@@ -4,10 +4,12 @@
 \alias{calcElecDemandICT}
 \title{Calculate Electricity Demand for ICT from Data Center Demands}
 \usage{
-calcElecDemandICT(endOfHistory = 2025)
+calcElecDemandICT(endOfHistory = 2025, extrapolate = TRUE)
 }
 \arguments{
 \item{endOfHistory}{upper temporal boundary for historical data}
+
+\item{extrapolate}{if \code{TRUE}}
 }
 \value{
 A magpie object containing ICT electricity demand data calculated from
