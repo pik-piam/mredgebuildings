@@ -767,7 +767,11 @@ calcMatchingReference <- function(subtype) {
                     calcOutput("MatchingReference", subtype = "OdysseeIDEES_sec",
                                aggregate = FALSE)) %>%
         as.quitte(na.rm = TRUE) %>%
-        removeColNa() %>%
+        removeColNa()
+      data <- refMap %>%
+        left_join(data, by = c(typ = "variable")) %>%
+        group_by(across(all_of(c("region", "period", "variable")))) %>%
+        summarise(value = sum(.data$value), .groups = "drop") %>%
         interpolate_missing_periods((2000 - lifetime):2022,
                                     expand.values = TRUE) %>%
         group_by(across(-all_of(c("period", "value")))) %>%
