@@ -17,7 +17,8 @@
 #' data (IEA Base) is separated and harmonized with SSP scenario projections.
 #'
 #' @param endOfHistory upper temporal boundary for historical data
-#' @param extrapolate if \code{TRUE}
+#' @param extrapolate if \code{TRUE}, regional demand will be linearly extrapolated using the slope
+#' of the last two existing data points per scenario, if \code{FALSE} data remains unchanged
 #'
 #' @returns A magpie object containing ICT electricity demand data calculated from
 #'   DC demands across regions, time periods, and scenarios.
@@ -34,7 +35,7 @@
 #' @importFrom magclass as.magpie
 #' @importFrom madrat toolCountryFill
 
-calcElecDemandICT <- function(endOfHistory = 2025, extrapolate = TRUE) {
+calcElecDemandICT <- function(endOfHistory = 2025, extrapolate = FALSE) {
 
   # PARAMETER ------------------------------------------------------------------
 
