@@ -17,6 +17,8 @@
 #' data (IEA Base) is separated and harmonized with SSP scenario projections.
 #'
 #' @param endOfHistory upper temporal boundary for historical data
+#' @param extrapolate if \code{TRUE}, regional demand will be linearly extrapolated using the slope
+#' of the last two existing data points per scenario, if \code{FALSE} data remains unchanged
 #'
 #' @returns A magpie object containing ICT electricity demand data calculated from
 #'   DC demands across regions, time periods, and scenarios.
@@ -33,7 +35,7 @@
 #' @importFrom magclass as.magpie
 #' @importFrom madrat toolCountryFill
 
-calcElecDemandICT <- function(endOfHistory = 2025) {
+calcElecDemandICT <- function(endOfHistory = 2025, extrapolate = FALSE) {
 
   # PARAMETER ------------------------------------------------------------------
 
@@ -149,28 +151,31 @@ calcElecDemandICT <- function(endOfHistory = 2025) {
 
 
   # extrapolate scenario data to 2100 using linear fit over last two periods (here: 2045-50)
-  data <- data %>%
-    group_by(across(all_of(c("region", "scenario", "variable")))) %>%
-    group_modify(~ {
-      periods <- sort(unique(.x$period))
+  if (isTRUE(extrapolate)) {
+    data <- data %>%
+      group_by(across(all_of(c("region", "scenario", "variable")))) %>%
+      group_modify(~ {
+        periods <- sort(unique(.x$period))
 
-      if (.y$scenario != "history") {
-        # linear extrapolation for future scenarios
-        fitData <- .x %>%
-          filter(.data$period %in% tail(periods, 2))
+        if (.y$scenario != "history") {
+          # linear extrapolation for future scenarios
+          fitData <- .x %>%
+            filter(.data$period %in% tail(periods, 2))
 
-        model <- lm(value ~ period, data = fitData)
+          model <- lm(value ~ period, data = fitData)
 
-        .x %>%
-          interpolate_missing_periods(seq.int(endOfHistory + 5, 2100, 5)) %>%
-          mutate(pred = predict(model, newdata = .),
-                 value = ifelse(is.na(.data$value), pmax(0, .data$pred), .data$value)) %>%
-          select(-"pred")
-      } else {
-        .x
-      }
-    }) %>%
-    ungroup()
+          .x %>%
+            interpolate_missing_periods(seq.int(endOfHistory + 5, 2100, 5)) %>%
+            mutate(pred = predict(model, newdata = .),
+                   value = ifelse(is.na(.data$value), pmax(0, .data$pred), .data$value)) %>%
+            select(-"pred")
+        } else {
+          .x
+        }
+      }) %>%
+      ungroup()
+  }
+
 
 
   # weights
