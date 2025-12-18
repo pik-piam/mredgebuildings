@@ -2,7 +2,7 @@
 % Please edit documentation in R/calcACOwnershipRatesFilled.R
 \name{calcACOwnershipRatesFilled}
 \alias{calcACOwnershipRatesFilled}
-\title{Calculate Filled Air Conditioning Ownership Rates with Regional Calibration}
+\title{Calculate Extrapolated Air Conditioning Ownership Rates with Regional Calibration}
 \usage{
 calcACOwnershipRatesFilled(endOfHistory = 2025)
 }

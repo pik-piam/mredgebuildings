@@ -1,4 +1,4 @@
-#' Calculate Filled Air Conditioning Ownership Rates with Regional Calibration
+#' Calculate Extrapolated Air Conditioning Ownership Rates with Regional Calibration
 #'
 #' This function fills AC ownership rates for all regions from 1990 to endOfHistory using
 #' global regression parameters (alpha, beta, gamma, delta) with region-specific GDP shifts.
@@ -83,8 +83,7 @@ calcACOwnershipRatesFilled <- function(endOfHistory = 2025) {
                 filter(.data$variable == "CDD",
                        .data$tlim == 20,
                        .data$rcp == "historical") %>%
-                group_by(across(all_of(c("region", "period")))) %>%
-                reframe(CDD = mean(.data$value)),
+                select("region", "period", "CDD" = "value"),
               by = c("region", "period"))
 
 
@@ -96,17 +95,6 @@ calcACOwnershipRatesFilled <- function(endOfHistory = 2025) {
     group_by(across(all_of(c("region")))) %>%
     slice_max(order_by = .data$period, n = 1, with_ties = FALSE) %>%
     ungroup() %>%
-
-    # Get CDD at endOfHistory for alpha calculation
-    select(-"CDD") %>%
-    left_join(hddcdd %>%
-                filter(.data$variable == "CDD",
-                       .data$tlim == 20,
-                       .data$rcp == "historical",
-                       .data$period == endOfHistory) %>%
-                group_by(across(all_of(c("region")))) %>%
-                reframe(CDD = mean(.data$value)),
-              by = "region") %>%
 
     mutate(gdppopShift = .data$gdppop - ((alpha - log(1 / .data$penetration - 1)) /
                                            (beta * .data$CDD^gamma))^(1 / delta)) %>%
@@ -138,7 +126,14 @@ calcACOwnershipRatesFilled <- function(endOfHistory = 2025) {
     replace_na(list("gdppopShift" = 0)) %>%
 
     mutate(
-      value = 1 / (1 + exp(alpha - beta * (.data$gdppop - .data$gdppopShift)^delta * .data$CDD^gamma)),
+      value = ifelse(
+        .data$gdppopShift < .data$gdppop,
+        1 / (1 + exp(alpha - beta * (.data$gdppop - .data$gdppopShift)^delta * .data$CDD^gamma)),
+        # extrapolation towards really low adoption values if GDP shift exceed GDP
+        # increases monotonously with GDP and continues the actual formula above
+        # otherwise arbitrary, but only affects adoption values close to zero
+        1 / (1 + exp(alpha)) / (1 - (.data$gdppop - .data$gdppopShift) / 10000)
+      ),
       variable = "ac ownership rate"
     ) %>%
 
