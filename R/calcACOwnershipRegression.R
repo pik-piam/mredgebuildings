@@ -16,14 +16,14 @@
 #'   \item \eqn{\delta} is the GDP per capita exponent parameter
 #' }
 #'
-#' The function performs a three-stage estimation process:
+#' The function performs a two-stage estimation process:
 #' \enumerate{
-#'   \item Linear regression on log-transformed data to obtain starting values for nls()
-#'   \item Non-linear regression using nls() to estimate beta, gamma, and delta
 #'   \item Alpha is set exogenously based on a minimum ownership rate assumption
+#'   \item Linear regression on log-transformed data with fixed alpha to obtain starting values for nls()
+#'   \item Non-linear regression using nls() with alpha fixed, estimating only beta, gamma, and delta
 #' }
 #'
-#' @returns magpie object with global regression parameters (alpha, beta, gamma, delta, pMin, pMax, cddMid)
+#' @returns magpie object with global regression parameters (alpha, beta, gamma, delta)
 #'
 #' @author Hagen Tockhorn
 #'
@@ -80,33 +80,35 @@ calcACOwnershipRegression <- function() {
                 reframe(CDD = mean(.data$value)),
               by = c("region", "period"))
 
-  # linear fit
-  estimateLin <- lm("log(1/penetration - 1) ~ gdppop:CDD", data = fitData)
-
-  # assign start values
-  startValues <- list(a = estimateLin$coefficients[["(Intercept)"]],
-                      b = estimateLin$coefficients[["gdppop:CDD"]],
-                      c = 1,
-                      d = 1)
-
-  # non-linear fit
-  estimateNonLin <- nls("penetration ~ 1 / (1 + exp(a + b * CDD^c * gdppop^d))",
-                        data = fitData,
-                        start = startValues,
-                        control = list(maxiter = 1000))
-
-
 
   # ASSUMPTIONS ----------------------------------------------------------------
 
   ## Minimum AC Ownership Rate ====
 
   # Accounting for cultural/behavioral influences reflected in disproportionally
-  # low historical reference values, the alpha parameter from the global fit is
-  # is corrected by an exogeneous lower boundary that has been chosen in accordance
-  # with the available reference data.
+  # low historical reference values, the alpha parameter is fixed exogenously
+  # based on a minimum ownership rate assumption, chosen in accordance with the
+  # available reference data.
 
   alpha <- log(1 / minOwnershipRate - 1)
+  fitData$alpha <- alpha
+
+
+  # FIT REGRESSION MODEL -------------------------------------------------------
+
+  # linear fit with fixed alpha for starting values
+  estimateLin <- lm("log(1/penetration - 1) - alpha ~ 0 + gdppop:CDD", data = fitData)
+
+  # assign start values
+  startValues <- list(b = estimateLin$coefficients[["gdppop:CDD"]],
+                      c = 1,
+                      d = 1)
+
+  # non-linear fit with alpha fixed
+  estimateNonLin <- nls("penetration ~ 1 / (1 + exp(alpha + b * CDD^c * gdppop^d))",
+                        data = fitData,
+                        start = startValues,
+                        control = list(maxiter = 1000))
 
 
   # extract fit parameters to data frame

@@ -7,7 +7,7 @@
 calcACOwnershipRegression()
 }
 \value{
-magpie object with global regression parameters (alpha, beta, gamma, delta, pMin, pMax, cddMid)
+magpie object with global regression parameters (alpha, beta, gamma, delta)
 }
 \description{
 This function estimates global regression parameters for air conditioner (AC)
@@ -27,11 +27,11 @@ where:
 \item \eqn{\delta} is the GDP per capita exponent parameter
 }
 
-The function performs a three-stage estimation process:
+The function performs a two-stage estimation process:
 \enumerate{
-\item Linear regression on log-transformed data to obtain starting values for nls()
-\item Non-linear regression using nls() to estimate beta, gamma, and delta
 \item Alpha is set exogenously based on a minimum ownership rate assumption
+\item Linear regression on log-transformed data with fixed alpha to obtain starting values for nls()
+\item Non-linear regression using nls() with alpha fixed, estimating only beta, gamma, and delta
 }
 }
 \author{
