@@ -6,20 +6,21 @@
 #' derive parameters for the AC penetration logistic curve.
 #'
 #' The regression model follows the logistic formula:
-#' \deqn{penetration = 1 / (1 + \exp(\alpha - \beta \cdot gdppop^\gamma \cdot CDD^\delta))}
+#' \deqn{penetration = 1 / (1 + \exp(\alpha - \beta \cdot gdppop^\delta \cdot CDD^\gamma))}
 #'
 #' where:
 #' \itemize{
-#'   \item \eqn{\alpha} is the intercept parameter
-#'   \item \eqn{\beta} is the interaction coefficient (inverted from model coefficient b)
+#'   \item \eqn{\alpha} is the intercept parameter that sets the lower boundary of AC ownership
+#'   \item \eqn{\beta} is the interaction coefficient (negated from fitted model coefficient b)
 #'   \item \eqn{\gamma} is the CDD exponent parameter
 #'   \item \eqn{\delta} is the GDP per capita exponent parameter
 #' }
 #'
 #' The function performs a two-stage estimation process:
 #' \enumerate{
-#'   \item Linear regression on log-transformed data to obtain starting values
-#'   \item Non-linear regression using nls() to estimate final parameters
+#'   \item Alpha is set exogenously based on a minimum ownership rate assumption
+#'   \item Linear regression on log-transformed data with fixed alpha to obtain starting values for nls()
+#'   \item Non-linear regression using nls() with alpha fixed, estimating only beta, gamma, and delta
 #' }
 #'
 #' @returns magpie object with global regression parameters (alpha, beta, gamma, delta)
@@ -39,7 +40,7 @@ calcACOwnershipRegression <- function() {
   # PARAMETERS -----------------------------------------------------------------
 
   # Minimum AC ownership rate
-  minOwnershipRate <- 0.013
+  minOwnershipRate <- 0.01
 
 
   # READ-IN DATA ---------------------------------------------------------------
@@ -56,7 +57,7 @@ calcACOwnershipRegression <- function() {
     as.quitte()
 
   # CDD
-  hddcdd <- calcOutput("HDDCDD", aggregate = FALSE) %>%
+  hddcdd <- calcOutput("HDDCDD", scenario = "ssp2", aggregate = FALSE) %>%
     as_tibble()
 
 
@@ -79,44 +80,44 @@ calcACOwnershipRegression <- function() {
                 reframe(CDD = mean(.data$value)),
               by = c("region", "period"))
 
-  # linear fit
-  estimateLin <- lm("log(1/penetration - 1) ~ gdppop:CDD", data = fitData)
-
-  # assign start values
-  startValues <- list(a = estimateLin$coefficients[["(Intercept)"]],
-                      b = estimateLin$coefficients[["gdppop:CDD"]],
-                      c = 1,
-                      d = 1)
-
-  # non-linear fit
-  estimateNonLin <- nls("penetration ~ 1 / (1 + exp(a + b * CDD^c * gdppop^d))",
-                        data = fitData,
-                        start = startValues,
-                        control = list(maxiter = 1000))
-
-
 
   # ASSUMPTIONS ----------------------------------------------------------------
 
   ## Minimum AC Ownership Rate ====
 
   # Accounting for cultural/behavioral influences reflected in disproportionally
-  # low historical reference values, the alpha parameter from the global fit is
-  # is corrected by an exogeneous lower boundary that has been chosen in accordance
-  # with the available reference data.
+  # low historical reference values, the alpha parameter is fixed exogenously
+  # based on a minimum ownership rate assumption, chosen in accordance with the
+  # available reference data.
 
   alpha <- log(1 / minOwnershipRate - 1)
+  fitData$alpha <- alpha
+
+
+  # FIT REGRESSION MODEL -------------------------------------------------------
+
+  # linear fit with fixed alpha for starting values
+  estimateLin <- lm("log(1/penetration - 1) - alpha ~ 0 + gdppop:CDD", data = fitData)
+
+  # assign start values
+  startValues <- list(b = estimateLin$coefficients[["gdppop:CDD"]],
+                      c = 1,
+                      d = 1)
+
+  # non-linear fit with alpha fixed
+  estimateNonLin <- nls("penetration ~ 1 / (1 + exp(alpha + b * CDD^c * gdppop^d))",
+                        data = fitData,
+                        start = startValues,
+                        control = list(maxiter = 1000))
 
 
   # extract fit parameters to data frame
   fitPars <- data.frame(region   = "GLO",
                         variable = c("alpha", "beta", "gamma", "delta"),
-                        value    = c(
-                          alpha,
-                          (-1) * coef(estimateNonLin)[["b"]],
-                          coef(estimateNonLin)[["c"]],
-                          coef(estimateNonLin)[["d"]]
-                        ))
+                        value    = c(alpha,
+                                     (-1) * coef(estimateNonLin)[["b"]],
+                                     coef(estimateNonLin)[["c"]],
+                                     coef(estimateNonLin)[["d"]]))
 
 
 

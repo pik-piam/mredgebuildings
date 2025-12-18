@@ -17,20 +17,21 @@ derive parameters for the AC penetration logistic curve.
 }
 \details{
 The regression model follows the logistic formula:
-\deqn{penetration = 1 / (1 + \exp(\alpha - \beta \cdot gdppop^\gamma \cdot CDD^\delta))}
+\deqn{penetration = 1 / (1 + \exp(\alpha - \beta \cdot gdppop^\delta \cdot CDD^\gamma))}
 
 where:
 \itemize{
-\item \eqn{\alpha} is the intercept parameter
-\item \eqn{\beta} is the interaction coefficient (inverted from model coefficient b)
+\item \eqn{\alpha} is the intercept parameter that sets the lower boundary of AC ownership
+\item \eqn{\beta} is the interaction coefficient (negated from fitted model coefficient b)
 \item \eqn{\gamma} is the CDD exponent parameter
 \item \eqn{\delta} is the GDP per capita exponent parameter
 }
 
 The function performs a two-stage estimation process:
 \enumerate{
-\item Linear regression on log-transformed data to obtain starting values
-\item Non-linear regression using nls() to estimate final parameters
+\item Alpha is set exogenously based on a minimum ownership rate assumption
+\item Linear regression on log-transformed data with fixed alpha to obtain starting values for nls()
+\item Non-linear regression using nls() with alpha fixed, estimating only beta, gamma, and delta
 }
 }
 \author{

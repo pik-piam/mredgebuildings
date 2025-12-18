@@ -2,7 +2,7 @@
 % Please edit documentation in R/calcACOwnershipRatesFilled.R
 \name{calcACOwnershipRatesFilled}
 \alias{calcACOwnershipRatesFilled}
-\title{Calculate Filled Air Conditioning Ownership Rates with Regional Parameters}
+\title{Calculate Extrapolated Air Conditioning Ownership Rates with Regional Calibration}
 \usage{
 calcACOwnershipRatesFilled(endOfHistory = 2025)
 }
@@ -14,9 +14,17 @@ magpie object with filled AC ownership rates for all regions (1990-endOfHistory)
 }
 \description{
 This function fills AC ownership rates for all regions from 1990 to endOfHistory using
-global regression parameters and calculates region-specific beta coefficients where
-historical data is available. Regional betas are derived to match the last historical
-data point per region.
+global regression parameters (alpha, beta, gamma, delta) with region-specific GDP shifts.
+The GDP shift (gdppopShift) is calculated for each region to horizontally shift the
+global S-curve along the GDP axis so that it passes through the region's most recent
+historical data point. This calibrates the global curve to match available historical
+data while maintaining the same functional form across all regions.
+}
+\details{
+The logistic formula used is:
+\deqn{penetration = 1 / (1 + \exp(\alpha - \beta \cdot (gdppop - gdppopShift)^\delta \cdot CDD^\gamma))}
+
+Regions without historical data use the global curve as-is (gdppopShift = 0).
 }
 \author{
 Hagen Tockhorn
