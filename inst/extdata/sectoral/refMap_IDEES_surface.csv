@@ -1,7 +1,7 @@
-variable,.code,typ,.brickVariable,.comment
-Res,SurfaceArea.ksqm.Res.HH,SFH,v_stock,
-Res,SurfaceArea.ksqm.Res.HH,MFH,v_stock,
-Com,SurfaceArea.ksqm.Ser.Bld,Com,v_stock,
-#Res_new,SurfaceArea.ksqm.Res.HHnew,SFH,v_construction,includes new and renovated buildings
-#Res_new,SurfaceArea.ksqm.Res.HHnew,MFH,v_construction,includes new and renovated buildings
-#Ser_new,SurfaceArea.ksqm.Ser.BldNew,Com,v_construction,includes new and renovated buildings
+variable,.code,typ,.brickVariable,.comment,.color
+Res,SurfaceArea.ksqm.Res.HH,SFH,v_stock,,Residential
+Res,SurfaceArea.ksqm.Res.HH,MFH,v_stock,,Residential
+Com,SurfaceArea.ksqm.Ser.Bld,Com,v_stock,,Commercial
+#Res_new,SurfaceArea.ksqm.Res.HHnew,SFH,v_construction,includes new and renovated buildings,Residential
+#Res_new,SurfaceArea.ksqm.Res.HHnew,MFH,v_construction,includes new and renovated buildings,Residential
+#Ser_new,SurfaceArea.ksqm.Ser.BldNew,Com,v_construction,includes new and renovated buildings,Commercial

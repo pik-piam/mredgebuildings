@@ -11,14 +11,14 @@ The share of heating systems that are replaced with the same technology
 during heating system replacement for each technology.
 }
 \details{
-Qantifying the status quo bias requires detailed data on heating system
+Quantifying the status quo bias requires detailed data on heating system
 replacement activities with initial and final technology. There are very few
 and mostly rough sources on this. We therefore assume technology-specific
-and temporally and spacially invariant shares of initial systems that are
+and temporally and spatially invariant shares of initial systems that are
 identically replaced. This leaves enough degrees of freedom to the model to
 reflect region-specific stocks and preferences while representing the status
 quo bias. It might make sense to model the decision as a two-stage process in
-which agents first decide wether to just replace identically and thus follow
+which agents first decide whether to just replace identically and thus follow
 the bias or decide for a new system independent of their old one. This is not
 yet reflected in this calculation.
 }

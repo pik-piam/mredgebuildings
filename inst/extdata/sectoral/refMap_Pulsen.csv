@@ -1,10 +1,10 @@
-variable,.variable,.variableEnglish,refVarGroup,sec,var,hs
-reel->ehp1,Direktverkande el,Direct electric heating,x->ehp1,Res,renovation,reel
-ehp1->ehp1,Äldre värmepump,Older heat pump,x->ehp1,Res,renovation,ehp1
-reel->ehp1,Elpannor,Electric boilers,x->ehp1,Res,renovation,reel
-biom->ehp1,Pellets,Pellets (wood pellets),x->ehp1,Res,renovation,biom
-biom->ehp1,Ved,Firewood,x->ehp1,Res,renovation,biom
-ehp1_constr,Nyproduktion,New construction,x->ehp1,Res,construction,ehp1
-libo->ehp1,Oljepannor,Oil boilers,x->ehp1,Res,renovation,libo
-gabo->ehp1,Gas,Gas,x->ehp1,Res,renovation,gabo
-dihe->ehp1,Fjärrvärme,District heating,x->ehp1,Res,renovation,dihe
+variable,.variable,.variableEnglish,refVarGroup,sec,var,hs,.color
+reel->ehp1,Direktverkande el,Direct electric heating,x->ehp1,Res,renovation,reel,Resistive electric
+ehp1->ehp1,Äldre värmepump,Older heat pump,x->ehp1,Res,renovation,ehp1,Heat pump
+reel->ehp1,Elpannor,Electric boilers,x->ehp1,Res,renovation,reel,Resistive electric
+biom->ehp1,Pellets,Pellets (wood pellets),x->ehp1,Res,renovation,biom,Biomass heater
+biom->ehp1,Ved,Firewood,x->ehp1,Res,renovation,biom,Biomass heater
+ehp1_constr,Nyproduktion,New construction,x->ehp1,Res,construction,ehp1,Construction
+libo->ehp1,Oljepannor,Oil boilers,x->ehp1,Res,renovation,libo,Liquids heater
+gabo->ehp1,Gas,Gas,x->ehp1,Res,renovation,gabo,Gas heater
+dihe->ehp1,Fjärrvärme,District heating,x->ehp1,Res,renovation,dihe,District heating

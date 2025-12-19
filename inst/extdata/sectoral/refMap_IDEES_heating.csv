@@ -1,29 +1,29 @@
-variable,.variableAbs,.variablePerSqm,.variable_Brick,hs,typ,.comment
-Res_Solids,FEC.ktoe.Res.HH.Thermal.SH.Solids.Solids,FEC_per_sqm.kWh.Res.HH.Thermal.SH.Solids.Solids,v_stock,sobo,SFH,
-Res_LPG+Oil,FEC.ktoe.Res.HH.Thermal.SH.LPG.LPG,FEC_per_sqm.kWh.Res.HH.Thermal.SH.LPG.LPG,v_stock,libo,SFH,
-Res_LPG+Oil,FEC.ktoe.Res.HH.Thermal.SH.Oil.Oil_LiqBio,FEC_per_sqm.kWh.Res.HH.Thermal.SH.Oil.Oil_LiqBio,v_stock,libo,SFH,
-Res_Gas,FEC.ktoe.Res.HH.Thermal.SH.Gas.NG_Biogas,FEC_per_sqm.kWh.Res.HH.Thermal.SH.Gas.NG_Biogas,v_stock,gabo,SFH,
-Res_Biomass,FEC.ktoe.Res.HH.Thermal.SH.Biomass.Biomass_Waste,FEC_per_sqm.kWh.Res.HH.Thermal.SH.Biomass.Biomass_Waste,v_stock,biom,SFH,
-#Res_Geo,FEC.ktoe.Res.HH.Thermal.SH.Geo.Geo,FEC_per_sqm.kWh.Res.HH.Thermal.SH.Geo.Geo,v_stock,,,not implemented
-Res_DistrHeat,FEC.ktoe.Res.HH.Thermal.SH.DistrHeat.Steam_Distr,FEC_per_sqm.kWh.Res.HH.Thermal.SH.DistrHeat.Steam_Distr,v_stock,dihe,SFH,
-Res_AdvElc,FEC.ktoe.Res.HH.Thermal.SH.AdvElc.Elec,FEC_per_sqm.kWh.Res.HH.Thermal.SH.AdvElc.Elec,v_stock,ehp1,SFH,
-Res_ConvElc,FEC.ktoe.Res.HH.Thermal.SH.ConvElc.Elec,FEC_per_sqm.kWh.Res.HH.Thermal.SH.ConvElc.Elec,v_stock,reel,SFH,
-Res_Solids,FEC.ktoe.Res.HH.Thermal.SH.Solids.Solids,FEC_per_sqm.kWh.Res.HH.Thermal.SH.Solids.Solids,v_stock,sobo,MFH,
-Res_LPG+Oil,FEC.ktoe.Res.HH.Thermal.SH.LPG.LPG,FEC_per_sqm.kWh.Res.HH.Thermal.SH.LPG.LPG,v_stock,libo,MFH,
-Res_LPG+Oil,FEC.ktoe.Res.HH.Thermal.SH.Oil.Oil_LiqBio,FEC_per_sqm.kWh.Res.HH.Thermal.SH.Oil.Oil_LiqBio,v_stock,libo,MFH,
-Res_Gas,FEC.ktoe.Res.HH.Thermal.SH.Gas.NG_Biogas,FEC_per_sqm.kWh.Res.HH.Thermal.SH.Gas.NG_Biogas,v_stock,gabo,MFH,
-Res_Biomass,FEC.ktoe.Res.HH.Thermal.SH.Biomass.Biomass_Waste,FEC_per_sqm.kWh.Res.HH.Thermal.SH.Biomass.Biomass_Waste,v_stock,biom,MFH,
-#Res_Geo,FEC.ktoe.Res.HH.Thermal.SH.Geo.Geo,FEC_per_sqm.kWh.Res.HH.Thermal.SH.Geo.Geo,v_stock,,,not implemented
-Res_DistrHeat,FEC.ktoe.Res.HH.Thermal.SH.DistrHeat.Steam_Distr,FEC_per_sqm.kWh.Res.HH.Thermal.SH.DistrHeat.Steam_Distr,v_stock,dihe,MFH,
-Res_AdvElc,FEC.ktoe.Res.HH.Thermal.SH.AdvElc.Elec,FEC_per_sqm.kWh.Res.HH.Thermal.SH.AdvElc.Elec,v_stock,ehp1,MFH,
-Res_ConvElc,FEC.ktoe.Res.HH.Thermal.SH.ConvElc.Elec,FEC_per_sqm.kWh.Res.HH.Thermal.SH.ConvElc.Elec,v_stock,reel,MFH,
-Com_Solids,FEC.ktoe.Ser.Bld.Thermal.SH.Solids.Solids,FEC_per_sqm.kWh.Ser.Bld.Thermal.SH.Solids.Solids,v_stock,sobo,Com,
-Com_LPG+Oil,FEC.ktoe.Ser.Bld.Thermal.SH.LPG.LPG,FEC_per_sqm.kWh.Ser.Bld.Thermal.SH.LPG.LPG,v_stock,libo,Com,
-Com_LPG+Oil,FEC.ktoe.Ser.Bld.Thermal.SH.Oil.Oil_LiqBio,FEC_per_sqm.kWh.Ser.Bld.Thermal.SH.Oil.Oil_LiqBio,v_stock,libo,Com,
-Com_GasHP+GasTH,FEC.ktoe.Ser.Bld.Thermal.SH.GasHP.NG_Biogas,FEC_per_sqm.kWh.Ser.Bld.Thermal.SH.GasHP.NG_Biogas,v_stock,gabo,Com,
-Com_GasHP+GasTH,FEC.ktoe.Ser.Bld.Thermal.SH.GasTH.NG_Biogas,FEC_per_sqm.kWh.Ser.Bld.Thermal.SH.GasTH.NG_Biogas,v_stock,gabo,Com,
-Com_Biomass,FEC.ktoe.Ser.Bld.Thermal.SH.Biomass.Biomass_Waste,FEC_per_sqm.kWh.Ser.Bld.Thermal.SH.Biomass.Biomass_Waste,v_stock,biom,Com,
-#Ser_Geo,FEC.ktoe.Ser.Bld.Thermal.SH.Geo.Geo,FEC_per_sqm.kWh.Ser.Bld.Thermal.SH.Geo.Geo,v_stock,,,not implemented
-Com_DistrHeat,FEC.ktoe.Ser.Bld.Thermal.SH.DistrHeat.Steam_Distr,FEC_per_sqm.kWh.Ser.Bld.Thermal.SH.DistrHeat.Steam_Distr,v_stock,dihe,Com,
-Com_AdvElc,FEC.ktoe.Ser.Bld.Thermal.SH.AdvElc.Elec,FEC_per_sqm.kWh.Ser.Bld.Thermal.SH.AdvElc.Elec,v_stock,ehp1,Com,
-Com_ConvElc,FEC.ktoe.Ser.Bld.Thermal.SH.ConvElc.Elec,FEC_per_sqm.kWh.Ser.Bld.Thermal.SH.ConvElc.Elec,v_stock,reel,Com,
+variable,.variableAbs,.variablePerSqm,.variable_Brick,hs,typ,.comment,.color
+Res_Solids,FEC.ktoe.Res.HH.Thermal.SH.Solids.Solids,FEC_per_sqm.kWh.Res.HH.Thermal.SH.Solids.Solids,v_stock,sobo,SFH,,Coal heater
+Res_LPG+Oil,FEC.ktoe.Res.HH.Thermal.SH.LPG.LPG,FEC_per_sqm.kWh.Res.HH.Thermal.SH.LPG.LPG,v_stock,libo,SFH,,Liquids heater
+Res_LPG+Oil,FEC.ktoe.Res.HH.Thermal.SH.Oil.Oil_LiqBio,FEC_per_sqm.kWh.Res.HH.Thermal.SH.Oil.Oil_LiqBio,v_stock,libo,SFH,,Liquids heater
+Res_Gas,FEC.ktoe.Res.HH.Thermal.SH.Gas.NG_Biogas,FEC_per_sqm.kWh.Res.HH.Thermal.SH.Gas.NG_Biogas,v_stock,gabo,SFH,,Gas heater
+Res_Biomass,FEC.ktoe.Res.HH.Thermal.SH.Biomass.Biomass_Waste,FEC_per_sqm.kWh.Res.HH.Thermal.SH.Biomass.Biomass_Waste,v_stock,biom,SFH,,Biomass heater
+#Res_Geo,FEC.ktoe.Res.HH.Thermal.SH.Geo.Geo,FEC_per_sqm.kWh.Res.HH.Thermal.SH.Geo.Geo,v_stock,,,not implemented,
+Res_DistrHeat,FEC.ktoe.Res.HH.Thermal.SH.DistrHeat.Steam_Distr,FEC_per_sqm.kWh.Res.HH.Thermal.SH.DistrHeat.Steam_Distr,v_stock,dihe,SFH,,District heating
+Res_AdvElc,FEC.ktoe.Res.HH.Thermal.SH.AdvElc.Elec,FEC_per_sqm.kWh.Res.HH.Thermal.SH.AdvElc.Elec,v_stock,ehp1,SFH,,Heat pump
+Res_ConvElc,FEC.ktoe.Res.HH.Thermal.SH.ConvElc.Elec,FEC_per_sqm.kWh.Res.HH.Thermal.SH.ConvElc.Elec,v_stock,reel,SFH,,Resistive electric
+Res_Solids,FEC.ktoe.Res.HH.Thermal.SH.Solids.Solids,FEC_per_sqm.kWh.Res.HH.Thermal.SH.Solids.Solids,v_stock,sobo,MFH,,Coal heater
+Res_LPG+Oil,FEC.ktoe.Res.HH.Thermal.SH.LPG.LPG,FEC_per_sqm.kWh.Res.HH.Thermal.SH.LPG.LPG,v_stock,libo,MFH,,Liquids heater
+Res_LPG+Oil,FEC.ktoe.Res.HH.Thermal.SH.Oil.Oil_LiqBio,FEC_per_sqm.kWh.Res.HH.Thermal.SH.Oil.Oil_LiqBio,v_stock,libo,MFH,,Liquids heater
+Res_Gas,FEC.ktoe.Res.HH.Thermal.SH.Gas.NG_Biogas,FEC_per_sqm.kWh.Res.HH.Thermal.SH.Gas.NG_Biogas,v_stock,gabo,MFH,,Gas heater
+Res_Biomass,FEC.ktoe.Res.HH.Thermal.SH.Biomass.Biomass_Waste,FEC_per_sqm.kWh.Res.HH.Thermal.SH.Biomass.Biomass_Waste,v_stock,biom,MFH,,Biomass heater
+#Res_Geo,FEC.ktoe.Res.HH.Thermal.SH.Geo.Geo,FEC_per_sqm.kWh.Res.HH.Thermal.SH.Geo.Geo,v_stock,,,not implemented,
+Res_DistrHeat,FEC.ktoe.Res.HH.Thermal.SH.DistrHeat.Steam_Distr,FEC_per_sqm.kWh.Res.HH.Thermal.SH.DistrHeat.Steam_Distr,v_stock,dihe,MFH,,District heating
+Res_AdvElc,FEC.ktoe.Res.HH.Thermal.SH.AdvElc.Elec,FEC_per_sqm.kWh.Res.HH.Thermal.SH.AdvElc.Elec,v_stock,ehp1,MFH,,Heat pump
+Res_ConvElc,FEC.ktoe.Res.HH.Thermal.SH.ConvElc.Elec,FEC_per_sqm.kWh.Res.HH.Thermal.SH.ConvElc.Elec,v_stock,reel,MFH,,Resistive electric
+Com_Solids,FEC.ktoe.Ser.Bld.Thermal.SH.Solids.Solids,FEC_per_sqm.kWh.Ser.Bld.Thermal.SH.Solids.Solids,v_stock,sobo,Com,,Coal heater
+Com_LPG+Oil,FEC.ktoe.Ser.Bld.Thermal.SH.LPG.LPG,FEC_per_sqm.kWh.Ser.Bld.Thermal.SH.LPG.LPG,v_stock,libo,Com,,Liquids heater
+Com_LPG+Oil,FEC.ktoe.Ser.Bld.Thermal.SH.Oil.Oil_LiqBio,FEC_per_sqm.kWh.Ser.Bld.Thermal.SH.Oil.Oil_LiqBio,v_stock,libo,Com,,Liquids heater
+Com_GasHP+GasTH,FEC.ktoe.Ser.Bld.Thermal.SH.GasHP.NG_Biogas,FEC_per_sqm.kWh.Ser.Bld.Thermal.SH.GasHP.NG_Biogas,v_stock,gabo,Com,,Gas heater
+Com_GasHP+GasTH,FEC.ktoe.Ser.Bld.Thermal.SH.GasTH.NG_Biogas,FEC_per_sqm.kWh.Ser.Bld.Thermal.SH.GasTH.NG_Biogas,v_stock,gabo,Com,,Gas heater
+Com_Biomass,FEC.ktoe.Ser.Bld.Thermal.SH.Biomass.Biomass_Waste,FEC_per_sqm.kWh.Ser.Bld.Thermal.SH.Biomass.Biomass_Waste,v_stock,biom,Com,,Biomass heater
+#Ser_Geo,FEC.ktoe.Ser.Bld.Thermal.SH.Geo.Geo,FEC_per_sqm.kWh.Ser.Bld.Thermal.SH.Geo.Geo,v_stock,,,not implemented,
+Com_DistrHeat,FEC.ktoe.Ser.Bld.Thermal.SH.DistrHeat.Steam_Distr,FEC_per_sqm.kWh.Ser.Bld.Thermal.SH.DistrHeat.Steam_Distr,v_stock,dihe,Com,,District heating
+Com_AdvElc,FEC.ktoe.Ser.Bld.Thermal.SH.AdvElc.Elec,FEC_per_sqm.kWh.Ser.Bld.Thermal.SH.AdvElc.Elec,v_stock,ehp1,Com,,Heat pump
+Com_ConvElc,FEC.ktoe.Ser.Bld.Thermal.SH.ConvElc.Elec,FEC_per_sqm.kWh.Ser.Bld.Thermal.SH.ConvElc.Elec,v_stock,reel,Com,,Resistive electric

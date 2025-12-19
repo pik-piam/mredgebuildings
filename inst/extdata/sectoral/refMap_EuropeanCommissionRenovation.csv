@@ -1,4 +1,4 @@
-variable,.variable_Brick,typ,.comment
-renovation rate|Energy related - Total|residential,v_renovation/v_stock,SFH,filtering effective renovations is done in the gams code to keep mapping simple
-renovation rate|Energy related - Total|residential,v_renovation/v_stock,MFH,filtering effective renovations is done in the gams code to keep mapping simple
-renovation rate|Energy related - Total|commercial,v_renovation/v_stock,Com,filtering effective renovations is done in the gams code to keep mapping simple
+variable,.variable_Brick,typ,.comment,.color
+renovation rate|Energy related - Total|residential,v_renovation/v_stock,SFH,filtering effective renovations is done in the gams code to keep mapping simple,Residential
+renovation rate|Energy related - Total|residential,v_renovation/v_stock,MFH,filtering effective renovations is done in the gams code to keep mapping simple,Residential
+renovation rate|Energy related - Total|commercial,v_renovation/v_stock,Com,filtering effective renovations is done in the gams code to keep mapping simple,Commercial

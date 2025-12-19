@@ -28,7 +28,8 @@ calcMatchingReference <- function(subtype) {
                            type = "sectoral", where = "mredgebuildings",
                            returnPathOnly = TRUE) %>%
     read.csv(comment.char = "#", encoding = "UTF-8") %>%
-    filter(!is.na(.data[["variable"]]))
+    filter(!is.na(.data[["variable"]])) %>%
+    select(-any_of(".color"))
 
 
 

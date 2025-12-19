@@ -1,22 +1,22 @@
-variable,refVarGroup,.typ,sec,hs
-Com_biom,Com,Com,Com,biom
-Com_dihe,Com,Com,Com,dihe
-Com_ehp1,Com,Com,Com,ehp1
-Com_gabo,Com,Com,Com,gabo
-Com_libo,Com,Com,Com,libo
-Com_reel,Com,Com,Com,reel
-Com_sobo,Com,Com,Com,sobo
-Res_biom,Res,SFH,Res,biom
-Res_dihe,Res,SFH,Res,dihe
-Res_ehp1,Res,SFH,Res,ehp1
-Res_gabo,Res,SFH,Res,gabo
-Res_libo,Res,SFH,Res,libo
-Res_reel,Res,SFH,Res,reel
-Res_sobo,Res,SFH,Res,sobo
-Res_biom,Res,MFH,Res,biom
-Res_dihe,Res,MFH,Res,dihe
-Res_ehp1,Res,MFH,Res,ehp1
-Res_gabo,Res,MFH,Res,gabo
-Res_libo,Res,MFH,Res,libo
-Res_reel,Res,MFH,Res,reel
-Res_sobo,Res,MFH,Res,sobo
+variable,refVarGroup,.typ,sec,hs,.color
+Com_biom,Com,Com,Com,biom,Biomass heater
+Com_dihe,Com,Com,Com,dihe,District heating
+Com_ehp1,Com,Com,Com,ehp1,Heat pump
+Com_gabo,Com,Com,Com,gabo,Gas heater
+Com_libo,Com,Com,Com,libo,Liquids heater
+Com_reel,Com,Com,Com,reel,Resistive electric
+Com_sobo,Com,Com,Com,sobo,Coal heater
+Res_biom,Res,SFH,Res,biom,Biomass heater
+Res_dihe,Res,SFH,Res,dihe,District heating
+Res_ehp1,Res,SFH,Res,ehp1,Heat pump
+Res_gabo,Res,SFH,Res,gabo,Gas heater
+Res_libo,Res,SFH,Res,libo,Liquids heater
+Res_reel,Res,SFH,Res,reel,Resistive electric
+Res_sobo,Res,SFH,Res,sobo,Coal heater
+Res_biom,Res,MFH,Res,biom,Biomass heater
+Res_dihe,Res,MFH,Res,dihe,District heating
+Res_ehp1,Res,MFH,Res,ehp1,Heat pump
+Res_gabo,Res,MFH,Res,gabo,Gas heater
+Res_libo,Res,MFH,Res,libo,Liquids heater
+Res_reel,Res,MFH,Res,reel,Resistive electric
+Res_sobo,Res,MFH,Res,sobo,Coal heater

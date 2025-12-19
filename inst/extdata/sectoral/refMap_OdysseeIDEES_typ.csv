@@ -1,3 +1,3 @@
-variable,.variable,typ,.comment
-SFH,nbrmpr*surmpr,SFH,
-MFH,nbripr*suripr,MFH,
+variable,.variable,typ,.comment,.color
+SFH,nbrmpr*surmpr,SFH,,SFH
+MFH,nbripr*suripr,MFH,,MFH

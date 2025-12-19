@@ -1,7 +1,7 @@
-variable,refVarGroup,.deg_urb,.building,typ,loc,.comment
-urban_SFH,urban,DEG1,HOUSE,SFH,urban,
-urban_SFH,urban,DEG2,HOUSE,SFH,urban,
-urban_MFH,urban,DEG1,FLAT,MFH,urban,
-urban_MFH,urban,DEG2,FLAT,MFH,urban,
-rural_SFH,rural,DEG3,HOUSE,SFH,rural,
-rural_MFH,rural,DEG3,FLAT,MFH,rural,
+variable,refVarGroup,.deg_urb,.building,typ,loc,.comment,.color
+urban_SFH,urban,DEG1,HOUSE,SFH,urban,,SFH
+urban_SFH,urban,DEG2,HOUSE,SFH,urban,,SFH
+urban_MFH,urban,DEG1,FLAT,MFH,urban,,MFH
+urban_MFH,urban,DEG2,FLAT,MFH,urban,,MFH
+rural_SFH,rural,DEG3,HOUSE,SFH,rural,,SFH
+rural_MFH,rural,DEG3,FLAT,MFH,rural,,MFH

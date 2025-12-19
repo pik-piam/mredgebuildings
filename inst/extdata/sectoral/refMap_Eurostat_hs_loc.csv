@@ -1,25 +1,25 @@
-variable,.deg_urb,.nrg_src,loc,hs,sec,.comment
-urban_dheat,DEG1,DHEAT,urban,dihe,Res,
-urban_elc,DEG1,ELC,urban,reel,Res,
-urban_elc,DEG1,ELC,urban,ehp1,Res,
-urban_gas,DEG1,GAS,urban,gabo,Res,
-urban_oil-coal,DEG1,OIL_COAL,urban,libo,Res,
-urban_oil-coal,DEG1,OIL_COAL,urban,sobo,Res,
-urban_biom,DEG1,REN_BMA,urban,biom,Res,
-urban_biom,DEG1,WDLG,urban,biom,Res,
-urban_dheat,DEG2,DHEAT,urban,dihe,Res,
-urban_elc,DEG2,ELC,urban,reel,Res,
-urban_elc,DEG2,ELC,urban,ehp1,Res,
-urban_gas,DEG2,GAS,urban,gabo,Res,
-urban_oil-coal,DEG2,OIL_COAL,urban,libo,Res,
-urban_oil-coal,DEG2,OIL_COAL,urban,sobo,Res,
-urban_biom,DEG2,REN_BMA,urban,biom,Res,
-urban_biom,DEG2,WDLG,urban,biom,Res,
-rural_dheat,DEG3,DHEAT,rural,dihe,Res,
-rural_elc,DEG3,ELC,rural,reel,Res,
-rural_elc,DEG3,ELC,rural,ehp1,Res,
-rural_gas,DEG3,GAS,rural,gabo,Res,
-rural_oil-coal,DEG3,OIL_COAL,rural,libo,Res,
-rural_oil-coal,DEG3,OIL_COAL,rural,sobo,Res,
-rural_biom,DEG3,REN_BMA,rural,biom,Res,
-rural_biom,DEG3,WDLG,rural,biom,Res,
+variable,.deg_urb,.nrg_src,loc,hs,sec,.comment,.color
+urban_dheat,DEG1,DHEAT,urban,dihe,Res,,District heating
+urban_elc,DEG1,ELC,urban,reel,Res,,Electricity
+urban_elc,DEG1,ELC,urban,ehp1,Res,,Electricity
+urban_gas,DEG1,GAS,urban,gabo,Res,,Gas heater
+urban_oil-coal,DEG1,OIL_COAL,urban,libo,Res,,hex:10105A
+urban_oil-coal,DEG1,OIL_COAL,urban,sobo,Res,,hex:10105A
+urban_biom,DEG1,REN_BMA,urban,biom,Res,,Biomass heater
+urban_biom,DEG1,WDLG,urban,biom,Res,,Biomass heater
+urban_dheat,DEG2,DHEAT,urban,dihe,Res,,District heating
+urban_elc,DEG2,ELC,urban,reel,Res,,Electricity
+urban_elc,DEG2,ELC,urban,ehp1,Res,,Electricity
+urban_gas,DEG2,GAS,urban,gabo,Res,,Gas heater
+urban_oil-coal,DEG2,OIL_COAL,urban,libo,Res,,hex:10105A
+urban_oil-coal,DEG2,OIL_COAL,urban,sobo,Res,,hex:10105A
+urban_biom,DEG2,REN_BMA,urban,biom,Res,,Biomass heater
+urban_biom,DEG2,WDLG,urban,biom,Res,,Biomass heater
+rural_dheat,DEG3,DHEAT,rural,dihe,Res,,District heating
+rural_elc,DEG3,ELC,rural,reel,Res,,Electricity
+rural_elc,DEG3,ELC,rural,ehp1,Res,,Electricity
+rural_gas,DEG3,GAS,rural,gabo,Res,,Gas heater
+rural_oil-coal,DEG3,OIL_COAL,rural,libo,Res,,hex:10105A
+rural_oil-coal,DEG3,OIL_COAL,rural,sobo,Res,,hex:10105A
+rural_biom,DEG3,REN_BMA,rural,biom,Res,,Biomass heater
+rural_biom,DEG3,WDLG,rural,biom,Res,,Biomass heater

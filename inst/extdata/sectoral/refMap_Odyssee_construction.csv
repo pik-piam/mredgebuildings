@@ -1,5 +1,5 @@
-variable,.variableTitle,.variable_Brick,typ,.comment
-nbrlpn,Total construction of dwellings,v_construction,SFH,
-nbrlpn,Total construction of dwellings,v_construction,MFH,
-nbrmpn,Construction of single family dwellings,v_construction,SFH,
-nbripn,Construction of multifamily dwellings,v_construction,MFH,
+variable,.variableTitle,.variable_Brick,typ,.comment,.color
+nbrlpn,Total construction of dwellings,v_construction,SFH,,Residential
+nbrlpn,Total construction of dwellings,v_construction,MFH,,Residential
+nbrmpn,Construction of single family dwellings,v_construction,SFH,,SFH
+nbripn,Construction of multifamily dwellings,v_construction,MFH,,MFH

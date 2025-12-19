@@ -1,4 +1,4 @@
-variable,.variable,sec,.comment
-Res,nbrlpr*surlog,Res,permanently occupied dwellings
-#Res2,nbrlog*surlog,Res,Total stock of dwelling
-Com,surter,Com,
+variable,.variable,sec,.comment,.color
+Res,nbrlpr*surlog,Res,permanently occupied dwellings,Residential
+#Res2,nbrlog*surlog,Res,Total stock of dwelling,Residential
+Com,surter,Com,,Commercial

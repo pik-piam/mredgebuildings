@@ -1,87 +1,87 @@
-variable,.variable,.variable_Brick,hs,typ,qty,.comment
-Total floor area of single family dwels,Total floor area of single family dwellings_m2,v_stock,biom,SFH,area,
-Total floor area of single family dwels,Total floor area of single family dwellings_m2,v_stock,dihe,SFH,area,
-Total floor area of single family dwels,Total floor area of single family dwellings_m2,v_stock,ehp1,SFH,area,
-Total floor area of single family dwels,Total floor area of single family dwellings_m2,v_stock,gabo,SFH,area,
-Total floor area of single family dwels,Total floor area of single family dwellings_m2,v_stock,libo,SFH,area,
-Total floor area of single family dwels,Total floor area of single family dwellings_m2,v_stock,reel,SFH,area,
-Total floor area of single family dwels,Total floor area of single family dwellings_m2,v_stock,sobo,SFH,area,
-Total floor area of multi family dwels,Total floor area of multi family dwellings_m2,v_stock,biom,MFH,area,
-Total floor area of multi family dwels,Total floor area of multi family dwellings_m2,v_stock,dihe,MFH,area,
-Total floor area of multi family dwels,Total floor area of multi family dwellings_m2,v_stock,ehp1,MFH,area,
-Total floor area of multi family dwels,Total floor area of multi family dwellings_m2,v_stock,gabo,MFH,area,
-Total floor area of multi family dwels,Total floor area of multi family dwellings_m2,v_stock,libo,MFH,area,
-Total floor area of multi family dwels,Total floor area of multi family dwellings_m2,v_stock,reel,MFH,area,
-Total floor area of multi family dwels,Total floor area of multi family dwellings_m2,v_stock,sobo,MFH,area,
-Total floor area of com buildings,Total floor area of non-residential buildings_m2,v_stock,biom,Com,area,
-Total floor area of com buildings,Total floor area of non-residential buildings_m2,v_stock,dihe,Com,area,
-Total floor area of com buildings,Total floor area of non-residential buildings_m2,v_stock,ehp1,Com,area,
-Total floor area of com buildings,Total floor area of non-residential buildings_m2,v_stock,gabo,Com,area,
-Total floor area of com buildings,Total floor area of non-residential buildings_m2,v_stock,libo,Com,area,
-Total floor area of com buildings,Total floor area of non-residential buildings_m2,v_stock,reel,Com,area,
-Total floor area of com buildings,Total floor area of non-residential buildings_m2,v_stock,sobo,Com,area,
-No of permanently occupied dwel,Number of permanently occupied dwelling_1,v_stock,biom,SFH,num,
-No of permanently occupied dwel,Number of permanently occupied dwelling_1,v_stock,dihe,SFH,num,
-No of permanently occupied dwel,Number of permanently occupied dwelling_1,v_stock,ehp1,SFH,num,
-No of permanently occupied dwel,Number of permanently occupied dwelling_1,v_stock,gabo,SFH,num,
-No of permanently occupied dwel,Number of permanently occupied dwelling_1,v_stock,libo,SFH,num,
-No of permanently occupied dwel,Number of permanently occupied dwelling_1,v_stock,reel,SFH,num,
-No of permanently occupied dwel,Number of permanently occupied dwelling_1,v_stock,sobo,SFH,num,
-No of permanently occupied dwel,Number of permanently occupied dwelling_1,v_stock,biom,MFH,num,
-No of permanently occupied dwel,Number of permanently occupied dwelling_1,v_stock,dihe,MFH,num,
-No of permanently occupied dwel,Number of permanently occupied dwelling_1,v_stock,ehp1,MFH,num,
-No of permanently occupied dwel,Number of permanently occupied dwelling_1,v_stock,gabo,MFH,num,
-No of permanently occupied dwel,Number of permanently occupied dwelling_1,v_stock,libo,MFH,num,
-No of permanently occupied dwel,Number of permanently occupied dwelling_1,v_stock,reel,MFH,num,
-No of permanently occupied dwel,Number of permanently occupied dwelling_1,v_stock,sobo,MFH,num,
-No of single family dwel permanently occupied,Number of single family dwelling permanently occupied_1,v_stock,biom,SFH,num,
-No of single family dwel permanently occupied,Number of single family dwelling permanently occupied_1,v_stock,dihe,SFH,num,
-No of single family dwel permanently occupied,Number of single family dwelling permanently occupied_1,v_stock,ehp1,SFH,num,
-No of single family dwel permanently occupied,Number of single family dwelling permanently occupied_1,v_stock,gabo,SFH,num,
-No of single family dwel permanently occupied,Number of single family dwelling permanently occupied_1,v_stock,libo,SFH,num,
-No of single family dwel permanently occupied,Number of single family dwelling permanently occupied_1,v_stock,reel,SFH,num,
-No of single family dwel permanently occupied,Number of single family dwelling permanently occupied_1,v_stock,sobo,SFH,num,
-No of multi family dwel permanently occupied,Number of multi family dwelling permanently occupied_1,v_stock,biom,MFH,num,
-No of multi family dwel permanently occupied,Number of multi family dwelling permanently occupied_1,v_stock,dihe,MFH,num,
-No of multi family dwel permanently occupied,Number of multi family dwelling permanently occupied_1,v_stock,ehp1,MFH,num,
-No of multi family dwel permanently occupied,Number of multi family dwelling permanently occupied_1,v_stock,gabo,MFH,num,
-No of multi family dwel permanently occupied,Number of multi family dwelling permanently occupied_1,v_stock,libo,MFH,num,
-No of multi family dwel permanently occupied,Number of multi family dwelling permanently occupied_1,v_stock,reel,MFH,num,
-No of multi family dwel permanently occupied,Number of multi family dwelling permanently occupied_1,v_stock,sobo,MFH,num,
-No of com buildings,Number of non-residential buildings_1,v_stock,biom,Com,num,
-No of com buildings,Number of non-residential buildings_1,v_stock,dihe,Com,num,
-No of com buildings,Number of non-residential buildings_1,v_stock,ehp1,Com,num,
-No of com buildings,Number of non-residential buildings_1,v_stock,gabo,Com,num,
-No of com buildings,Number of non-residential buildings_1,v_stock,libo,Com,num,
-No of com buildings,Number of non-residential buildings_1,v_stock,reel,Com,num,
-No of com buildings,Number of non-residential buildings_1,v_stock,sobo,Com,num,
-No of com buildings with electric heating,Number of non-residential buildings with electric heating_1,v_stock,reel,Com,num,
-No of com buildings with electric heating,Number of non-residential buildings with electric heating_1,v_stock,ehp1,Com,num,
-No of com buildings with electric heaters (not heat-pump),Number of non-residential buildings with electric heaters (not heat-pump)_1,v_stock,reel,Com,num,
-No of com buildings with heat pumps,Number of non-residential buildings with heat pumps_1,v_stock,ehp1,Com,num,
-#No of com buildings with heating by solar thermal energy,#Number of non-residential buildings with heating by solar thermal energy_1,v_stock,Com,num,Not yet implemented
-No of com buildings with heating on biomass,Number of non-residential buildings with heating on biomass_1,v_stock,biom,Com,num,
-No of com buildings with heating on coal,Number of non-residential buildings with heating on coal_1,v_stock,sobo,Com,num,
-#No of com buildings with heating on fuel oil,#Number of non-residential buildings with heating on fuel oil_1,v_stock,Com,num,could be aggregated and mapped to libo
-#No of com buildings with heating on liquefied petroleum gas,#Number of non-residential buildings with heating on liquefied petroleum gas_1,v_stock,Com,num,could be aggregated and mapped to libo
-No of com buildings with heating on natural gas,Number of non-residential buildings with heating on natural gas_1,v_stock,gabo,Com,num,
-No of dwels with electric heating,Number of dwellings with electric heating_1,v_stock,reel,SFH,num,
-No of dwels with electric heating,Number of dwellings with electric heating_1,v_stock,reel,MFH,num,
-No of dwels with electric heating,Number of dwellings with electric heating_1,v_stock,ehp1,SFH,num,
-No of dwels with electric heating,Number of dwellings with electric heating_1,v_stock,ehp1,MFH,num,
-No of dwels with electric heaters (not heat-pump),Number of dwellings with electric heaters (not heat-pump)_1,v_stock,reel,SFH,num,
-No of dwels with electric heaters (not heat-pump),Number of dwellings with electric heaters (not heat-pump)_1,v_stock,reel,MFH,num,
-No of dwels with heat pumps,Number of dwellings with heat pumps_1,v_stock,ehp1,SFH,num,
-No of dwels with heat pumps,Number of dwellings with heat pumps_1,v_stock,ehp1,MFH,num,
-#No of dwels with heating by solar thermal energy,#Number of dwellings with heating by solar thermal energy_1,v_stock,SFH,num,Not yet implemented
-#No of dwels with heating by solar thermal energy,#Number of dwellings with heating by solar thermal energy_1,v_stock,MFH,num,Not yet implemented
-No of dwels with heating on biomass,Number of dwellings with heating on biomass_1,v_stock,biom,SFH,num,
-No of dwels with heating on biomass,Number of dwellings with heating on biomass_1,v_stock,biom,MFH,num,
-No of dwels with heating on coal,Number of dwellings with heating on coal_1,v_stock,sobo,SFH,num,
-No of dwels with heating on coal,Number of dwellings with heating on coal_1,v_stock,sobo,MFH,num,
-#No of dwels with heating on fuel oil,#Number of dwellings with heating on fuel oil_1,v_stock,SFH,num,could be aggregated and mapped to libo
-#No of dwels with heating on fuel oil,#Number of dwellings with heating on fuel oil_1,v_stock,MFH,num,could be aggregated and mapped to libo
-#No of dwels with heating on LPG,#Number of dwellings with heating on LPG_1,v_stock,SFH,num,could be aggregated and mapped to libo
-#No of dwels with heating on LPG,#Number of dwellings with heating on LPG_1,v_stock,MFH,num,could be aggregated and mapped to libo
-No of dwels with heating on natural gas,Number of dwellings with heating on natural gas_1,v_stock,gabo,SFH,num,
-No of dwels with heating on natural gas,Number of dwellings with heating on natural gas_1,v_stock,gabo,MFH,num,
+variable,.variable,.variable_Brick,hs,typ,qty,.comment,.color
+Total floor area of single family dwels,Total floor area of single family dwellings_m2,v_stock,biom,SFH,area,,SFH
+Total floor area of single family dwels,Total floor area of single family dwellings_m2,v_stock,dihe,SFH,area,,SFH
+Total floor area of single family dwels,Total floor area of single family dwellings_m2,v_stock,ehp1,SFH,area,,SFH
+Total floor area of single family dwels,Total floor area of single family dwellings_m2,v_stock,gabo,SFH,area,,SFH
+Total floor area of single family dwels,Total floor area of single family dwellings_m2,v_stock,libo,SFH,area,,SFH
+Total floor area of single family dwels,Total floor area of single family dwellings_m2,v_stock,reel,SFH,area,,SFH
+Total floor area of single family dwels,Total floor area of single family dwellings_m2,v_stock,sobo,SFH,area,,SFH
+Total floor area of multi family dwels,Total floor area of multi family dwellings_m2,v_stock,biom,MFH,area,,MFH
+Total floor area of multi family dwels,Total floor area of multi family dwellings_m2,v_stock,dihe,MFH,area,,MFH
+Total floor area of multi family dwels,Total floor area of multi family dwellings_m2,v_stock,ehp1,MFH,area,,MFH
+Total floor area of multi family dwels,Total floor area of multi family dwellings_m2,v_stock,gabo,MFH,area,,MFH
+Total floor area of multi family dwels,Total floor area of multi family dwellings_m2,v_stock,libo,MFH,area,,MFH
+Total floor area of multi family dwels,Total floor area of multi family dwellings_m2,v_stock,reel,MFH,area,,MFH
+Total floor area of multi family dwels,Total floor area of multi family dwellings_m2,v_stock,sobo,MFH,area,,MFH
+Total floor area of com buildings,Total floor area of non-residential buildings_m2,v_stock,biom,Com,area,,Commercial
+Total floor area of com buildings,Total floor area of non-residential buildings_m2,v_stock,dihe,Com,area,,Commercial
+Total floor area of com buildings,Total floor area of non-residential buildings_m2,v_stock,ehp1,Com,area,,Commercial
+Total floor area of com buildings,Total floor area of non-residential buildings_m2,v_stock,gabo,Com,area,,Commercial
+Total floor area of com buildings,Total floor area of non-residential buildings_m2,v_stock,libo,Com,area,,Commercial
+Total floor area of com buildings,Total floor area of non-residential buildings_m2,v_stock,reel,Com,area,,Commercial
+Total floor area of com buildings,Total floor area of non-residential buildings_m2,v_stock,sobo,Com,area,,Commercial
+No of permanently occupied dwel,Number of permanently occupied dwelling_1,v_stock,biom,SFH,num,,Residential
+No of permanently occupied dwel,Number of permanently occupied dwelling_1,v_stock,dihe,SFH,num,,Residential
+No of permanently occupied dwel,Number of permanently occupied dwelling_1,v_stock,ehp1,SFH,num,,Residential
+No of permanently occupied dwel,Number of permanently occupied dwelling_1,v_stock,gabo,SFH,num,,Residential
+No of permanently occupied dwel,Number of permanently occupied dwelling_1,v_stock,libo,SFH,num,,Residential
+No of permanently occupied dwel,Number of permanently occupied dwelling_1,v_stock,reel,SFH,num,,Residential
+No of permanently occupied dwel,Number of permanently occupied dwelling_1,v_stock,sobo,SFH,num,,Residential
+No of permanently occupied dwel,Number of permanently occupied dwelling_1,v_stock,biom,MFH,num,,Residential
+No of permanently occupied dwel,Number of permanently occupied dwelling_1,v_stock,dihe,MFH,num,,Residential
+No of permanently occupied dwel,Number of permanently occupied dwelling_1,v_stock,ehp1,MFH,num,,Residential
+No of permanently occupied dwel,Number of permanently occupied dwelling_1,v_stock,gabo,MFH,num,,Residential
+No of permanently occupied dwel,Number of permanently occupied dwelling_1,v_stock,libo,MFH,num,,Residential
+No of permanently occupied dwel,Number of permanently occupied dwelling_1,v_stock,reel,MFH,num,,Residential
+No of permanently occupied dwel,Number of permanently occupied dwelling_1,v_stock,sobo,MFH,num,,Residential
+No of single family dwel permanently occupied,Number of single family dwelling permanently occupied_1,v_stock,biom,SFH,num,,SFH
+No of single family dwel permanently occupied,Number of single family dwelling permanently occupied_1,v_stock,dihe,SFH,num,,SFH
+No of single family dwel permanently occupied,Number of single family dwelling permanently occupied_1,v_stock,ehp1,SFH,num,,SFH
+No of single family dwel permanently occupied,Number of single family dwelling permanently occupied_1,v_stock,gabo,SFH,num,,SFH
+No of single family dwel permanently occupied,Number of single family dwelling permanently occupied_1,v_stock,libo,SFH,num,,SFH
+No of single family dwel permanently occupied,Number of single family dwelling permanently occupied_1,v_stock,reel,SFH,num,,SFH
+No of single family dwel permanently occupied,Number of single family dwelling permanently occupied_1,v_stock,sobo,SFH,num,,SFH
+No of multi family dwel permanently occupied,Number of multi family dwelling permanently occupied_1,v_stock,biom,MFH,num,,MFH
+No of multi family dwel permanently occupied,Number of multi family dwelling permanently occupied_1,v_stock,dihe,MFH,num,,MFH
+No of multi family dwel permanently occupied,Number of multi family dwelling permanently occupied_1,v_stock,ehp1,MFH,num,,MFH
+No of multi family dwel permanently occupied,Number of multi family dwelling permanently occupied_1,v_stock,gabo,MFH,num,,MFH
+No of multi family dwel permanently occupied,Number of multi family dwelling permanently occupied_1,v_stock,libo,MFH,num,,MFH
+No of multi family dwel permanently occupied,Number of multi family dwelling permanently occupied_1,v_stock,reel,MFH,num,,MFH
+No of multi family dwel permanently occupied,Number of multi family dwelling permanently occupied_1,v_stock,sobo,MFH,num,,MFH
+No of com buildings,Number of non-residential buildings_1,v_stock,biom,Com,num,,Commercial
+No of com buildings,Number of non-residential buildings_1,v_stock,dihe,Com,num,,Commercial
+No of com buildings,Number of non-residential buildings_1,v_stock,ehp1,Com,num,,Commercial
+No of com buildings,Number of non-residential buildings_1,v_stock,gabo,Com,num,,Commercial
+No of com buildings,Number of non-residential buildings_1,v_stock,libo,Com,num,,Commercial
+No of com buildings,Number of non-residential buildings_1,v_stock,reel,Com,num,,Commercial
+No of com buildings,Number of non-residential buildings_1,v_stock,sobo,Com,num,,Commercial
+No of com buildings with electric heating,Number of non-residential buildings with electric heating_1,v_stock,reel,Com,num,,Electricity
+No of com buildings with electric heating,Number of non-residential buildings with electric heating_1,v_stock,ehp1,Com,num,,Electricity
+No of com buildings with electric heaters (not heat-pump),Number of non-residential buildings with electric heaters (not heat-pump)_1,v_stock,reel,Com,num,,Resistive electric
+No of com buildings with heat pumps,Number of non-residential buildings with heat pumps_1,v_stock,ehp1,Com,num,,Heat pump
+#No of com buildings with heating by solar thermal energy,#Number of non-residential buildings with heating by solar thermal energy_1,v_stock,Com,num,Not yet implemented,,
+No of com buildings with heating on biomass,Number of non-residential buildings with heating on biomass_1,v_stock,biom,Com,num,,Biomass heater
+No of com buildings with heating on coal,Number of non-residential buildings with heating on coal_1,v_stock,sobo,Com,num,,Coal heater
+#No of com buildings with heating on fuel oil,#Number of non-residential buildings with heating on fuel oil_1,v_stock,Com,num,could be aggregated and mapped to libo,,Liquids heater
+#No of com buildings with heating on liquefied petroleum gas,#Number of non-residential buildings with heating on liquefied petroleum gas_1,v_stock,Com,num,could be aggregated and mapped to libo,,Liquids heater
+No of com buildings with heating on natural gas,Number of non-residential buildings with heating on natural gas_1,v_stock,gabo,Com,num,,Gas heater
+No of dwels with electric heating,Number of dwellings with electric heating_1,v_stock,reel,SFH,num,,Electricity
+No of dwels with electric heating,Number of dwellings with electric heating_1,v_stock,reel,MFH,num,,Electricity
+No of dwels with electric heating,Number of dwellings with electric heating_1,v_stock,ehp1,SFH,num,,Electricity
+No of dwels with electric heating,Number of dwellings with electric heating_1,v_stock,ehp1,MFH,num,,Electricity
+No of dwels with electric heaters (not heat-pump),Number of dwellings with electric heaters (not heat-pump)_1,v_stock,reel,SFH,num,,Resistive electric
+No of dwels with electric heaters (not heat-pump),Number of dwellings with electric heaters (not heat-pump)_1,v_stock,reel,MFH,num,,Resistive electric
+No of dwels with heat pumps,Number of dwellings with heat pumps_1,v_stock,ehp1,SFH,num,,Heat pump
+No of dwels with heat pumps,Number of dwellings with heat pumps_1,v_stock,ehp1,MFH,num,,Heat pump
+#No of dwels with heating by solar thermal energy,#Number of dwellings with heating by solar thermal energy_1,v_stock,SFH,num,Not yet implemented,,
+#No of dwels with heating by solar thermal energy,#Number of dwellings with heating by solar thermal energy_1,v_stock,MFH,num,Not yet implemented,,
+No of dwels with heating on biomass,Number of dwellings with heating on biomass_1,v_stock,biom,SFH,num,,Biomass heater
+No of dwels with heating on biomass,Number of dwellings with heating on biomass_1,v_stock,biom,MFH,num,,Biomass heater
+No of dwels with heating on coal,Number of dwellings with heating on coal_1,v_stock,sobo,SFH,num,,Coal heater
+No of dwels with heating on coal,Number of dwellings with heating on coal_1,v_stock,sobo,MFH,num,,Coal heater
+#No of dwels with heating on fuel oil,#Number of dwellings with heating on fuel oil_1,v_stock,SFH,num,could be aggregated and mapped to libo,,Liquids heater
+#No of dwels with heating on fuel oil,#Number of dwellings with heating on fuel oil_1,v_stock,MFH,num,could be aggregated and mapped to libo,,Liquids heater
+#No of dwels with heating on LPG,#Number of dwellings with heating on LPG_1,v_stock,SFH,num,could be aggregated and mapped to libo,,Liquids heater
+#No of dwels with heating on LPG,#Number of dwellings with heating on LPG_1,v_stock,MFH,num,could be aggregated and mapped to libo,,Liquids heater
+No of dwels with heating on natural gas,Number of dwellings with heating on natural gas_1,v_stock,gabo,SFH,num,,Gas heater
+No of dwels with heating on natural gas,Number of dwellings with heating on natural gas_1,v_stock,gabo,MFH,num,,Gas heater

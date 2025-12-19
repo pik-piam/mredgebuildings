@@ -1,22 +1,22 @@
-variable,refVarGroup,.variable,.bage,.building,vin,typ,.brickVariable,.comment
-SFH_before1945,SFH,BUILDING|Area|Constructed area,Before 1945,Residential sector|Single family- Terraced houses|Single family- Terraced houses,before1945,SFH,v_stock,
-SFH_1945-1969,SFH,BUILDING|Area|Constructed area,1945 - 1969,Residential sector|Single family- Terraced houses|Single family- Terraced houses,1945-1969,SFH,v_stock,
-SFH_1970-1979,SFH,BUILDING|Area|Constructed area,1970 - 1979,Residential sector|Single family- Terraced houses|Single family- Terraced houses,1970-1979,SFH,v_stock,
-SFH_1980-1989,SFH,BUILDING|Area|Constructed area,1980 - 1989,Residential sector|Single family- Terraced houses|Single family- Terraced houses,1980-1989,SFH,v_stock,
-SFH_1990-1999,SFH,BUILDING|Area|Constructed area,1990 - 1999,Residential sector|Single family- Terraced houses|Single family- Terraced houses,1990-1999,SFH,v_stock,
-SFH_2000-2010,SFH,BUILDING|Area|Constructed area,2000 - 2010,Residential sector|Single family- Terraced houses|Single family- Terraced houses,2000-2010,SFH,v_stock,
-SFH_post2010,SFH,BUILDING|Area|Constructed area,Post 2010,Residential sector|Single family- Terraced houses|Single family- Terraced houses,2011-2020,SFH,v_stock,
-MFH_before1945,MFH,BUILDING|Area|Constructed area,Before 1945,Residential sector|Appartment blocks|Appartment blocks,before1945,MFH,v_stock,
-MFH_1945-1969,MFH,BUILDING|Area|Constructed area,1945 - 1969,Residential sector|Appartment blocks|Appartment blocks,1945-1969,MFH,v_stock,
-MFH_1970-1979,MFH,BUILDING|Area|Constructed area,1970 - 1979,Residential sector|Appartment blocks|Appartment blocks,1970-1979,MFH,v_stock,
-MFH_1980-1989,MFH,BUILDING|Area|Constructed area,1980 - 1989,Residential sector|Appartment blocks|Appartment blocks,1980-1989,MFH,v_stock,
-MFH_1990-1999,MFH,BUILDING|Area|Constructed area,1990 - 1999,Residential sector|Appartment blocks|Appartment blocks,1990-1999,MFH,v_stock,
-MFH_2000-2010,MFH,BUILDING|Area|Constructed area,2000 - 2010,Residential sector|Appartment blocks|Appartment blocks,2000-2010,MFH,v_stock,
-MFH_post2010,MFH,BUILDING|Area|Constructed area,Post 2010,Residential sector|Appartment blocks|Appartment blocks,2011-2020,MFH,v_stock,
-MFH_before1945,MFH,BUILDING|Area|Constructed area,Before 1945,Residential sector|Multifamily houses|Multifamily houses,before1945,MFH,v_stock,
-MFH_1945-1969,MFH,BUILDING|Area|Constructed area,1945 - 1969,Residential sector|Multifamily houses|Multifamily houses,1945-1969,MFH,v_stock,
-MFH_1970-1979,MFH,BUILDING|Area|Constructed area,1970 - 1979,Residential sector|Multifamily houses|Multifamily houses,1970-1979,MFH,v_stock,
-MFH_1980-1989,MFH,BUILDING|Area|Constructed area,1980 - 1989,Residential sector|Multifamily houses|Multifamily houses,1980-1989,MFH,v_stock,
-MFH_1990-1999,MFH,BUILDING|Area|Constructed area,1990 - 1999,Residential sector|Multifamily houses|Multifamily houses,1990-1999,MFH,v_stock,
-MFH_2000-2010,MFH,BUILDING|Area|Constructed area,2000 - 2010,Residential sector|Multifamily houses|Multifamily houses,2000-2010,MFH,v_stock,
-MFH_post2010,MFH,BUILDING|Area|Constructed area,Post 2010,Residential sector|Multifamily houses|Multifamily houses,2011-2020,MFH,v_stock,
+variable,refVarGroup,.variable,.bage,.building,vin,typ,.brickVariable,.comment,.color
+SFH_before1945,SFH,BUILDING|Area|Constructed area,Before 1945,Residential sector|Single family- Terraced houses|Single family- Terraced houses,before1945,SFH,v_stock,,Before 1945
+SFH_1945-1969,SFH,BUILDING|Area|Constructed area,1945 - 1969,Residential sector|Single family- Terraced houses|Single family- Terraced houses,1945-1969,SFH,v_stock,,1945 - 1969
+SFH_1970-1979,SFH,BUILDING|Area|Constructed area,1970 - 1979,Residential sector|Single family- Terraced houses|Single family- Terraced houses,1970-1979,SFH,v_stock,,1970 - 1979
+SFH_1980-1989,SFH,BUILDING|Area|Constructed area,1980 - 1989,Residential sector|Single family- Terraced houses|Single family- Terraced houses,1980-1989,SFH,v_stock,,1980 - 1989
+SFH_1990-1999,SFH,BUILDING|Area|Constructed area,1990 - 1999,Residential sector|Single family- Terraced houses|Single family- Terraced houses,1990-1999,SFH,v_stock,,1990 - 1999
+SFH_2000-2010,SFH,BUILDING|Area|Constructed area,2000 - 2010,Residential sector|Single family- Terraced houses|Single family- Terraced houses,2000-2010,SFH,v_stock,,2000 - 2010
+SFH_post2010,SFH,BUILDING|Area|Constructed area,Post 2010,Residential sector|Single family- Terraced houses|Single family- Terraced houses,2011-2020,SFH,v_stock,,2011 - 2020
+MFH_before1945,MFH,BUILDING|Area|Constructed area,Before 1945,Residential sector|Appartment blocks|Appartment blocks,before1945,MFH,v_stock,,Before 1945
+MFH_1945-1969,MFH,BUILDING|Area|Constructed area,1945 - 1969,Residential sector|Appartment blocks|Appartment blocks,1945-1969,MFH,v_stock,,1945 - 1969
+MFH_1970-1979,MFH,BUILDING|Area|Constructed area,1970 - 1979,Residential sector|Appartment blocks|Appartment blocks,1970-1979,MFH,v_stock,,1970 - 1979
+MFH_1980-1989,MFH,BUILDING|Area|Constructed area,1980 - 1989,Residential sector|Appartment blocks|Appartment blocks,1980-1989,MFH,v_stock,,1980 - 1989
+MFH_1990-1999,MFH,BUILDING|Area|Constructed area,1990 - 1999,Residential sector|Appartment blocks|Appartment blocks,1990-1999,MFH,v_stock,,1990 - 1999
+MFH_2000-2010,MFH,BUILDING|Area|Constructed area,2000 - 2010,Residential sector|Appartment blocks|Appartment blocks,2000-2010,MFH,v_stock,,2000 - 2010
+MFH_post2010,MFH,BUILDING|Area|Constructed area,Post 2010,Residential sector|Appartment blocks|Appartment blocks,2011-2020,MFH,v_stock,,2011 - 2020
+MFH_before1945,MFH,BUILDING|Area|Constructed area,Before 1945,Residential sector|Multifamily houses|Multifamily houses,before1945,MFH,v_stock,,Before 1945
+MFH_1945-1969,MFH,BUILDING|Area|Constructed area,1945 - 1969,Residential sector|Multifamily houses|Multifamily houses,1945-1969,MFH,v_stock,,1945 - 1969
+MFH_1970-1979,MFH,BUILDING|Area|Constructed area,1970 - 1979,Residential sector|Multifamily houses|Multifamily houses,1970-1979,MFH,v_stock,,1970 - 1979
+MFH_1980-1989,MFH,BUILDING|Area|Constructed area,1980 - 1989,Residential sector|Multifamily houses|Multifamily houses,1980-1989,MFH,v_stock,,1980 - 1989
+MFH_1990-1999,MFH,BUILDING|Area|Constructed area,1990 - 1999,Residential sector|Multifamily houses|Multifamily houses,1990-1999,MFH,v_stock,,1990 - 1999
+MFH_2000-2010,MFH,BUILDING|Area|Constructed area,2000 - 2010,Residential sector|Multifamily houses|Multifamily houses,2000-2010,MFH,v_stock,,2000 - 2010
+MFH_post2010,MFH,BUILDING|Area|Constructed area,Post 2010,Residential sector|Multifamily houses|Multifamily houses,2011-2020,MFH,v_stock,,2011 - 2020
