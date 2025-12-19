@@ -1,15 +1,15 @@
-variable,refVarGroup,typ,hs
-MFH_biom,MFH,MFH,biom
-MFH_dihe,MFH,MFH,dihe
-MFH_ehp1,MFH,MFH,ehp1
-MFH_gabo,MFH,MFH,gabo
-MFH_libo,MFH,MFH,libo
-MFH_reel,MFH,MFH,reel
-MFH_sobo,MFH,MFH,sobo
-SFH_biom,SFH,SFH,biom
-SFH_dihe,SFH,SFH,dihe
-SFH_ehp1,SFH,SFH,ehp1
-SFH_gabo,SFH,SFH,gabo
-SFH_libo,SFH,SFH,libo
-SFH_reel,SFH,SFH,reel
-SFH_sobo,SFH,SFH,sobo
+variable,refVarGroup,typ,hs,.color
+MFH_biom,MFH,MFH,biom,Biomass heater
+MFH_dihe,MFH,MFH,dihe,District heating
+MFH_ehp1,MFH,MFH,ehp1,Heat pump
+MFH_gabo,MFH,MFH,gabo,Gas heater
+MFH_libo,MFH,MFH,libo,Liquids heater
+MFH_reel,MFH,MFH,reel,Resistive electric
+MFH_sobo,MFH,MFH,sobo,Coal heater
+SFH_biom,SFH,SFH,biom,Biomass heater
+SFH_dihe,SFH,SFH,dihe,District heating
+SFH_ehp1,SFH,SFH,ehp1,Heat pump
+SFH_gabo,SFH,SFH,gabo,Gas heater
+SFH_libo,SFH,SFH,libo,Liquids heater
+SFH_reel,SFH,SFH,reel,Resistive electric
+SFH_sobo,SFH,SFH,sobo,Coal heater

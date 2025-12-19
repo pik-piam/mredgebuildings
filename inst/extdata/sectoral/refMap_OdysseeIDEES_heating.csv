@@ -1,33 +1,33 @@
-variable,.variable,typ,hs,.comment
-Res_libo,nbrlprpet*surlog,SFH,libo,
-Res_libo,nbrlprpet*surlog,MFH,libo,
-Res_gabo,nbrlprgaz*surlog,SFH,gabo,
-Res_gabo,nbrlprgaz*surlog,MFH,gabo,
-Res_dihe,nbrlprvap*surlog,SFH,dihe,
-Res_dihe,nbrlprvap*surlog,MFH,dihe,
-Res_biom,nbrlprboi*surlog,SFH,biom,
-Res_biom,nbrlprboi*surlog,MFH,biom,
-Res_elec,nbrlprele*surlog,SFH,ehp1,
-Res_elec,nbrlprele*surlog,MFH,ehp1,
-Res_elec,nbrlprele*surlog,SFH,reel,
-Res_elec,nbrlprele*surlog,MFH,reel,
-Res_ehp1,nbrlprelehp*surlog,SFH,ehp1,
-Res_ehp1,nbrlprelehp*surlog,MFH,ehp1,
-Res_reel,nbrlprelerh*surlog,SFH,reel,
-Res_reel,nbrlprelerh*surlog,MFH,reel,
-MFH_libo,nbriprpet*suripr,MFH,libo,
-MFH_gabo,nbriprgaz*suripr,MFH,gabo,
-MFH_dihe,nbriprvap*suripr,MFH,dihe,
-MFH_biom,nbriprboi*suripr,MFH,biom,
-MFH_elec,nbriprele*suripr,MFH,ehp1,
-MFH_elec,nbriprele*suripr,MFH,reel,
-MFH_ehp1,nbriprelehp*suripr,MFH,ehp1,
-MFH_reel,nbriprelerh*suripr,MFH,reel,
-SFH_libo,nbrmprpet*surmpr,SFH,libo,
-SFH_gabo,nbrmprgaz*surmpr,SFH,gabo,
-SFH_dihe,nbrmprvap*surmpr,SFH,dihe,
-SFH_biom,nbrmprboi*surmpr,SFH,biom,
-SFH_elec,nbrmprele*surmpr,SFH,ehp1,
-SFH_elec,nbrmprele*surmpr,SFH,reel,
-SFH_ehp1,nbrmprelehp*surmpr,SFH,ehp1,
-SFH_reel,nbrmprelerh*surmpr,SFH,reel,
+variable,.variable,typ,hs,.comment,.color
+Res_libo,nbrlprpet*surlog,SFH,libo,,Liquids heater
+Res_libo,nbrlprpet*surlog,MFH,libo,,Liquids heater
+Res_gabo,nbrlprgaz*surlog,SFH,gabo,,Gas heater
+Res_gabo,nbrlprgaz*surlog,MFH,gabo,,Gas heater
+Res_dihe,nbrlprvap*surlog,SFH,dihe,,District heating
+Res_dihe,nbrlprvap*surlog,MFH,dihe,,District heating
+Res_biom,nbrlprboi*surlog,SFH,biom,,Biomass heater
+Res_biom,nbrlprboi*surlog,MFH,biom,,Biomass heater
+Res_elec,nbrlprele*surlog,SFH,ehp1,,Electricity
+Res_elec,nbrlprele*surlog,MFH,ehp1,,Electricity
+Res_elec,nbrlprele*surlog,SFH,reel,,Electricity
+Res_elec,nbrlprele*surlog,MFH,reel,,Electricity
+Res_ehp1,nbrlprelehp*surlog,SFH,ehp1,,Heat pump
+Res_ehp1,nbrlprelehp*surlog,MFH,ehp1,,Heat pump
+Res_reel,nbrlprelerh*surlog,SFH,reel,,Resistive electric
+Res_reel,nbrlprelerh*surlog,MFH,reel,,Resistive electric
+MFH_libo,nbriprpet*suripr,MFH,libo,,Liquids heater
+MFH_gabo,nbriprgaz*suripr,MFH,gabo,,Gas heater
+MFH_dihe,nbriprvap*suripr,MFH,dihe,,District heating
+MFH_biom,nbriprboi*suripr,MFH,biom,,Biomass heater
+MFH_elec,nbriprele*suripr,MFH,ehp1,,Electricity
+MFH_elec,nbriprele*suripr,MFH,reel,,Electricity
+MFH_ehp1,nbriprelehp*suripr,MFH,ehp1,,Heat pump
+MFH_reel,nbriprelerh*suripr,MFH,reel,,Resistive electric
+SFH_libo,nbrmprpet*surmpr,SFH,libo,,Liquids heater
+SFH_gabo,nbrmprgaz*surmpr,SFH,gabo,,Gas heater
+SFH_dihe,nbrmprvap*surmpr,SFH,dihe,,District heating
+SFH_biom,nbrmprboi*surmpr,SFH,biom,,Biomass heater
+SFH_elec,nbrmprele*surmpr,SFH,ehp1,,Electricity
+SFH_elec,nbrmprele*surmpr,SFH,reel,,Electricity
+SFH_ehp1,nbrmprelehp*surmpr,SFH,ehp1,,Heat pump
+SFH_reel,nbrmprelerh*surmpr,SFH,reel,,Resistive electric

@@ -1,2 +1,2 @@
-variable,.dwel,.size,.variableTilte,.variable_Brick,sec,.comment
-Res,nbrlpn,surlpn,Total construction of dwellings_Floor area of new dwellings (average),v_construction,Res,
+variable,.dwel,.size,.variableTitle,.variable_Brick,sec,.comment,.color
+Res,nbrlpn,surlpn,Total construction of dwellings_Floor area of new dwellings (average),v_construction,Res,,Residential

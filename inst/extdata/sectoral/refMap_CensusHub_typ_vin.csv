@@ -1,25 +1,25 @@
-variable,refVarGroup,.buildingType,vin,typ,.variableBrick,.comment
-SFH_before1945,SFH,residential_1dwelling,before1945,SFH,v_stock,
-SFH_1945-1969,SFH,residential_1dwelling,1945-1969,SFH,v_stock,
-SFH_1970-1979,SFH,residential_1dwelling,1970-1979,SFH,v_stock,
-SFH_1980-1989,SFH,residential_1dwelling,1980-1989,SFH,v_stock,
-SFH_1990-1999,SFH,residential_1dwelling,1990-1999,SFH,v_stock,
-SFH_2000-2010,SFH,residential_1dwelling,2000-2010,SFH,v_stock,
-SFH_2011-2020,SFH,residential_1dwelling,2011-2020,SFH,v_stock,
-SFH_2021-2030,SFH,residential_1dwelling,2021-2030,SFH,v_stock,
-SFH_before1945,SFH,residential_2dwelling,before1945,SFH,v_stock,
-SFH_1945-1969,SFH,residential_2dwelling,1945-1969,SFH,v_stock,
-SFH_1970-1979,SFH,residential_2dwelling,1970-1979,SFH,v_stock,
-SFH_1980-1989,SFH,residential_2dwelling,1980-1989,SFH,v_stock,
-SFH_1990-1999,SFH,residential_2dwelling,1990-1999,SFH,v_stock,
-SFH_2000-2010,SFH,residential_2dwelling,2000-2010,SFH,v_stock,
-SFH_2011-2020,SFH,residential_2dwelling,2011-2020,SFH,v_stock,
-SFH_2021-2030,SFH,residential_2dwelling,2021-2030,SFH,v_stock,
-MFH_before1945,MFH,residential_ge3dwelling,before1945,MFH,v_stock,
-MFH_1945-1969,MFH,residential_ge3dwelling,1945-1969,MFH,v_stock,
-MFH_1970-1979,MFH,residential_ge3dwelling,1970-1979,MFH,v_stock,
-MFH_1980-1989,MFH,residential_ge3dwelling,1980-1989,MFH,v_stock,
-MFH_1990-1999,MFH,residential_ge3dwelling,1990-1999,MFH,v_stock,
-MFH_2000-2010,MFH,residential_ge3dwelling,2000-2010,MFH,v_stock,
-MFH_2011-2020,MFH,residential_ge3dwelling,2011-2020,MFH,v_stock,
-MFH_2021-2030,MFH,residential_ge3dwelling,2021-2030,MFH,v_stock,
+variable,refVarGroup,.buildingType,vin,typ,.variableBrick,.comment,.color
+SFH_before1945,SFH,residential_1dwelling,before1945,SFH,v_stock,,Before 1945
+SFH_1945-1969,SFH,residential_1dwelling,1945-1969,SFH,v_stock,,1945 - 1969
+SFH_1970-1979,SFH,residential_1dwelling,1970-1979,SFH,v_stock,,1970 - 1979
+SFH_1980-1989,SFH,residential_1dwelling,1980-1989,SFH,v_stock,,1980 - 1989
+SFH_1990-1999,SFH,residential_1dwelling,1990-1999,SFH,v_stock,,1990 - 1999
+SFH_2000-2010,SFH,residential_1dwelling,2000-2010,SFH,v_stock,,2000 - 2010
+SFH_2011-2020,SFH,residential_1dwelling,2011-2020,SFH,v_stock,,2011 - 2020
+SFH_2021-2030,SFH,residential_1dwelling,2021-2030,SFH,v_stock,,2021 - 2030
+SFH_before1945,SFH,residential_2dwelling,before1945,SFH,v_stock,,Before 1945
+SFH_1945-1969,SFH,residential_2dwelling,1945-1969,SFH,v_stock,,1945 - 1969
+SFH_1970-1979,SFH,residential_2dwelling,1970-1979,SFH,v_stock,,1970 - 1979
+SFH_1980-1989,SFH,residential_2dwelling,1980-1989,SFH,v_stock,,1980 - 1989
+SFH_1990-1999,SFH,residential_2dwelling,1990-1999,SFH,v_stock,,1990 - 1999
+SFH_2000-2010,SFH,residential_2dwelling,2000-2010,SFH,v_stock,,2000 - 2010
+SFH_2011-2020,SFH,residential_2dwelling,2011-2020,SFH,v_stock,,2011 - 2020
+SFH_2021-2030,SFH,residential_2dwelling,2021-2030,SFH,v_stock,,2021 - 2030
+MFH_before1945,MFH,residential_ge3dwelling,before1945,MFH,v_stock,,Before 1945
+MFH_1945-1969,MFH,residential_ge3dwelling,1945-1969,MFH,v_stock,,1945 - 1969
+MFH_1970-1979,MFH,residential_ge3dwelling,1970-1979,MFH,v_stock,,1970 - 1979
+MFH_1980-1989,MFH,residential_ge3dwelling,1980-1989,MFH,v_stock,,1980 - 1989
+MFH_1990-1999,MFH,residential_ge3dwelling,1990-1999,MFH,v_stock,,1990 - 1999
+MFH_2000-2010,MFH,residential_ge3dwelling,2000-2010,MFH,v_stock,,2000 - 2010
+MFH_2011-2020,MFH,residential_ge3dwelling,2011-2020,MFH,v_stock,,2011 - 2020
+MFH_2021-2030,MFH,residential_ge3dwelling,2021-2030,MFH,v_stock,,2021 - 2030

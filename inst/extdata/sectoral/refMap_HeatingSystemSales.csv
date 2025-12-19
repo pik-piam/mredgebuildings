@@ -1,9 +1,9 @@
-variable,refVarGroup,hs,.comment
-reel,all,reel,
-ehp1,all,ehp1,
-biom,all,biom,
-sobo,all,sobo,
-gabo,all,gabo,
-dihe,all,dihe,
-libo,all,libo,
-h2bo,all,h2bo,not in the data and filled with zero
+variable,refVarGroup,hs,.comment,.color
+reel,all,reel,,Resistive electric
+ehp1,all,ehp1,,Heat pump
+biom,all,biom,,Biomass heater
+sobo,all,sobo,,Coal heater
+gabo,all,gabo,,Gas heater
+dihe,all,dihe,,District heating
+libo,all,libo,,Liquids heater
+h2bo,all,h2bo,not in the data and filled with zero,Hydrogen heater

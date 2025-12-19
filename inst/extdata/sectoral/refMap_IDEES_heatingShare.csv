@@ -1,22 +1,22 @@
-variable,refVarGroup,.code,.variable_Brick,hs,sec,.comment
-Res_Solids,Res,NUM.number.Res.HH.Thermal.SH.Solids,v_stock,sobo,Res,
-Res_LPG+Oil,Res,NUM.number.Res.HH.Thermal.SH.LPG,v_stock,libo,Res,
-Res_LPG+Oil,Res,NUM.number.Res.HH.Thermal.SH.Oil,v_stock,libo,Res,
-Res_Gas,Res,NUM.number.Res.HH.Thermal.SH.Gas,v_stock,gabo,Res,
-Res_Biomass,Res,NUM.number.Res.HH.Thermal.SH.Biomass,v_stock,biom,Res,
-#Res_Geo,,NUM.number.Res.HH.Thermal.SH.Geo,v_stock,,,not implemented
-Res_DistrHeat,Res,NUM.number.Res.HH.Thermal.SH.DistrHeat,v_stock,dihe,Res,
-Res_AdvElc,Res,NUM.number.Res.HH.Thermal.SH.AdvElc,v_stock,ehp1,Res,
-Res_ConvElc,Res,NUM.number.Res.HH.Thermal.SH.ConvElc,v_stock,reel,Res,
-Res_H2,Res,,v_stock,h2bo,Res,not in the data but needed to complete group
-Com_Solids,Com,NUM.number.Ser.Bld.Thermal.SH.Solids,v_stock,sobo,Com,
-Com_LPG+Oil,Com,NUM.number.Ser.Bld.Thermal.SH.LPG,v_stock,libo,Com,
-Com_LPG+Oil,Com,NUM.number.Ser.Bld.Thermal.SH.Oil,v_stock,libo,Com,
-Com_GasHP+GasTH,Com,NUM.number.Ser.Bld.Thermal.SH.GasHP,v_stock,gabo,Com,
-Com_GasHP+GasTH,Com,NUM.number.Ser.Bld.Thermal.SH.GasTH,v_stock,gabo,Com,
-Com_Biomass,Com,NUM.number.Ser.Bld.Thermal.SH.Biomass,v_stock,biom,Com,
-#Ser_Geo,,NUM.number.Ser.Bld.Thermal.SH.Geo,v_stock,,,not implemented
-Com_DistrHeat,Com,NUM.number.Ser.Bld.Thermal.SH.DistrHeat,v_stock,dihe,Com,
-Com_AdvElc,Com,NUM.number.Ser.Bld.Thermal.SH.AdvElc,v_stock,ehp1,Com,
-Com_ConvElc,Com,NUM.number.Ser.Bld.Thermal.SH.ConvElc,v_stock,reel,Com,
-Com_H2,Com,,v_stock,h2bo,Com,not in the data but needed to complete group
+variable,refVarGroup,.code,.variable_Brick,hs,sec,.comment,.color
+Res_Solids,Res,NUM.number.Res.HH.Thermal.SH.Solids,v_stock,sobo,Res,,Coal heater
+Res_LPG+Oil,Res,NUM.number.Res.HH.Thermal.SH.LPG,v_stock,libo,Res,,Liquids heater
+Res_LPG+Oil,Res,NUM.number.Res.HH.Thermal.SH.Oil,v_stock,libo,Res,,Liquids heater
+Res_Gas,Res,NUM.number.Res.HH.Thermal.SH.Gas,v_stock,gabo,Res,,Gas heater
+Res_Biomass,Res,NUM.number.Res.HH.Thermal.SH.Biomass,v_stock,biom,Res,,Biomass heater
+#Res_Geo,,NUM.number.Res.HH.Thermal.SH.Geo,v_stock,,,not implemented,
+Res_DistrHeat,Res,NUM.number.Res.HH.Thermal.SH.DistrHeat,v_stock,dihe,Res,,District heating
+Res_AdvElc,Res,NUM.number.Res.HH.Thermal.SH.AdvElc,v_stock,ehp1,Res,,Heat pump
+Res_ConvElc,Res,NUM.number.Res.HH.Thermal.SH.ConvElc,v_stock,reel,Res,,Resistive electric
+Res_H2,Res,,v_stock,h2bo,Res,not in the data but needed to complete group,Hydrogen heater
+Com_Solids,Com,NUM.number.Ser.Bld.Thermal.SH.Solids,v_stock,sobo,Com,,Coal heater
+Com_LPG+Oil,Com,NUM.number.Ser.Bld.Thermal.SH.LPG,v_stock,libo,Com,,Liquids heater
+Com_LPG+Oil,Com,NUM.number.Ser.Bld.Thermal.SH.Oil,v_stock,libo,Com,,Liquids heater
+Com_GasHP+GasTH,Com,NUM.number.Ser.Bld.Thermal.SH.GasHP,v_stock,gabo,Com,,Gas heater
+Com_GasHP+GasTH,Com,NUM.number.Ser.Bld.Thermal.SH.GasTH,v_stock,gabo,Com,,Gas heater
+Com_Biomass,Com,NUM.number.Ser.Bld.Thermal.SH.Biomass,v_stock,biom,Com,,Biomass heater
+#Ser_Geo,,NUM.number.Ser.Bld.Thermal.SH.Geo,v_stock,,,not implemented,
+Com_DistrHeat,Com,NUM.number.Ser.Bld.Thermal.SH.DistrHeat,v_stock,dihe,Com,,District heating
+Com_AdvElc,Com,NUM.number.Ser.Bld.Thermal.SH.AdvElc,v_stock,ehp1,Com,,Heat pump
+Com_ConvElc,Com,NUM.number.Ser.Bld.Thermal.SH.ConvElc,v_stock,reel,Com,,Resistive electric
+Com_H2,Com,,v_stock,h2bo,Com,not in the data but needed to complete group,Hydrogen heater

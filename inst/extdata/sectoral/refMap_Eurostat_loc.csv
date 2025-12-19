@@ -1,4 +1,4 @@
-variable,.deg_urb,loc,sec,.comment
-urban,DEG1,urban,Res,Cities
-urban,DEG2,urban,Res,Towns and suburbs
-rural,DEG3,rural,Res,Rural areas
+variable,.deg_urb,loc,sec,.comment,.color
+urban,DEG1,urban,Res,Cities,Urban
+urban,DEG2,urban,Res,Towns and suburbs,Urban
+rural,DEG3,rural,Res,Rural areas,Rural

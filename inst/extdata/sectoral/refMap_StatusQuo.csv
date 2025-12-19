@@ -1,65 +1,65 @@
-variable,refVarGroup,hs,hsr,sec,.comment
-_biom->x,biom,biom,reel,Res,
-_biom->x,biom,biom,ehp1,Res,
-biom->biom,biom,biom,biom,Res,
-#_biom->x,biom,biom,sobo,Res,replacement not allowed
-_biom->x,biom,biom,gabo,Res,
-_biom->x,biom,biom,dihe,Res,
-#_biom->x,biom,biom,libo,Res,replacement not allowed
-_biom->x,biom,biom,h2bo,Res,
-_dihe->x,dihe,dihe,reel,Res,
-_dihe->x,dihe,dihe,ehp1,Res,
-_dihe->x,dihe,dihe,biom,Res,
-#_dihe->x,dihe,dihe,sobo,Res,replacement not allowed
-_dihe->x,dihe,dihe,gabo,Res,
-dihe->dihe,dihe,dihe,dihe,Res,
-#_dihe->x,dihe,dihe,libo,Res,replacement not allowed
-_dihe->x,dihe,dihe,h2bo,Res,
-_ehp1->x,ehp1,ehp1,reel,Res,
-ehp1->ehp1,ehp1,ehp1,ehp1,Res,
-_ehp1->x,ehp1,ehp1,biom,Res,
-#_ehp1->x,ehp1,ehp1,sobo,Res,replacement not allowed
-_ehp1->x,ehp1,ehp1,gabo,Res,
-_ehp1->x,ehp1,ehp1,dihe,Res,
-#_ehp1->x,ehp1,ehp1,libo,Res,replacement not allowed
-_ehp1->x,ehp1,ehp1,h2bo,Res,
-_gabo->x,gabo,gabo,reel,Res,
-_gabo->x,gabo,gabo,ehp1,Res,
-_gabo->x,gabo,gabo,biom,Res,
-#_gabo->x,gabo,gabo,sobo,Res,replacement not allowed
-gabo->gabo,gabo,gabo,gabo,Res,
-_gabo->x,gabo,gabo,dihe,Res,
-#_gabo->x,gabo,gabo,libo,Res,replacement not allowed
-_gabo->x,gabo,gabo,h2bo,Res,
-_h2bo->x,h2bo,h2bo,reel,Res,
-_h2bo->x,h2bo,h2bo,ehp1,Res,
-_h2bo->x,h2bo,h2bo,biom,Res,
-#_h2bo->x,h2bo,h2bo,sobo,Res,replacement not allowed
-_h2bo->x,h2bo,h2bo,gabo,Res,
-_h2bo->x,h2bo,h2bo,dihe,Res,
-#_h2bo->x,h2bo,h2bo,libo,Res,replacement not allowed
-h2bo->h2bo,h2bo,h2bo,h2bo,Res,
-_libo->x,libo,libo,reel,Res,
-_libo->x,libo,libo,ehp1,Res,
-_libo->x,libo,libo,biom,Res,
-#_libo->x,libo,libo,sobo,Res,replacement not allowed
-_libo->x,libo,libo,gabo,Res,
-_libo->x,libo,libo,dihe,Res,
-libo->libo,libo,libo,libo,Res,
-_libo->x,libo,libo,h2bo,Res,
-reel->reel,reel,reel,reel,Res,
-_reel->x,reel,reel,ehp1,Res,
-_reel->x,reel,reel,biom,Res,
-#_reel->x,reel,reel,sobo,Res,replacement not allowed
-_reel->x,reel,reel,gabo,Res,
-_reel->x,reel,reel,dihe,Res,
-#_reel->x,reel,reel,libo,Res,replacement not allowed
-_reel->x,reel,reel,h2bo,Res,
-_sobo->x,sobo,sobo,reel,Res,
-_sobo->x,sobo,sobo,ehp1,Res,
-_sobo->x,sobo,sobo,biom,Res,
-sobo->sobo,sobo,sobo,sobo,Res,
-_sobo->x,sobo,sobo,gabo,Res,
-_sobo->x,sobo,sobo,dihe,Res,
-_sobo->x,sobo,sobo,libo,Res,
-_sobo->x,sobo,sobo,h2bo,Res,
+variable,refVarGroup,hs,hsr,sec,.comment,.color
+_biom->x,biom,biom,reel,Res,,hex:ffffff
+_biom->x,biom,biom,ehp1,Res,,hex:ffffff
+biom->biom,biom,biom,biom,Res,,Biomass heater
+#_biom->x,biom,biom,sobo,Res,replacement not allowed,
+_biom->x,biom,biom,gabo,Res,,hex:ffffff
+_biom->x,biom,biom,dihe,Res,,hex:ffffff
+#_biom->x,biom,biom,libo,Res,replacement not allowed,
+_biom->x,biom,biom,h2bo,Res,,hex:ffffff
+_dihe->x,dihe,dihe,reel,Res,,hex:ffffff
+_dihe->x,dihe,dihe,ehp1,Res,,hex:ffffff
+_dihe->x,dihe,dihe,biom,Res,,hex:ffffff
+#_dihe->x,dihe,dihe,sobo,Res,replacement not allowed,
+_dihe->x,dihe,dihe,gabo,Res,,hex:ffffff
+dihe->dihe,dihe,dihe,dihe,Res,,District heating
+#_dihe->x,dihe,dihe,libo,Res,replacement not allowed,
+_dihe->x,dihe,dihe,h2bo,Res,,hex:ffffff
+_ehp1->x,ehp1,ehp1,reel,Res,,hex:ffffff
+ehp1->ehp1,ehp1,ehp1,ehp1,Res,,Heat pump
+_ehp1->x,ehp1,ehp1,biom,Res,,hex:ffffff
+#_ehp1->x,ehp1,ehp1,sobo,Res,replacement not allowed,
+_ehp1->x,ehp1,ehp1,gabo,Res,,hex:ffffff
+_ehp1->x,ehp1,ehp1,dihe,Res,,hex:ffffff
+#_ehp1->x,ehp1,ehp1,libo,Res,replacement not allowed,
+_ehp1->x,ehp1,ehp1,h2bo,Res,,hex:ffffff
+_gabo->x,gabo,gabo,reel,Res,,hex:ffffff
+_gabo->x,gabo,gabo,ehp1,Res,,hex:ffffff
+_gabo->x,gabo,gabo,biom,Res,,hex:ffffff
+#_gabo->x,gabo,gabo,sobo,Res,replacement not allowed,
+gabo->gabo,gabo,gabo,gabo,Res,,Gas heater
+_gabo->x,gabo,gabo,dihe,Res,,hex:ffffff
+#_gabo->x,gabo,gabo,libo,Res,replacement not allowed,
+_gabo->x,gabo,gabo,h2bo,Res,,hex:ffffff
+_h2bo->x,h2bo,h2bo,reel,Res,,hex:ffffff
+_h2bo->x,h2bo,h2bo,ehp1,Res,,hex:ffffff
+_h2bo->x,h2bo,h2bo,biom,Res,,hex:ffffff
+#_h2bo->x,h2bo,h2bo,sobo,Res,replacement not allowed,
+_h2bo->x,h2bo,h2bo,gabo,Res,,hex:ffffff
+_h2bo->x,h2bo,h2bo,dihe,Res,,hex:ffffff
+#_h2bo->x,h2bo,h2bo,libo,Res,replacement not allowed,
+h2bo->h2bo,h2bo,h2bo,h2bo,Res,,Hydrogen heater
+_libo->x,libo,libo,reel,Res,,hex:ffffff
+_libo->x,libo,libo,ehp1,Res,,hex:ffffff
+_libo->x,libo,libo,biom,Res,,hex:ffffff
+#_libo->x,libo,libo,sobo,Res,replacement not allowed,
+_libo->x,libo,libo,gabo,Res,,hex:ffffff
+_libo->x,libo,libo,dihe,Res,,hex:ffffff
+libo->libo,libo,libo,libo,Res,,Liquids heater
+_libo->x,libo,libo,h2bo,Res,,hex:ffffff
+reel->reel,reel,reel,reel,Res,,Resistive electric
+_reel->x,reel,reel,ehp1,Res,,hex:ffffff
+_reel->x,reel,reel,biom,Res,,hex:ffffff
+#_reel->x,reel,reel,sobo,Res,replacement not allowed,
+_reel->x,reel,reel,gabo,Res,,hex:ffffff
+_reel->x,reel,reel,dihe,Res,,hex:ffffff
+#_reel->x,reel,reel,libo,Res,replacement not allowed,
+_reel->x,reel,reel,h2bo,Res,,hex:ffffff
+_sobo->x,sobo,sobo,reel,Res,,hex:ffffff
+_sobo->x,sobo,sobo,ehp1,Res,,hex:ffffff
+_sobo->x,sobo,sobo,biom,Res,,hex:ffffff
+sobo->sobo,sobo,sobo,sobo,Res,,Coal heater
+_sobo->x,sobo,sobo,gabo,Res,,hex:ffffff
+_sobo->x,sobo,sobo,dihe,Res,,hex:ffffff
+_sobo->x,sobo,sobo,libo,Res,,hex:ffffff
+_sobo->x,sobo,sobo,h2bo,Res,,hex:ffffff

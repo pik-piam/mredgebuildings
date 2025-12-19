@@ -1,9 +1,9 @@
-variable,.variableTitle,.variable_Brick,var,typ,.comment
-surlog,Floor area of dwellings (average),v_dwelSizeStock,stock,SFH,
-surlog,Floor area of dwellings (average),v_dwelSizeStock,stock,MFH,
-surmpr,Floor area of single family dwellings,v_dwelSizeStock,stock,SFH,
-suripr,Floor area of multifamily dwellings,v_dwelSizeStock,stock,MFH,
-surlpn,Floor area of new dwellings (average),v_dwelSizeConstruction,construction,SFH,
-surlpn,Floor area of new dwellings (average),v_dwelSizeConstruction,construction,MFH,
-surmpn,Floor area of new singlefamily dwellings,v_dwelSizeConstruction,construction,SFH,
-suripn,Floor area of new multifamily dwellings,v_dwelSizeConstruction,construction,MFH,
+variable,.variableTitle,.variable_Brick,var,typ,.comment,.color
+surlog,Floor area of dwellings (average),v_dwelSizeStock,stock,SFH,,Residential
+surlog,Floor area of dwellings (average),v_dwelSizeStock,stock,MFH,,Residential
+surmpr,Floor area of single family dwellings,v_dwelSizeStock,stock,SFH,,SFH
+suripr,Floor area of multifamily dwellings,v_dwelSizeStock,stock,MFH,,MFH
+surlpn,Floor area of new dwellings (average),v_dwelSizeConstruction,construction,SFH,,Residential
+surlpn,Floor area of new dwellings (average),v_dwelSizeConstruction,construction,MFH,,Residential
+surmpn,Floor area of new singlefamily dwellings,v_dwelSizeConstruction,construction,SFH,,SFH
+suripn,Floor area of new multifamily dwellings,v_dwelSizeConstruction,construction,MFH,,MFH

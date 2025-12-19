@@ -1,6 +1,6 @@
-variable,typ
-Res,SFH
-Res,MFH
-Res_SFH,SFH
-Res_MFH,MFH
-Com,Com
+variable,typ,.color
+Res,SFH,Residential
+Res,MFH,Residential
+Res_SFH,SFH,SFH
+Res_MFH,MFH,MFH
+Com,Com,Commercial

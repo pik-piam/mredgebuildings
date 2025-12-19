@@ -1,11 +1,11 @@
-variable,.variable,refVarGroup,.weight,hs,.comment
-gabo,Sales|Boilers|Gas|Wall Hung|non-condensing,all,1,gabo,
-gabo,Sales|Boilers|Gas|Wall Hung|condensing,all,1,gabo,
-gabo,Sales|Boilers|Gas|Floor Standing|non-condensing,all,1,gabo,
-gabo,Sales|Boilers|Gas|Floor Standing|condensing,all,1,gabo,
-gabo,Sales|Boilers|Jet burner,all,0.15,gabo,average fuel shares taken from report
-libo,Sales|Boilers|Jet burner,all,0.85,libo,average fuel shares taken from report
-solids,Sales|Boilers|Solid fuel boiler,all,1,sobo,
-solids,Sales|Boilers|Solid fuel boiler,all,1,biom,
-reel,Sales|Boilers|Electric boiler,all,1,reel,
-ehp1,Sales|Boilers|Heat pumps,all,1,ehp1,
+variable,.variable,refVarGroup,.weight,hs,.comment,.color
+gabo,Sales|Boilers|Gas|Wall Hung|non-condensing,all,1,gabo,,Gas heater
+gabo,Sales|Boilers|Gas|Wall Hung|condensing,all,1,gabo,,Gas heater
+gabo,Sales|Boilers|Gas|Floor Standing|non-condensing,all,1,gabo,,Gas heater
+gabo,Sales|Boilers|Gas|Floor Standing|condensing,all,1,gabo,,Gas heater
+gabo,Sales|Boilers|Jet burner,all,0.15,gabo,average fuel shares taken from report,Gas heater
+libo,Sales|Boilers|Jet burner,all,0.85,libo,average fuel shares taken from report,Liquids heater
+solids,Sales|Boilers|Solid fuel boiler,all,1,sobo,,hex:10105A
+solids,Sales|Boilers|Solid fuel boiler,all,1,biom,,hex:10105A
+reel,Sales|Boilers|Electric boiler,all,1,reel,,Resistive electric
+ehp1,Sales|Boilers|Heat pumps,all,1,ehp1,,Heat pump
