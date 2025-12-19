@@ -4,10 +4,6 @@
 #' detailed EIA publication for building sector appliances and equipment. The
 #' range of the building shell lifetime is taken from Skarning et al. 2017.
 #'
-#' The standing lifetime is estimated assuming a steady state, i.e. constant
-#'   flows and stock. For shape parameters > 2, it is roughly half of scale
-#'   parameter.
-#'
 #' @source https://www.eia.gov/analysis/studies/buildings/equipcosts/pdf/full.pdf
 #' @source http://dx.doi.org/10.1016/j.enbuild.2017.01.080
 #'
@@ -20,7 +16,6 @@
 #'
 #' @importFrom madrat readSource calcOutput toolGetMapping
 #' @importFrom magclass add_dimension as.magpie mselect getSets mbind
-#'   add_columns
 #' @importFrom quitte inline.data.frame
 #' @importFrom dplyr .data %>% mutate filter everything pull
 #'   right_join
@@ -64,25 +59,6 @@ calcLifetimeParams <- function(subtype, granularity = NULL) {
   weibullFromRange <- function(x, probFrom, probTo) {
     x$shape <- log(log(1 - probTo) / log(1 - probFrom), x$to / x$from)
     x$scale <- x$from / (-log(1 - probFrom))^(1 / x$shape)
-    x
-  }
-
-  # calculate standing life time assuming steady state
-  calcStandingLt <- function(x, factors = NULL) {
-    scale <- mselect(x, variable = "scale", collapseNames = TRUE)
-    shape <- mselect(x, variable = "shape", collapseNames = TRUE)
-    mFactors <- new.magpie(names = getNames(scale), fill = 1, sets = getSets(scale))
-
-    if (!is.null(factors)) {
-      for (item in names(factors)) {
-        mFactors[, , item] <- factors[[item]]
-      }
-    }
-
-    nm <- "standingLt"
-    x <- add_columns(x, addnm = nm, dim = "variable")
-    x[, , nm] <- scale * gamma(2 / shape) / gamma(1 / shape) * mFactors
-
     x
   }
 
@@ -253,11 +229,6 @@ calcLifetimeParams <- function(subtype, granularity = NULL) {
           add_dimension(add = "typ", nm = typ)
       }))
 
-      # we assume heat pumps to be less old and oil and coal heaters to be older
-      # then steady state case
-      params <- calcStandingLt(params,
-                               factors = c(ehp1 = 0.5, libo = 1.4, sobo = 1.6))
-
       description <- "Weibull lifetime distribution parameters for heating systems"
     },
 
@@ -279,8 +250,6 @@ calcLifetimeParams <- function(subtype, granularity = NULL) {
         select(-"from", -"to") %>%
         pivot_longer(everything(), names_to = "variable") %>%
         as.magpie(datacol = "value")
-
-      params <- calcStandingLt(params)
 
       description <- "Weibull lifetime distribution parameters for the building shell"
     },
@@ -314,6 +283,6 @@ calcLifetimeParams <- function(subtype, granularity = NULL) {
   return(list(x = agg$x,
               weight = agg$weight,
               min = 0,
-              unit = "[scale,standingLt] = yr; [shape] = 1",
+              unit = "[scale] = yr; [shape] = 1",
               description = description))
 }

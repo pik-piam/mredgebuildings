@@ -25,11 +25,6 @@ Parameters for the lifetime of heating systems are taken from a very
 detailed EIA publication for building sector appliances and equipment. The
 range of the building shell lifetime is taken from Skarning et al. 2017.
 }
-\details{
-The standing lifetime is estimated assuming a steady state, i.e. constant
-flows and stock. For shape parameters > 2, it is roughly half of scale
-parameter.
-}
 \author{
 Robin Hasse
 }
