@@ -48,5 +48,7 @@ A BibTeX entry for LaTeX users is
   author = {Robin Hasse and Pascal Sauer and Antoine Levesque and Hagen Tockhorn},
   date = {2026-03-17},
   year = {2026},
+  url = {https://github.com/pik-piam/mredgebuildings},
+  note = {Version: 0.15.2},
 }
 ```
