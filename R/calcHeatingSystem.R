@@ -116,6 +116,11 @@ calcHeatingSystem <- function(subtype = c("Purchasing cost", "Efficiency"),
         mutate(value = .data[["value"]] + replace_na(.data[["h2MarkUp"]], 0)) %>%
         select(-"h2MarkUp")
 
+      # As a first approach to heat pump subsidy, we assume a general subsidy on
+      # heat pumps amounting to 30% of total purchasing costs (does not include installation costs)
+      data <- data %>%
+        mutate(value = .data$value * ifelse(.data$hs == "ehp1", 0.7, 1))
+
       # unit conversion EUR/kW -> USD/kW
       usd2eur <- usd2eur()
       data <- data %>%
