@@ -128,6 +128,10 @@ calcHeatingSystem <- function(subtype = c("Purchasing cost", "Efficiency"),
       unit <- "USD2020/kW"
     },
     `Efficiency` = {
+      # COP data of heat pumps is very low compared to other sources, therefore increase by 1
+      # TODO: Add reference to sources or adopt more sophisticated solution # nolint: todo_comment_linter.
+      data <- data %>%
+        mutate(value = .data$value + ifelse(.data$hs == "ehp1", 1, 0))
       unit <- "1"
     }
   )
