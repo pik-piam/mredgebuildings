@@ -148,7 +148,16 @@ calcShareOdyssee <- function(subtype = c("enduse", "carrier", "enduse_carrier"),
                  by = c("period", "carrier", "sector"),
                  relationship = "many-to-many") %>%
       mutate(value = .data[["value"]] * .data[["share"]]) %>%
-      select("region", "period", "carrier", "enduse", "sector", "value")
+      select("region", "period", "carrier", "enduse", "sector", "value", "version")
+
+    # Use old data where new demand is zero
+    applightData <- applightData %>%
+      pivot_wider(names_from = "version", values_from = "value") %>%
+      group_by(across(-all_of(c("new", "old")))) %>%
+      mutate(value = ifelse(all(.data$new == 0), .data$old, .data$new)) %>%
+      ungroup() %>%
+      filter(!is.na(.data$value)) %>%
+      select(-"new", -"old")
 
     # replace missing values
     odyssee <- applightData %>%

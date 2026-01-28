@@ -26,12 +26,20 @@ toolUnitConversion <- function(x, unitConversion, dim = 3.1,
          "'from', 'to', and 'factor'.")
   }
 
+  separateUnit <- "unit" %in% getSets(x)
 
   # all units in data
-  units <- unique(gsub("^.*_", "", grep("_", getItems(x, dim), value = TRUE)))
+  units <- if (separateUnit) {
+    getItems(x, "unit")
+  } else {
+    unique(gsub("^.*_", "", grep("_", getItems(x, dim), value = TRUE)))
+  }
   if (!all(units %in% unitConversion$from)) {
     stop("There is no conversion defined for the following units: ",
          paste(setdiff(units, unitConversion$from)), collapse = ", ")
+  } else if (length(units) == 0) {
+    stop("No units were found: ",
+         "No unit dimension exists and units are not contained in the variable dimension as <variable>_<unit>.")
   }
 
   # prepare look up table
@@ -42,15 +50,23 @@ toolUnitConversion <- function(x, unitConversion, dim = 3.1,
   dimName <- getSets(x)[[paste0("d", dim)]]
   x <- as.quitte(x)
   x <- x[!is.na(x[["value"]]), ]
-  x <- suppressWarnings(separate(x, dimName, c(dimName, "unit"), sep = "_"))
-  x[["value"]] <- ifelse(is.na(x[["unit"]]),
-                         x[["value"]],
-                         x[["value"]] * uConv[x[["unit"]], "factor"])
-  x[[dimName]] <- paste0(x[[dimName]],
-                         ifelse(removeUnit | is.na(x[["unit"]]),
-                                "",
-                                paste0("_", uConv[x[["unit"]], "to"])))
-  x["unit"] <- NULL
+  if (separateUnit) {
+    x[["unit"]] <- as.character(x[["unit"]])
+    x[["value"]] <- ifelse(is.na(x[["unit"]]),
+                           x[["value"]],
+                           x[["value"]] * uConv[x[["unit"]], "factor"])
+    x[["unit"]] <- as.factor(ifelse(removeUnit | is.na(x[["unit"]]), "", uConv[x[["unit"]], "to"]))
+  } else {
+    x <- suppressWarnings(separate(x, dimName, c(dimName, "unit"), sep = "_"))
+    x[["value"]] <- ifelse(is.na(x[["unit"]]),
+                           x[["value"]],
+                           x[["value"]] * uConv[x[["unit"]], "factor"])
+    x[[dimName]] <- paste0(x[[dimName]],
+                           ifelse(removeUnit | is.na(x[["unit"]]),
+                                  "",
+                                  paste0("_", uConv[x[["unit"]], "to"])))
+    x["unit"] <- NULL
+  }
   x <- dimReduce(as.magpie(x, spatial = "region"))
 
   return(x)

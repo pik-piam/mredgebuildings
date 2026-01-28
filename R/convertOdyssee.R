@@ -63,11 +63,13 @@ convertOdyssee <- function(x, subtype = "250109") {
   for (elec in namesElec) {
     elecHP <- sub("ele", "elehp", elec)
     elecRH <- sub("ele", "elerh", elec)
-    dataRH <- data[, , elec] - data[, , elecHP]
-    getNames(dataRH) <- elecRH
-    getSets(dataRH) <- getSets(data)
-    dataRH[] <- pmax(0, dataRH)
-    data <- mbind(data, dataRH)
+    if (elecHP %in% getNames(data)) { # ensure that heat pump data is included in data set
+      dataRH <- data[, , elec] - data[, , elecHP]
+      getNames(dataRH) <- elecRH
+      getSets(dataRH) <- getSets(data)
+      dataRH[] <- pmax(0, dataRH)
+      data <- mbind(data, dataRH)
+    }
   }
 
   # fill missing regions with NA
