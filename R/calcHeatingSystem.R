@@ -41,6 +41,26 @@ calcHeatingSystem <- function(subtype = c("Purchasing cost", "Efficiency"),
       filter(!is.na(.data[["value"]]))
   }
 
+  # COP data of heat pumps in EU_ReferenceScenario is low compared to other sources:
+  # See e.g. Masiukiewicz et al. (10.1016/j.energy.2025.136001), Bogdanov et al. (10.1016/j.apenergy.2024.123647).
+  # Detailed hourly data differentiated by heat pump type is provided by
+  # when2Heat data source (Ruhnau, 10.25832/WHEN2HEAT/2019-08-06).
+  # This could be used/referenced for a future more sophisticated solution.
+  # Here we increase efficiency of air-sourced heat pumps by 1 and of other heat pumps by 0.6
+  adjustHpEfficiency <- function(x, subtype) {
+    if (subtype == "Efficiency") {
+      x %>%
+        mutate(value = case_when(
+          .data$technology == "Heat pump air" ~ .data$value + 1,
+          .data$technology == "Heat pump water" ~ .data$value + 0.6,
+          .data$technology == "Heat pump ground" ~ .data$value + 0.6,
+          .default = .data$value
+        ))
+    } else {
+      x
+    }
+  }
+
 
 
   # CALCULATE ------------------------------------------------------------------
@@ -87,6 +107,7 @@ calcHeatingSystem <- function(subtype = c("Purchasing cost", "Efficiency"),
     completeServices() %>%
     filter(.data[["variable"]] == subtype,
            .data[["level"]] %in% c("Current", "central")) %>%
+    adjustHpEfficiency(subtype) %>%
     left_join(typMap, by = "subsector", relationship = "many-to-many") %>%
     left_join(periodMap, by = "pointintime") %>%
     left_join(euRefMap, by = c("typ", "technology"), relationship = "many-to-many") %>%
