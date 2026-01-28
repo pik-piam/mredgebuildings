@@ -83,13 +83,43 @@ calcShareOdyssee <- function(subtype = c("enduse", "carrier", "enduse_carrier"),
   # Map Variables
   odyssee <- odysseeData %>%
     as.quitte() %>%
-    filter(.data[["variable"]] %in% vars,
-           !is.na(.data[["value"]])) %>%
+    filter(.data[["variable"]] %in% vars) %>%
     mutate(region = droplevels(.data[["region"]])) %>%
     separate("variable", c("carrier", "sector", "enduse"), c(3, 8)) %>%
     revalue.levels(carrier = carrierMap,
                    sector  = sectorMap,
-                   enduse  = enduseMap) %>%
+                   enduse  = enduseMap)
+
+  # For service sector: Appliance demand given by difference between reported totals and sum of all other end uses
+  # We assume that appliance demand is electric
+  # For residential sector: If all demands are given,
+  # add the difference between reported totals and sum of all other end uses to appliance demand
+  applianceByDifference <- odyssee %>%
+    filter(.data$carrier == "elec", .data$enduse != "totals") %>%
+    group_by(across(-all_of(c("enduse", "value")))) %>%
+    summarise(value = sum(.data$value),
+              enduse = "appliances") %>%
+    left_join(odyssee %>%
+                filter(.data$enduse == "totals"),
+              by = c("model", "scenario", "region", "carrier", "sector", "unit", "period", "version"),
+              suffix = c("Sep", "Tot")) %>%
+    mutate(value = .data$valueTot - .data$valueSep) %>%
+    select("model", "scenario", "region", "carrier", "sector", enduse = "enduseSep",
+           "unit", "period", "value", "version")
+
+  odyssee <- odyssee %>%
+    rbind(applianceByDifference %>%
+            filter(.data$sector == "services")) %>%
+    left_join(applianceByDifference %>%
+                filter(.data$sector == "residential"),
+              by = c("model", "scenario", "region", "carrier", "sector", "enduse", "unit", "period", "version"),
+              suffix = c("Data", "Diff")) %>%
+    mutate(value = case_when(
+      !is.na(.data$valueData) & !is.na(.data$valueDiff) ~ .data$valueData + .data$valueDiff,
+      !is.na(.data$valueData) & is.na(.data$valueDiff) ~ .data$valueData,
+      .default = NA
+    ), .keep = "unused") %>%
+    filter(!is.na(.data$value)) %>%
     interpolate_missing_periods(expand.values = TRUE)
 
 
@@ -134,13 +164,34 @@ calcShareOdyssee <- function(subtype = c("enduse", "carrier", "enduse_carrier"),
 
     # split existing aggregated data into "appliances" and "lighting"
     applightData <- odysseeData %>%
-      filter(.data[["variable"]] %in% vars,
-             !is.na(.data[["value"]])) %>%
+      filter(.data[["variable"]] %in% vars) %>%
       mutate(region = droplevels(.data[["region"]])) %>%
       separate("variable", c("carrier", "sector", "enduse"), c(3, 8)) %>%
       revalue.levels(carrier = carrierMap,
                      sector  = sectorMap,
-                     enduse  = enduseMap) %>%
+                     enduse  = enduseMap)
+
+
+    # For service sector if lighting demand is missing in addition:
+    # Appliance and lighting  demand given by difference between reported totals and sum of all other end uses
+    # We assume that appliance and lighting demand is electric
+    applightService <- applightData %>%
+      filter(.data$sector == "services", .data$carrier == "elec", .data$enduse != "totals") %>%
+      group_by(across(-all_of(c("enduse", "value")))) %>%
+      filter(is.na(.data$value[.data$enduse == "lighting"])) %>%
+      summarise(value = sum(.data$value[.data$enduse != "lighting"]),
+                enduse = "appliances_light") %>%
+      left_join(applightData %>%
+                  filter(.data$enduse == "totals"),
+                by = c("model", "scenario", "region", "carrier", "sector", "unit", "period", "version"),
+                suffix = c("Sep", "Tot")) %>%
+      mutate(value = .data$valueTot - .data$valueSep) %>%
+      select("model", "scenario", "region", "carrier", "sector", enduse = "enduseSep",
+             "unit", "period", "value", "version")
+
+    applightData <- applightData %>%
+      rbind(applightService) %>%
+      filter(!is.na(.data$value)) %>%
       interpolate_missing_periods(expand.values = TRUE) %>%
       filter(.data[["enduse"]] == "appliances_light") %>%
       select(-"enduse") %>%
