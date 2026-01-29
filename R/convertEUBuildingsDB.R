@@ -36,14 +36,16 @@ convertEUBuildingsDB <- function(x, subtype) {
   )
   data <- toolUnitConversion(data, unitConversion)
 
+  browser()
+
   # drop EU sum and rename regions
   data <- data["EU", , invert = TRUE]
   getItems(data, 1) <- toolCountry2isocode(getItems(data, 1))
 
   # manually drop erroneous data points
   if (category == "BuildingStockCharacteristics") {
-    data[, 2017, c("Total floor area of single family dwellings_m2",
-                   "Total floor area of multi family dwellings_m2")] <- NA
+    data[, 2017, c("Total floor area of single family dwellings",
+                   "Total floor area of multi family dwellings")] <- NA
   } else if (category == "BuildingShellPerformance") {
     data[, 2008, ] <- NA
   }
