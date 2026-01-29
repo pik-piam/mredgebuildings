@@ -59,10 +59,12 @@ readEUBuildingsDB <- function(subtype = "") {
     gather("period", "value", matches("\\d{4}")) %>%
     filter(!is.na(.data[["value"]]),
            .data[["region"]] != "EU") %>%
-    mutate(unit = gsub("\\. | ", "-", .data[["unit"]])) %>%
-    unite("variable", "variable", "unit") %>%
-    as.quitte() %>%
-    as.magpie()
+    mutate(unit = gsub("\\. | ", "-", .data[["unit"]]))
+
+  browser()
+
+  data <- data %>%
+    as.magpie(spatial = 3)
 
   if (identical(variable, as.character(NA))) {
     return(data)
