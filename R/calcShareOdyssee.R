@@ -84,7 +84,6 @@ calcShareOdyssee <- function(subtype = c("enduse", "carrier", "enduse_carrier"),
   odyssee <- odysseeData %>%
     as.quitte() %>%
     filter(.data[["variable"]] %in% vars) %>%
-    mutate(region = droplevels(.data[["region"]])) %>%
     separate("variable", c("carrier", "sector", "enduse"), c(3, 8)) %>%
     revalue.levels(carrier = carrierMap,
                    sector  = sectorMap,
@@ -108,6 +107,7 @@ calcShareOdyssee <- function(subtype = c("enduse", "carrier", "enduse_carrier"),
            "unit", "period", "value", "version")
 
   odyssee <- odyssee %>%
+    filter(.data$enduse != "totals") %>%
     rbind(applianceByDifference %>%
             filter(.data$sector == "services")) %>%
     left_join(applianceByDifference %>%
@@ -120,6 +120,7 @@ calcShareOdyssee <- function(subtype = c("enduse", "carrier", "enduse_carrier"),
       .default = NA
     ), .keep = "unused") %>%
     filter(!is.na(.data$value)) %>%
+    mutate(region = droplevels(.data[["region"]])) %>%
     interpolate_missing_periods(expand.values = TRUE)
 
 
@@ -165,7 +166,6 @@ calcShareOdyssee <- function(subtype = c("enduse", "carrier", "enduse_carrier"),
     # split existing aggregated data into "appliances" and "lighting"
     applightData <- odysseeData %>%
       filter(.data[["variable"]] %in% vars) %>%
-      mutate(region = droplevels(.data[["region"]])) %>%
       separate("variable", c("carrier", "sector", "enduse"), c(3, 8)) %>%
       revalue.levels(carrier = carrierMap,
                      sector  = sectorMap,
@@ -190,8 +190,10 @@ calcShareOdyssee <- function(subtype = c("enduse", "carrier", "enduse_carrier"),
              "unit", "period", "value", "version")
 
     applightData <- applightData %>%
+      filter(.data$enduse != "totals") %>%
       rbind(applightService) %>%
       filter(!is.na(.data$value)) %>%
+      mutate(region = droplevels(.data[["region"]])) %>%
       interpolate_missing_periods(expand.values = TRUE) %>%
       filter(.data[["enduse"]] == "appliances_light") %>%
       select(-"enduse") %>%
