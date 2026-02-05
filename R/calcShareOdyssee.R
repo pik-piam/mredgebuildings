@@ -40,6 +40,12 @@ calcShareOdyssee <- function(subtype = c("enduse", "carrier", "enduse_carrier"),
                          as.quitte() %>%
                          mutate(version = "old"))
 
+  odysseeRegions <- odysseeData %>%
+    filter(!is.na(.data$value)) %>%
+    pull("region") %>%
+    as.character() %>%
+    unique()
+
 
   # Get GDP per Cap
   gdppop <- calcOutput("GDPpc",
@@ -82,8 +88,7 @@ calcShareOdyssee <- function(subtype = c("enduse", "carrier", "enduse_carrier"),
 
   # Map Variables
   odyssee <- odysseeData %>%
-    as.quitte() %>%
-    filter(.data[["variable"]] %in% vars) %>%
+    filter(.data$region %in% odysseeRegions, .data$variable %in% vars) %>%
     separate("variable", c("carrier", "sector", "enduse"), c(3, 8)) %>%
     revalue.levels(carrier = carrierMap,
                    sector  = sectorMap,
@@ -120,7 +125,6 @@ calcShareOdyssee <- function(subtype = c("enduse", "carrier", "enduse_carrier"),
       .default = NA
     ), .keep = "unused") %>%
     filter(!is.na(.data$value)) %>%
-    mutate(region = droplevels(.data[["region"]])) %>%
     interpolate_missing_periods(expand.values = TRUE)
 
 
@@ -193,7 +197,6 @@ calcShareOdyssee <- function(subtype = c("enduse", "carrier", "enduse_carrier"),
       filter(.data$enduse != "totals") %>%
       rbind(applightService) %>%
       filter(!is.na(.data$value)) %>%
-      mutate(region = droplevels(.data[["region"]])) %>%
       interpolate_missing_periods(expand.values = TRUE) %>%
       filter(.data[["enduse"]] == "appliances_light") %>%
       select(-"enduse") %>%
@@ -245,7 +248,7 @@ calcShareOdyssee <- function(subtype = c("enduse", "carrier", "enduse_carrier"),
       summarise(value = sum(.data[["value"]], na.rm = TRUE), .groups = "drop") %>%
       ungroup() %>%
       toolCalcShares(if (subtype == "enduse_carrier") shareOf else tail(shareOf, 1)) %>%
-      complete(!!!syms(c("region", "period", shareOf))) %>%
+      complete(region = odysseeRegions, !!!syms(c("period", shareOf))) %>%
       left_join(shareGlobal, by = shareOf) %>%
       mutate(value = ifelse(is.na(.data[["value.x"]]),
                             .data[["value.y"]],
@@ -256,14 +259,13 @@ calcShareOdyssee <- function(subtype = c("enduse", "carrier", "enduse_carrier"),
 
     # Weights: regional share of final energy
     regShare <- odyssee %>%
-      complete(!!!syms(c("region", "period", "sector", "carrier", "enduse"))) %>%
+      complete(region = odysseeRegions, !!!syms(c("period", "sector", "carrier", "enduse"))) %>%
       interpolate_missing_periods(expand.values = TRUE) %>%
       group_by(across(all_of(c("region", "period", shareOf)))) %>%
       summarise(value = sum(.data[["value"]], na.rm = TRUE), .groups = "drop") %>%
       group_by(across(all_of(c("period", shareOf)))) %>%
-      mutate(value = .data[["value"]] / sum(.data[["value"]], na.rm = TRUE))
-
-
+      mutate(value = .data[["value"]] / sum(.data[["value"]], na.rm = TRUE)) %>%
+      ungroup()
 
 
 
@@ -278,6 +280,11 @@ calcShareOdyssee <- function(subtype = c("enduse", "carrier", "enduse_carrier"),
       as.magpie() %>%
       collapseDim() %>%
       toolCountryFill(1, verbosity = 2)
+
+    # Check if non-Odyssee regions have been filled with non-NA values
+    if (any(!is.na(share[odysseeRegions, , , invert = TRUE])))
+      warning("Non-Odyssee regions have been filled with non-NA values.",
+              "Please check the region handling in 'calcShareOdyssee'")
 
 
     return(list(x = share,
