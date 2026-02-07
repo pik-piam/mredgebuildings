@@ -133,7 +133,11 @@ calcShareOdyssee <- function(subtype = c("enduse", "carrier", "enduse_carrier"),
     select(-"model", -"scenario", -"unit") %>%
     pivot_wider(names_from = "version", values_from = "value") %>%
     group_by(across(-all_of(c("new", "old")))) %>%
-    mutate(value = ifelse(all(.data$new == 0), .data$old, .data$new), .keep = "unused") %>%
+    mutate(value = ifelse(
+      all(.data$new == 0) | all(.data$region == "GBR"), # GBR is not in new data so use old data
+      .data$old,
+      .data$new
+    ), .keep = "unused") %>%
     ungroup() %>%
     as.quitte()
 
