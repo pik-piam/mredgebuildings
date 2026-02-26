@@ -175,7 +175,7 @@ calcCarrierPrices <- function() {
 
   eurostatPrices <- rbind(eurostatGasPrice, eurostatElecPrice) %>%
     left_join(lcu2usd, by = "region") %>%
-    mutate(value = .data$value / .data$lcu2usd,
+    mutate(value = .data$value * .data$lcu2usd,
            year = as.numeric(gsub("(\\d{4})-\\d{2}", "\\1", .data$period)),
            fiveYearPeriod = case_match(
              .data$year,
