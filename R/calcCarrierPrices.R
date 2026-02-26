@@ -178,20 +178,20 @@ calcCarrierPrices <- function() {
     left_join(eurostatPrices, by = c("region", "carrier")) %>%
     group_by(across(all_of(c("region", "carrier")))) %>%
     mutate(eod = if (all(is.na(.data$value))) NA else  max(.data$period[!is.na(.data$value)]),
-           value = case_when(!is.na(.data$value) ~ .data$value,
-                             all(is.na(.data$value)) ~ .data$valueECEMF,
-                             !is.na(.data$relIncrease) ~ .data$valueECEMF * .data$relIncrease *
-                               (.data$value / .data$valueECEMF)[.data$period == .data$eod],
-                             .default = .data$valueECEMF *
-                               (.data$value / .data$valueECEMF)[.data$period == .data$eod]),
            # nolint start: commented_code_linter.
            # value = case_when(!is.na(.data$value) ~ .data$value,
            #                   all(is.na(.data$value)) ~ .data$valueECEMF,
-           #                   !is.na(.data$absIncrease) ~ .data$valueECEMF *
-           #                     (.data$value / .data$valueECEMF)[.data$period == .data$eod]
-           #                     + .data$absIncrease,
+           #                   !is.na(.data$relIncrease) ~ .data$valueECEMF * .data$relIncrease *
+           #                     (.data$value / .data$valueECEMF)[.data$period == .data$eod],
            #                   .default = .data$valueECEMF *
            #                     (.data$value / .data$valueECEMF)[.data$period == .data$eod]),
+           value = case_when(!is.na(.data$value) ~ .data$value,
+                             all(is.na(.data$value)) ~ .data$valueECEMF,
+                             !is.na(.data$absIncrease) ~ .data$valueECEMF
+                             * (.data$value / .data$valueECEMF)[.data$period == .data$eod]
+                             + .data$absIncrease,
+                             .default = .data$valueECEMF
+                             * (.data$value / .data$valueECEMF)[.data$period == .data$eod]),
            # nolint end
            variable = "price",
            unit = "USD/kWh",
