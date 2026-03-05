@@ -167,7 +167,6 @@ calcCarrierPrices <- function() {
     summarise(value = mean(.data$value), .groups = "drop") %>%
     pivot_wider(names_from = "fiveYearPeriod") %>%
     mutate(absIncrease = .data[["2021-2025"]] - .data[["2016-2020"]],
-           relIncrease = .data[["2021-2025"]] / .data[["2016-2020"]],
            .keep = "unused")
 
   # all prices
@@ -178,13 +177,12 @@ calcCarrierPrices <- function() {
     left_join(eurostatPrices, by = c("region", "carrier")) %>%
     group_by(across(all_of(c("region", "carrier")))) %>%
     mutate(eod = if (all(is.na(.data$value))) NA else  max(.data$period[!is.na(.data$value)]),
-           # nolint start: commented_code_linter.
-           # value = case_when(!is.na(.data$value) ~ .data$value,
-           #                   all(is.na(.data$value)) ~ .data$valueECEMF,
-           #                   !is.na(.data$relIncrease) ~ .data$valueECEMF * .data$relIncrease *
-           #                     (.data$value / .data$valueECEMF)[.data$period == .data$eod],
-           #                   .default = .data$valueECEMF *
-           #                     (.data$value / .data$valueECEMF)[.data$period == .data$eod]),
+           factorAbsIncrease = case_when(
+             .data$period %in% seq(2025, 2040) & .data$carrier == "elec" ~ -1 / 15 * .data$period + 2040 / 15,
+             .data$period > 2040 & .data$carrier == "elec" ~ 0,
+             .default = 1
+           ),
+           absIncrease = .data$absIncrease * .data$factorAbsIncrease,
            value = case_when(!is.na(.data$value) ~ .data$value,
                              all(is.na(.data$value)) ~ .data$valueECEMF,
                              !is.na(.data$absIncrease) ~ .data$valueECEMF
@@ -192,12 +190,11 @@ calcCarrierPrices <- function() {
                              + .data$absIncrease,
                              .default = .data$valueECEMF
                              * (.data$value / .data$valueECEMF)[.data$period == .data$eod]),
-           # nolint end
            variable = "price",
            unit = "USD/kWh",
            level = "central") %>%
     ungroup() %>%
-    select(-"valueECEMF", -"eod", -"absIncrease", -"relIncrease") %>%
+    select(-"valueECEMF", -"eod", -"absIncrease", -"factorAbsIncrease") %>%
     filter(.data$period %in% periods)
 
 
