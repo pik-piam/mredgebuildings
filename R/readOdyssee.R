@@ -33,7 +33,10 @@ readOdyssee <- function(subtype = "250109") {
                              "Enerdata_Odyssee_250109_145827.csv",  # households: 1990 - 2009
                              "Enerdata_Odyssee_250109_150428.csv"), # services
                 "220405" = c("export_enerdata_9259_031531.csv",     # households
-                             "export_enerdata_9259_031431.csv"))    # services
+                             "export_enerdata_9259_031431.csv"),    # services
+                "260305" = c("Enerdata_Odyssee_260305_104629.csv",  # services
+                             "Enerdata_Odyssee_260305_104438.csv",  # households: 2010 - 2024
+                             "Enerdata_Odyssee_260305_103355.csv")) # households: 1990 - 2009
 
   skipRows <- if (subtype == "220405") 1 else 0
 

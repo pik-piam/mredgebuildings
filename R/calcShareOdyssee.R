@@ -33,7 +33,7 @@ calcShareOdyssee <- function(subtype = c("enduse", "carrier", "enduse_carrier"),
   # READ-IN DATA ---------------------------------------------------------------
 
   # Read Buildings Data
-  odysseeData <- rbind(readSource("Odyssee", subtype = "250109") %>%
+  odysseeData <- rbind(readSource("Odyssee", subtype = "260305") %>%
                          as.quitte() %>%
                          mutate(version = "new"),
                        readSource("Odyssee", subtype = "220405") %>%
