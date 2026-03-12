@@ -218,7 +218,7 @@ calcSharesEU <- function(thermal = FALSE,
   #       the data points are not mixed with those of IEA ETP.
 
   shares <- sharesOdyssee %>%
-    interpolate_missing_periods(period = seq.int(periodBegin, endOfHistory, 1)) %>%
+    interpolate_missing_periods(period = seq.int(periodBegin, endOfHistory, 1), expand.values = TRUE) %>%
     left_join(sharesETP %>%
                 filter(.data$region != "CHN" | .data$enduse %in% c("water_heating")) %>%
                 rename("valueETP" = "value"),
@@ -260,7 +260,7 @@ calcSharesEU <- function(thermal = FALSE,
 
     # Apply priority rules with the WEO region condition
     mutate(value = case_when(
-      !is.na(.data$value) & .data$value != 0                            ~ .data$value,      # 1. Odyssee
+      !is.na(.data$value)                                               ~ .data$value,      # 1. Odyssee (non-zero)
       !is.na(.data$valueEEI)                                            ~ .data$valueEEI,   # 2. IEA EEI
       !is.na(.data$valueChina)                                          ~ .data$valueChina, # 3. IEA China
       (!is.na(.data$valueWEO) & .data$eeiCount < 2)                     ~ .data$valueWEO,   # 4. IEA WEO
