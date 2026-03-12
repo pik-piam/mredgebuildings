@@ -102,7 +102,7 @@ calcMatchingReference <- function(subtype) {
     eubdb <- do.call(rbind, lapply(eubdbCateories, function(c) {
       readSource("EUBuildingsDB", c) %>%
         as.quitte(na.rm = TRUE) %>%
-        select("region", "period", "variable", "value")
+        select("region", "period", "variable", "unit", "value")
     }))
 
 
@@ -448,7 +448,6 @@ calcMatchingReference <- function(subtype) {
         select("variable", ".variable") %>%
         unique() %>%
         left_join(eubdb, by = c(.variable = "variable")) %>%
-        mutate(unit = "1") %>%
         as.quitte() %>%
         select(-".variable")
 

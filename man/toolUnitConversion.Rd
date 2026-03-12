@@ -4,22 +4,19 @@
 \alias{toolUnitConversion}
 \title{Convert unit}
 \usage{
-toolUnitConversion(x, unitConversion, dim = 3.1, removeUnit = FALSE)
+toolUnitConversion(x, unitConversion, removeUnit = FALSE)
 }
 \arguments{
 \item{x}{MAgPIE object}
 
 \item{unitConversion}{data.frame with the columns from, to, factor}
 
-\item{dim}{variable dimension that contains the unit as suffix}
-
 \item{removeUnit}{boolean remove unit after conversion for clean variable
 names}
 }
 \description{
-Takes MAgPIE object with a variable dimension that has the unit as suffix
-separated with '_' and converts the unit according to a unit conversion
-table.
+Takes MAgPIE object with a variable dimension and a unit dimension,
+and converts the unit according to a unit conversion table.
 }
 \author{
 Robin Hasse
