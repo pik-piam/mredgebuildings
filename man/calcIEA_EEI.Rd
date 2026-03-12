@@ -20,7 +20,8 @@ IEA EEI final energy data is processed and mapped w.r.t. carrier and enduse name
 \details{
 As for the buildings sector, data for residential and commercial ("service")
 buildings is aggregated and the carrier "biomass" is split into traditional
-and modern biomass w.r.t. to income per capita.
+and modern biomass w.r.t. to income per capita. Energy data on "space_cooling"
+is aggregated over all carriers into "elec".
 }
 \author{
 Hagen Tockhorn
