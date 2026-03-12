@@ -122,6 +122,11 @@ calcSharesEU <- function(thermal = FALSE,
                                 type  = "sectoral",
                                 where = "mredgebuildings")
 
+  # Source hierarchy overrides for special cases
+  hierarchyOverrides <- toolGetMapping(name  = "sourceHierarchyOverrides.csv",
+                                       type  = "sectoral",
+                                       where = "mredgebuildings")
+
 
 
   # FUNCTIONS ------------------------------------------------------------------
@@ -260,7 +265,20 @@ calcSharesEU <- function(thermal = FALSE,
       !is.na(.data$valueChina)                                          ~ .data$valueChina, # 3. IEA China
       (!is.na(.data$valueWEO) & .data$eeiCount < 2)                     ~ .data$valueWEO,   # 4. IEA WEO
       (!is.na(.data$valueETP) & .data$eeiCount < 2)                     ~ .data$valueETP,   # 5. IEA ETP
-      .default                                                          = .data$value       # Fallback to Odyssee
+      .default                                                          = NA
+    )) %>%
+
+    # Apply special case source hierarchy overrides
+    left_join(hierarchyOverrides %>%
+                select("region", "enduse", "carrier", "sourceOverride"),
+              by = c("region", "enduse"),
+              relationship = "many-to-many") %>%
+    mutate(value = case_when(
+      .data$sourceOverride == "EEI" & !is.na(.data$valueEEI)       ~ .data$valueEEI,
+      .data$sourceOverride == "WEO" & !is.na(.data$valueWEO)       ~ .data$valueWEO,
+      .data$sourceOverride == "China" & !is.na(.data$valueChina)   ~ .data$valueChina,
+      .data$sourceOverride == "ETP" & !is.na(.data$valueETP)       ~ .data$valueETP,
+      .default = .data$value
     )) %>%
     select("region", "period", "enduse", "value")
 

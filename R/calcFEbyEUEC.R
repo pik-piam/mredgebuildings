@@ -81,6 +81,11 @@ calcFEbyEUEC <- function() {
                             type  = "sectoral",
                             where = "mredgebuildings")
 
+  # Source hierarchy overrides for special cases
+  hierarchyOverrides <- toolGetMapping(name  = "sourceHierarchyOverrides.csv",
+                                       type  = "sectoral",
+                                       where = "mredgebuildings")
+
   # lower temporal boundary for historical data
   periodBegin <- 1990
 
@@ -112,13 +117,19 @@ calcFEbyEUEC <- function() {
            # remove outlier region that leads to crooked estimates
            .data$region != "PER")
 
-  # combine the already disaggregated data and expand to cover full period range
+  # combine the already disaggregated data within source hierarchy and expand to cover full period range
   feDisagg <- feOdyssee %>%
     left_join(feIEAEEI,
-              by = c("region", "period", "carrier", "enduse")) %>%
-    mutate(value = ifelse(is.na(.data[["value.x"]]),
-                          .data[["value.y"]],
-                          .data[["value.x"]])) %>%
+              by = c("region", "period", "carrier", "enduse"),
+              suffix = c("Odyssee", "EEI")) %>%
+    left_join(hierarchyOverrides %>%
+                select("region", "enduse", "carrier", "sourceOverride"),
+              by = c("region", "enduse", "carrier"),
+              relationship = "many-to-many") %>%
+    mutate(value = case_when(
+      .data$sourceOverride == "EEI" ~ .data$valueEEI,
+      .default = coalesce(.data$valueOdyssee, .data$valueEEI)
+    )) %>%
     select("region", "period", "carrier", "enduse", "value") %>%
     interpolate_missing_periods(unique(ieaIO$period), expand.values = TRUE)
 
