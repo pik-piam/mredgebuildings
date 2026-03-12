@@ -8,3 +8,4 @@ allowLinterWarnings: no
 enforceVersionUpdate: no
 skipCoverage: no
 AutocreateCITATION: yes
+UsePkgDown: no
