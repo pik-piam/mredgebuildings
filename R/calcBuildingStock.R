@@ -272,21 +272,21 @@ calcBuildingStock <- function(subtype = c("residential", "commercial"),
         nbripr = "dwellings_MFH"
       )
       varsStockEubdb <- c(
-        `Average floor area of permanently occupied dwellings_m2` = "floorPerDwelling_Total.m2",
-        `Total floor area of single family dwellings_m2` = "floor_SFH.m2",
-        `Total floor area of multi family dwellings_m2`  = "floor_MFH.m2",
-        `Number of permanently occupied dwelling_1`               = "dwellings_Total.1",
-        `Number of single family dwelling permanently occupied_1` = "dwellings_SFH.1",
-        `Number of multi family dwelling permanently occupied_1`  = "dwellings_MFH.1"
+        `Average floor area of permanently occupied dwellings` = "floorPerDwelling_Total",
+        `Total floor area of single family dwellings` = "floor_SFH",
+        `Total floor area of multi family dwellings`  = "floor_MFH",
+        `Number of permanently occupied dwelling`               = "dwellings_Total",
+        `Number of single family dwelling permanently occupied` = "dwellings_SFH",
+        `Number of multi family dwelling permanently occupied`  = "dwellings_MFH"
       )
       varsVintagesEubdb <- c(
-        "Share of dwellings built before 1945_1",
-        "Share of dwellings built between 1945 and 1969_1",
-        "Share of dwellings built between 1970 and 1979_1",
-        "Share of dwellings built between 1980 and 1989_1",
-        "Share of dwellings built between 1990 and 1999_1",
-        "Share of dwellings built between 2000 and 2010_1",
-        "Share of dwellings built after 2010_1"
+        "Share of dwellings built before 1945",
+        "Share of dwellings built between 1945 and 1969",
+        "Share of dwellings built between 1970 and 1979",
+        "Share of dwellings built between 1980 and 1989",
+        "Share of dwellings built between 1990 and 1999",
+        "Share of dwellings built between 2000 and 2010",
+        "Share of dwellings built after 2010"
       )
       varsConstructionOdyssee <- c(
         nbrlpn = "construction_Total",
@@ -294,9 +294,9 @@ calcBuildingStock <- function(subtype = c("residential", "commercial"),
         nbripn = "construction_MFH"
       )
       varsLocationEubdb <- c(
-        `Share of dwellings in densely-populated area (urban centre)_1`       = "dwellings_urban.1",
-        `Share of dwellings in intermediate urbanised area (urban cluster)_1` = "dwellings_urban.1",
-        `Share of dwellings in thinly-populated area (rural)_1`               = "dwellings_rural.1"
+        `Share of dwellings in densely-populated area (urban centre)`       = "dwellings_urban",
+        `Share of dwellings in intermediate urbanised area (urban cluster)` = "dwellings_urban",
+        `Share of dwellings in thinly-populated area (rural)`               = "dwellings_rural"
       )
       varsHeatingOdyssee <- c(
         nbrlprpet = "dwellings_oil",
@@ -325,8 +325,7 @@ calcBuildingStock <- function(subtype = c("residential", "commercial"),
         revalue.levels(variable = varsOdyssee)
       stockEubdb <- eubdb %>%
         filter(.data[["variable"]] %in% names(varsStockEubdb)) %>%
-        revalue.levels(variable = varsStockEubdb) %>%
-        separate("variable", c("variable", "unit"), sep = "\\.")
+        revalue.levels(variable = varsStockEubdb)
       vintagesEubdb <- eubdb %>%
         filter(.data[["variable"]] %in% varsVintagesEubdb) %>%
         mutate(variable = gsub("Share of dwellings built (between |)| |_1$", "",
@@ -337,7 +336,6 @@ calcBuildingStock <- function(subtype = c("residential", "commercial"),
       locationEubdb <- eubdb %>%
         filter(.data[["variable"]] %in% names(varsLocationEubdb)) %>%
         revalue.levels(variable = varsLocationEubdb) %>%
-        separate("variable", c("variable", "unit"), sep = "\\.") %>%
         group_by(across(all_of(c("region", "period", "variable", "unit")))) %>%
         summarise(value = sum(.data[["value"]]), .groups = "drop")
       heatingOdyssee <- odyssee %>%
@@ -392,6 +390,7 @@ calcBuildingStock <- function(subtype = c("residential", "commercial"),
         summarise(value =
                     .data[["value"]][.data[["variable"]] == "dwellings_Total"] -
                     .data[["value"]][.data[["variable"]] != "dwellings_Total"],
+                  unit = .data[["unit"]][.data[["variable"]] == "dwellings_Total"],
                   variable = setdiff(varsDwellings, .data[["variable"]]),
                   .groups = "drop") %>%
         bind_rows(stockEubdb)

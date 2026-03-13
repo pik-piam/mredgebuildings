@@ -59,10 +59,10 @@ readEUBuildingsDB <- function(subtype = "") {
     gather("period", "value", matches("\\d{4}")) %>%
     filter(!is.na(.data[["value"]]),
            .data[["region"]] != "EU") %>%
-    mutate(unit = gsub("\\. | ", "-", .data[["unit"]])) %>%
-    unite("variable", "variable", "unit") %>%
-    as.quitte() %>%
-    as.magpie()
+    mutate(unit = gsub("\\. | ", "-", .data[["unit"]]))
+
+  data <- data %>%
+    as.magpie(spatial = 3)
 
   if (identical(variable, as.character(NA))) {
     return(data)
@@ -77,7 +77,7 @@ readEUBuildingsDB <- function(subtype = "") {
   )
   if (subtype %in% names(variableRegEx)) {
     data <- mselect(data, variable = grep(variableRegEx[[subtype]],
-                                          getNames(data), value = TRUE))
+                                          getNames(data, dim = "variable"), value = TRUE))
   } else {
     stop("'", variable, "' is not a valid variable for this subtype. ",
          "Valid subtypes with variable filtering are: ",
