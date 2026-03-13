@@ -38,20 +38,7 @@ convertOdyssee <- function(x, subtype = "250109") {
     "MEUR2015; MEUR2015; 1"
   )
 
-  if (subtype == "220405") {
-    data <- toolUnitConversion(data, unitConversion)
-  } else {
-    for (i in seq_len(nrow(unitConversion))) {
-      if (!unitConversion[[i, "from"]] %in% getItems(data, "unit")) next
-      tmp <- mselect(data, unit = unitConversion[[i, "from"]])
-      tmp <- tmp * unitConversion[[i, "factor"]]
-      getItems(tmp, "unit") <- unitConversion[[i, "to"]]
-      data <- data %>%
-        mselect(unit = setdiff(getItems(data, "unit"),
-                               unitConversion[[i, "from"]])) %>%
-        mbind(tmp)
-    }
-  }
+  data <- toolUnitConversion(data, unitConversion)
 
   # manually drop erroneous data points
   data["HUN", , c("surlpn", "surmpn", "suripn")] <- NA
