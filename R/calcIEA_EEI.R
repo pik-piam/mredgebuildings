@@ -94,7 +94,7 @@ calcIEA_EEI <- function(subtype = c("buildings"), #nolint object_name_linter
       ungroup()
 
 
-    # split biomass into traditional + modern biomass
+    # split biomass into traditional + modern biomass and merge aggregated space cooling data
     data <- dataAgg %>%
       filter(.data$enduse != "space_cooling") %>%
       rbind(coolingDemand) %>%

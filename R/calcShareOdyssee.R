@@ -250,16 +250,11 @@ calcShareOdyssee <- function(subtype = c("enduse", "carrier", "enduse_carrier"),
 
       group_by(across(all_of(c("region", shareOf)))) %>%
       mutate(hasPartialNAs = all(is.na(.data$value))) %>%
-      ungroup() %>%
       group_by(across(all_of(c("region")))) %>%
       mutate(hasAllNAs = all(is.na(.data$value))) %>%
       ungroup() %>%
 
-      mutate(value = ifelse(is.na(.data$value) & .data$hasAllNAs,
-                            NA,
-                            ifelse(is.na(.data$value) & .data$hasPartialNAs,
-                                   0,
-                                   .data$value))) %>%
+      mutate(value = ifelse(is.na(.data$value) & .data$hasPartialNAs & !.data$hasAllNAs, 0, .data$value)) %>%
       select(-"hasPartialNAs", -"hasAllNAs")
 
 
