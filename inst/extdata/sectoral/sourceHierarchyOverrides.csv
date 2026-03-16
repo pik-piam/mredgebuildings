@@ -1,0 +1,2 @@
+region,enduse,carrier,sourceOverride,comment
+ITA,space_cooling,*,EEI,Avoid infeasibilities with Odyssee data

@@ -122,6 +122,11 @@ calcSharesEU <- function(thermal = FALSE,
                                 type  = "sectoral",
                                 where = "mredgebuildings")
 
+  # Source hierarchy overrides for special cases
+  hierarchyOverrides <- toolGetMapping(name  = "sourceHierarchyOverrides.csv",
+                                       type  = "sectoral",
+                                       where = "mredgebuildings")
+
 
 
   # FUNCTIONS ------------------------------------------------------------------
@@ -213,7 +218,7 @@ calcSharesEU <- function(thermal = FALSE,
   #       the data points are not mixed with those of IEA ETP.
 
   shares <- sharesOdyssee %>%
-    interpolate_missing_periods(period = seq.int(periodBegin, endOfHistory, 1)) %>%
+    interpolate_missing_periods(period = seq.int(periodBegin, endOfHistory, 1), expand.values = TRUE) %>%
     left_join(sharesETP %>%
                 filter(.data$region != "CHN" | .data$enduse %in% c("water_heating")) %>%
                 rename("valueETP" = "value"),
@@ -255,12 +260,25 @@ calcSharesEU <- function(thermal = FALSE,
 
     # Apply priority rules with the WEO region condition
     mutate(value = case_when(
-      !is.na(.data$value) & .data$value != 0                            ~ .data$value,      # 1. Odyssee
+      !is.na(.data$value)                                               ~ .data$value,      # 1. Odyssee (non-zero)
       !is.na(.data$valueEEI)                                            ~ .data$valueEEI,   # 2. IEA EEI
       !is.na(.data$valueChina)                                          ~ .data$valueChina, # 3. IEA China
       (!is.na(.data$valueWEO) & .data$eeiCount < 2)                     ~ .data$valueWEO,   # 4. IEA WEO
       (!is.na(.data$valueETP) & .data$eeiCount < 2)                     ~ .data$valueETP,   # 5. IEA ETP
-      .default                                                          = .data$value       # Fallback to Odyssee
+      .default                                                          = NA
+    )) %>%
+
+    # Apply special case source hierarchy overrides
+    left_join(hierarchyOverrides %>%
+                select("region", "enduse", "carrier", "sourceOverride"),
+              by = c("region", "enduse"),
+              relationship = "many-to-many") %>%
+    mutate(value = case_when(
+      .data$sourceOverride == "EEI" & !is.na(.data$valueEEI)       ~ .data$valueEEI,
+      .data$sourceOverride == "WEO" & !is.na(.data$valueWEO)       ~ .data$valueWEO,
+      .data$sourceOverride == "China" & !is.na(.data$valueChina)   ~ .data$valueChina,
+      .data$sourceOverride == "ETP" & !is.na(.data$valueETP)       ~ .data$valueETP,
+      .default = .data$value
     )) %>%
     select("region", "period", "enduse", "value")
 

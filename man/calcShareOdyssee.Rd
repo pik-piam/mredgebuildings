@@ -23,9 +23,10 @@ the Odyssee data base (EU member states). In case of multi-level shares, the
 function gives the share w.r.t. to the last categories but for all
 categories. E.g. 'enduse_carrier' gives the share of each carrier in the
 demand from each end use.
-Missing shares that result from missing demand data are filled with the
-average share across all regions and periods and then normalised to sum up to
-one again.
+Missing shares are handled as follows: If all data for a region is missing
+(no demand data at all), the shares remain NA. If a specific category (e.g.,
+a specific carrier or end use) has no data across all periods for a region,
+its shares are filled with 0, assuming zero demand for that category.
 Biomass is split according to GDP per Capita (see toolSplitBiomass).
 }
 \author{

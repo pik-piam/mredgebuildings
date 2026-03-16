@@ -5,9 +5,10 @@
 #' function gives the share w.r.t. to the last categories but for all
 #' categories. E.g. 'enduse_carrier' gives the share of each carrier in the
 #' demand from each end use.
-#' Missing shares that result from missing demand data are filled with the
-#' average share across all regions and periods and then normalised to sum up to
-#' one again.
+#' Missing shares are handled as follows: If all data for a region is missing
+#' (no demand data at all), the shares remain NA. If a specific category (e.g.,
+#' a specific carrier or end use) has no data across all periods for a region,
+#' its shares are filled with 0, assuming zero demand for that category.
 #' Biomass is split according to GDP per Capita (see toolSplitBiomass).
 #'
 #' @author Robin Hasse, Antoine Levesque, Hagen Tockhorn
@@ -33,7 +34,7 @@ calcShareOdyssee <- function(subtype = c("enduse", "carrier", "enduse_carrier"),
   # READ-IN DATA ---------------------------------------------------------------
 
   # Read Buildings Data
-  odysseeData <- rbind(readSource("Odyssee", subtype = "250109") %>%
+  odysseeData <- rbind(readSource("Odyssee", subtype = "260305") %>%
                          as.quitte() %>%
                          mutate(version = "new"),
                        readSource("Odyssee", subtype = "220405") %>%
@@ -240,25 +241,21 @@ calcShareOdyssee <- function(subtype = c("enduse", "carrier", "enduse_carrier"),
                 description = "Aggregated fe values for Odyssee regions"))
   } else {
     #---Calculate Shares
-
-    shareGlobal <- odyssee %>%
-      group_by(across(all_of(shareOf))) %>%
-      summarise(value = sum(.data[["value"]], na.rm = TRUE), .groups = "drop") %>%
-      ungroup() %>%
-      mutate(value = .data[["value"]] / sum(.data[["value"]], na.rm = TRUE))
-
     share <- odyssee %>%
       group_by(across(all_of(c("region", "period", shareOf)))) %>%
       summarise(value = sum(.data[["value"]], na.rm = TRUE), .groups = "drop") %>%
       ungroup() %>%
       toolCalcShares(if (subtype == "enduse_carrier") shareOf else tail(shareOf, 1)) %>%
       complete(region = odysseeRegions, !!!syms(c("period", shareOf))) %>%
-      left_join(shareGlobal, by = shareOf) %>%
-      mutate(value = ifelse(is.na(.data[["value.x"]]),
-                            .data[["value.y"]],
-                            .data[["value.x"]])) %>%
-      select(-"value.x", -"value.y") %>%
-      toolCalcShares(if (subtype == "enduse_carrier") shareOf else tail(shareOf, 1))
+
+      group_by(across(all_of(c("region", shareOf)))) %>%
+      mutate(hasPartialNAs = all(is.na(.data$value))) %>%
+      group_by(across(all_of(c("region")))) %>%
+      mutate(hasAllNAs = all(is.na(.data$value))) %>%
+      ungroup() %>%
+
+      mutate(value = ifelse(is.na(.data$value) & .data$hasPartialNAs & !.data$hasAllNAs, 0, .data$value)) %>%
+      select(-"hasPartialNAs", -"hasAllNAs")
 
 
     # Weights: regional share of final energy

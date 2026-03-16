@@ -4,7 +4,8 @@
 #'
 #' As for the buildings sector, data for residential and commercial ("service")
 #' buildings is aggregated and the carrier "biomass" is split into traditional
-#' and modern biomass w.r.t. to income per capita.
+#' and modern biomass w.r.t. to income per capita. Energy data on "space_cooling"
+#' is aggregated over all carriers into "elec".
 #'
 #' @param subtype sector name
 #' @param mixData logical indicating whether to mix res/com data points if both are not given
@@ -51,6 +52,7 @@ calcIEA_EEI <- function(subtype = c("buildings"), #nolint object_name_linter
                               type = "sectoral",
                               where = "mredgebuildings") %>%
     pull("EDGE", "IEA_EEI")
+
   carrierMap <- toolGetMapping(name = "carrierMap_IEA-EEI.csv",
                                type = "sectoral",
                                where = "mredgebuildings") %>%
@@ -83,8 +85,19 @@ calcIEA_EEI <- function(subtype = c("buildings"), #nolint object_name_linter
       mutate(value = replace_na(.data[["value"]], 0) * pj2ej)
 
 
-    # split biomass into traditional + modern biomass
+    # aggregate all space_cooling energy carriers to electricity
+    coolingDemand <- dataAgg %>%
+      filter(.data$enduse == "space_cooling") %>%
+      mutate(carrier = "elec") %>%
+      group_by(across(-all_of(c("value")))) %>%
+      summarise(value = sum(.data$value)) %>%
+      ungroup()
+
+
+    # split biomass into traditional + modern biomass and merge aggregated space cooling data
     data <- dataAgg %>%
+      filter(.data$enduse != "space_cooling") %>%
+      rbind(coolingDemand) %>%
       select("region", "period", "carrier", "enduse", "value") %>%
       as.quitte() %>%
       as.magpie() %>%
