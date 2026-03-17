@@ -24,7 +24,7 @@ convertEUBuildingsDB <- function(x, subtype) {
   # unit conversion
   unitConversion <- inline.data.frame(
     "from;          to;     factor",
-    "Mm<b2>;        m2;     1", # per dwelling
+    "Mm<b2>;        m2;     1E6", # per dwelling
     "m<b2>;         m2;     1",
     "thousand;      1;      1E3",
     "%;             1;      1E-2",
@@ -41,9 +41,10 @@ convertEUBuildingsDB <- function(x, subtype) {
   getItems(data, 1) <- toolCountry2isocode(getItems(data, 1))
 
   # manually drop erroneous data points
-  if (category == "BuildingStockCharacteristics") {
-    data[, 2017, c("Total floor area of single family dwellings_m2",
-                   "Total floor area of multi family dwellings_m2")] <- NA
+  if (category == "BuildingStockCharacteristics"
+      && !variable %in% c("residentialVintageShares", "shareHouseholdSize")) {
+    data[, 2017, c("Total floor area of single family dwellings",
+                   "Total floor area of multi family dwellings")] <- NA
   } else if (category == "BuildingShellPerformance") {
     data[, 2008, ] <- NA
   }
