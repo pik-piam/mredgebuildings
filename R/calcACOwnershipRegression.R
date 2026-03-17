@@ -105,7 +105,7 @@ calcACOwnershipRegression <- function() {
                       d = 1)
 
   # non-linear fit with alpha fixed
-  estimateNonLin <- nls("penetration ~ 1 / (1 + exp(alpha - b * CDD^c * gdppop^d))",
+  estimateNonLin <- nls("penetration ~ 1 / (1 + exp(alpha + b * CDD^c * gdppop^d))",
                         data = fitData,
                         start = startValues,
                         control = list(maxiter = 1000))
@@ -115,7 +115,7 @@ calcACOwnershipRegression <- function() {
   fitPars <- data.frame(region   = "GLO",
                         variable = c("alpha", "beta", "gamma", "delta"),
                         value    = c(alpha,
-                                     coef(estimateNonLin)[["b"]],
+                                     (-1) * coef(estimateNonLin)[["b"]],
                                      coef(estimateNonLin)[["c"]],
                                      coef(estimateNonLin)[["d"]]))
 
