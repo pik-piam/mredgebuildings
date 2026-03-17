@@ -101,10 +101,7 @@ calcACOwnershipRatesFilled <- function(endOfHistory = 2025) {
     select("region", "gdppopShift") %>%
 
     # fill missing regions with zero shift (use global curve as-is)
-    right_join(gdppop %>%
-                 select("region") %>%
-                 unique(),
-               by = "region") %>%
+    semi_join(gdppop, by = "region") %>%
     mutate(gdppopShift = ifelse(is.na(.data$gdppopShift) | is.infinite(.data$gdppopShift), 0, .data$gdppopShift))
 
 
