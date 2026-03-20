@@ -40,11 +40,10 @@ readEurostatBuildings <- function(subtype) {
 
 
   .transformBiAnnual <- function(time) {
-    case_when(
-      grepl("\\d{4}-S1", time) ~ paste0(gsub("(\\d{4})-S1", "\\1", time), "-01"),
-      grepl("\\d{4}-S2", time) ~ paste0(gsub("(\\d{4})-S2", "\\1", time), "-07"),
-      .default = as.character(time)
-    )
+    time <- as.character(time)
+    time <- sub("(\\d{4})-S1", "\\1-01", time)
+    time <- sub("(\\d{4})-S2", "\\1-07", time)
+    time
   }
 
   # pick file

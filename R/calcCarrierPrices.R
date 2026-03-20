@@ -152,10 +152,11 @@ calcCarrierPrices <- function() {
     as_tibble() %>%
     mutate(carrier = "elec")
 
-  eurostatPrices <- rbind(eurostatGasPrice, eurostatElecPrice) %>%
+  eurostatPriceIncrease <- rbind(eurostatGasPrice, eurostatElecPrice) %>%
+    mutate(value = ifelse(.data$region == "HRV", NA, .data$value)) %>% # Exclude HRV due to large jumps
     left_join(lcu2usd, by = "region") %>%
     mutate(value = .data$value * .data$lcu2usd,
-           year = as.numeric(gsub("(\\d{4})-\\d{2}", "\\1", .data$period)),
+           year = as.numeric(sub("(\\d{4})-\\d{2}", "\\1", .data$period)),
            fiveYearPeriod = case_match(
              .data$year,
              2016:2020 ~ "2016-2020",
@@ -174,22 +175,23 @@ calcCarrierPrices <- function() {
     full_join(ecemfPrices,
               by = c("region", "period", "carrier"),
               suffix = c("", "ECEMF")) %>%
-    left_join(eurostatPrices, by = c("region", "carrier")) %>%
+    left_join(eurostatPriceIncrease, by = c("region", "carrier")) %>%
     group_by(across(all_of(c("region", "carrier")))) %>%
-    mutate(eod = if (all(is.na(.data$value))) NA else  max(.data$period[!is.na(.data$value)]),
+    mutate(eod = if (all(is.na(.data$value))) NA else max(.data$period[!is.na(.data$value)]),
            factorAbsIncrease = case_when(
-             .data$period %in% seq(2025, 2040) & .data$carrier == "elec" ~ -1 / 15 * .data$period + 2040 / 15,
+             .data$period %in% seq(2025, 2040) & .data$carrier == "elec" ~ (2040 - .data$period) / (2040 - 2025),
              .data$period > 2040 & .data$carrier == "elec" ~ 0,
              .default = 1
            ),
            absIncrease = .data$absIncrease * .data$factorAbsIncrease,
-           value = case_when(!is.na(.data$value) ~ .data$value,
-                             all(is.na(.data$value)) ~ .data$valueECEMF,
-                             !is.na(.data$absIncrease) ~ .data$valueECEMF
-                             * (.data$value / .data$valueECEMF)[.data$period == .data$eod]
-                             + .data$absIncrease,
-                             .default = .data$valueECEMF
-                             * (.data$value / .data$valueECEMF)[.data$period == .data$eod]),
+           value = case_when(
+             !is.na(.data$value) ~ .data$value,
+             all(is.na(.data$value)) & !is.na(.data$absIncrease) ~ .data$valueECEMF + .data$absIncrease,
+             all(is.na(.data$value)) & is.na(.data$absIncrease) ~ .data$valueECEMF,
+             !is.na(.data$absIncrease) ~ .data$valueECEMF * (.data$value / .data$valueECEMF)[.data$period == .data$eod]
+             + .data$absIncrease,
+             .default = .data$valueECEMF * (.data$value / .data$valueECEMF)[.data$period == .data$eod]
+           ),
            variable = "price",
            unit = "USD/kWh",
            level = "central") %>%
