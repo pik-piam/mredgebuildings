@@ -38,7 +38,7 @@ calcRenovationCostModel <- function() {
   # ASSUMPTIONS ----------------------------------------------------------------
 
   # temporal scope of the report and of final data set
-  periodsReport <- 2014:2017
+  periodsReport <- 2012:2016
   periods <- c(2000, 2020)
 
   # minimum specific investment relative to average in EU
@@ -56,7 +56,7 @@ calcRenovationCostModel <- function() {
     as.quitte(na.rm = TRUE) %>%
     select(-"model", -"scenario", -"period")
 
-  # average income in reporting period: 2014 - 2017
+  # average income in reporting period
   pop <- calcOutput("Population", scenario = "SSP2", aggregate = FALSE) %>%
     setNames("population") %>%
     as.quitte() %>%
@@ -222,7 +222,6 @@ calcRenovationCostModel <- function() {
 
   ## Unit conversion ====
 
-  # cost data was surveyed 2014 - 2017 but we use 2020 for currency conversion
   specificInvest <- specificInvest %>%
     mutate(value = .data$value * eur2usd(year = round(mean(periodsReport))))
   unit <- "USD2017/m2"
