@@ -17,8 +17,6 @@
 #' data (IEA Base) is separated and harmonized with SSP scenario projections.
 #'
 #' @param endOfHistory upper temporal boundary for historical data
-#' @param extrapolate if \code{TRUE}, regional demand will be linearly extrapolated using the slope
-#' of the last two existing data points per scenario, if \code{FALSE} data remains unchanged
 #'
 #' @returns A magpie object containing ICT electricity demand data calculated from
 #'   DC demands across regions, time periods, and scenarios.
@@ -35,7 +33,7 @@
 #' @importFrom magclass as.magpie
 #' @importFrom madrat toolCountryFill
 
-calcElecDemandICT <- function(endOfHistory = 2025, extrapolate = FALSE) {
+calcElecDemandICT <- function(endOfHistory = 2025) {
 
   # PARAMETER ------------------------------------------------------------------
 
@@ -52,7 +50,7 @@ calcElecDemandICT <- function(endOfHistory = 2025, extrapolate = FALSE) {
     filter(!is.na(.data$value))
 
   # R5 Resolution (Elec. Demand DC)
-  dataR5 <- readSource("PRISMA_ICT", subtype = "R5", convert = FALSE) %>%
+  dataR5 <- readSource("PRISMA_ICT", subtype = "R5 2100", convert = FALSE) %>%
     as_tibble() %>%
     filter(!is.na(.data$value))
 
@@ -93,7 +91,8 @@ calcElecDemandICT <- function(endOfHistory = 2025, extrapolate = FALSE) {
     reframe(value = sum(.data$value)) %>%
     ungroup() %>%
     pivot_wider(names_from = "variable", values_from = "value") %>%
-    mutate(ratio = .data$ict / .data$dc - 1, .keep = "unused")
+    mutate(ratio = .data$ict / .data$dc - 1, .keep = "unused") %>%
+    interpolate_missing_periods(unique(dataR5$period), expand.values = TRUE, value = "ratio")
 
 
   data <- dataR5 %>%
@@ -137,7 +136,7 @@ calcElecDemandICT <- function(endOfHistory = 2025, extrapolate = FALSE) {
     ungroup() %>%
     select(-"regionTarget", -"weight") %>%
 
-    # calculate ICT (DC + Network) demand using global network share
+    # calculate ICT (DC + Network) demand using global network / DC ratio
     left_join(networkDCRatio, by = c("estimate", "period")) %>%
     mutate(value = .data$value * (1 + .data$ratio), .keep = "unused") %>%
     select(-"variable", -"unit") %>%
@@ -148,33 +147,6 @@ calcElecDemandICT <- function(endOfHistory = 2025, extrapolate = FALSE) {
            carrier = "elec",
            enduse = "ict") %>%
     replace_na(list("value" = 0))
-
-
-  # extrapolate scenario data to 2100 using linear fit over last two periods (here: 2045-50)
-  if (isTRUE(extrapolate)) {
-    data <- data %>%
-      group_by(across(all_of(c("region", "scenario", "variable")))) %>%
-      group_modify(~ {
-        periods <- sort(unique(.x$period))
-
-        if (.y$scenario != "history") {
-          # linear extrapolation for future scenarios
-          fitData <- .x %>%
-            filter(.data$period %in% tail(periods, 2))
-
-          model <- lm(value ~ period, data = fitData)
-
-          .x %>%
-            interpolate_missing_periods(seq.int(endOfHistory + 5, 2100, 5)) %>%
-            mutate(pred = predict(model, newdata = .),
-                   value = ifelse(is.na(.data$value), pmax(0, .data$pred), .data$value)) %>%
-            select(-"pred")
-        } else {
-          .x
-        }
-      }) %>%
-      ungroup()
-  }
 
 
 

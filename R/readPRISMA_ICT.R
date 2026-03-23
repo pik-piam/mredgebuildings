@@ -4,7 +4,7 @@
 #' Supports different regional resolutions and data center counts.
 #'
 #' @param subtype Character string specifying data type: "R12" for 12-region ICT data,
-#'   "R5" for 5-region data center data, or "nDC" for data center counts
+#'   "R5" for 5-region data center data ("R5 2100" until 2100), or "nDC" for data center counts
 #'
 #' @returns A magpie object containing the requested ICT/data center data
 #'
@@ -19,14 +19,15 @@
 readPRISMA_ICT <- function(subtype) { # nolint: object_name_linter
 
   subtype <- switch(subtype,
+                    "R5 2100" = "R5 DC_2100",
                     "R12" = "Output_R12",
                     "R5"  = "R5 DC",
                     "nDC" = "Num. DC",
                     subtype)
 
-  fileName <- "R12_Clean IAM  Version_Finalised.xlsx"
+  fileName <- "R12_Clean IAM Version_Finalised_2100.xlsx"
 
-  if (subtype %in% c("Output_R12", "R5 DC")) {
+  if (subtype %in% c("Output_R12", "R5 DC", "R5 DC_2100")) {
     # Read and process energy data sheets
     data <- read.xlsx(fileName, sheet = subtype, check.names = FALSE, sep.names = " ") %>%
       (\(df) setNames(df, gsub(" \\(twh\\)", "", tolower(names(df)))))() %>%
