@@ -150,18 +150,6 @@ calcElecDemandICT <- function(endOfHistory = 2025) {
 
 
 
-  # weights
-  weights <- dataDC %>%
-    select("region", "value") %>%
-    mutate(region = as.character(.data$region)) %>%
-    right_join(data %>%
-                 select("region", "period", "variable") %>%
-                 unique(),
-               by = "region") %>%
-    replace_na(list("value" = 0))
-
-
-
   # OUTPUT ---------------------------------------------------------------------
 
   data <- data %>%
@@ -169,14 +157,8 @@ calcElecDemandICT <- function(endOfHistory = 2025) {
     as.magpie() %>%
     toolCountryFill(0, verbosity = 2)
 
-  weights <- weights %>%
-    as.quitte() %>%
-    as.magpie() %>%
-    toolCountryFill(0, verbosity = 2)
-
 
   return(list(x = data,
-              weight = weights,
               unit = "EJ",
               min = 0,
               description = "Annual historical and SSP ICT electricity demands"))
