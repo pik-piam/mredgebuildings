@@ -1,15 +1,15 @@
 variable,variableTarget
-dc lower bound,dc lower
-dc upper bound,dc upper
+dc lower bound,dc low
+dc upper bound,dc high
 dc mean,dc mean
-dc central estimate,dc central
-lower bound dc,dc lower
-upper bound dc,dc upper
+dc central estimate,dc medium
+lower bound dc,dc low
+upper bound dc,dc high
 mean dc,dc mean
-central estimate dc,dc central
-ict lower,ict lower
-ict upper,ict upper
+central estimate dc,dc medium
+ict lower,ict low
+ict upper,ict high
 mean,ict mean
-central estimate,ict central
-lower ict,ict lower
-upper ict,ict upper
+central estimate,ict medium
+lower ict,ict low
+upper ict,ict high

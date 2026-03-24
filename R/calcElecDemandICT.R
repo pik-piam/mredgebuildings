@@ -7,7 +7,7 @@
 #'
 #' The function processes multiple demand estimates:
 #' \itemize{
-#'   \item Mean and central estimate
+#'   \item Mean and medium estimate
 #'   \item Lower demand boundary (DGI elasticity from historical efficiency dominant phases)
 #'   \item Upper demand boundary (DGI elasticity from historical service dominant phases)
 #' }
