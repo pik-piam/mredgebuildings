@@ -479,7 +479,7 @@ calcMatchingReference <- function(subtype) {
 
     EuropeanCommissionRenovation = {
 
-      # The data represents the average between 2014 and 2017. But we assume
+      # The data represents the average between 2012 and 2016. But we assume
       # this value for all historic periods temporarily
       data <- readSource("EuropeanCommissionRenovation") %>%
         as.quitte(na.rm = TRUE) %>%
