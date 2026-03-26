@@ -3,8 +3,7 @@
 #' Reads ICT and data center electricity demand data from PRISMA project Excel file.
 #' Supports different regional resolutions and data center counts.
 #'
-#' @param subtype Character string specifying data type: "R12" for 12-region ICT data,
-#'   "R5" for 5-region data center data ("R5 2100" until 2100), or "nDC" for data center counts
+#' @param subtype Character string specifying data type
 #'
 #' @returns A magpie object containing the requested ICT/data center data
 #'
@@ -18,16 +17,9 @@
 #'
 readPRISMA_ICT <- function(subtype) { # nolint: object_name_linter
 
-  subtype <- switch(subtype,
-                    "R5 2100" = "R5 DC_2100",
-                    "R12" = "Output_R12",
-                    "R5"  = "R5 DC",
-                    "nDC" = "Num. DC",
-                    subtype)
+  fileName <- "R12_Clean IAM Version_Finalised_2100_update_2026-03-31.xlsx"
 
-  fileName <- "R12_Clean IAM Version_Finalised_2100.xlsx"
-
-  if (subtype %in% c("Output_R12", "R5 DC", "R5 DC_2100")) {
+  if (subtype %in% c("Output_R12", "R5 DC", "R5 DC_2100_revised")) {
     # Read and process energy data sheets
     data <- read.xlsx(fileName, sheet = subtype, check.names = FALSE, sep.names = " ") %>%
       (\(df) setNames(df, gsub(" \\(twh\\)", "", tolower(names(df)))))() %>%

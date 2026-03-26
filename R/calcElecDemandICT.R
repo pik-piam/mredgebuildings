@@ -54,17 +54,17 @@ calcElecDemandICT <- function(endOfHistory = 2025) {
   # READ-IN DATA ---------------------------------------------------------------
 
   # R12 Resolution (Elec. Demand DC + ICT)
-  dataR12 <- readSource("PRISMA_ICT", subtype = "R12", convert = FALSE) %>%
+  dataR12 <- readSource("PRISMA_ICT", subtype = "Output_R12", convert = FALSE) %>%
     as_tibble() %>%
     filter(!is.na(.data$value))
 
   # R5 Resolution (Elec. Demand DC)
-  dataR5 <- readSource("PRISMA_ICT", subtype = "R5 2100", convert = FALSE) %>%
+  dataR5 <- readSource("PRISMA_ICT", subtype = "R5 DC_2100_revised", convert = FALSE) %>%
     as_tibble() %>%
     filter(!is.na(.data$value))
 
   # Number of DCs
-  dataDC <- readSource("PRISMA_ICT", subtype = "nDC") %>%
+  dataDC <- readSource("PRISMA_ICT", subtype = "Num. DC") %>%
     as_tibble() %>%
     filter(!is.na(.data$value))
 
