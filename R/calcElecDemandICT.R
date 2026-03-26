@@ -12,9 +12,10 @@
 #'   \item Upper demand boundary (DGI elasticity from historical service dominant phases)
 #' }
 #'
-#' Data is downscaled from R5 to country-level using historical DC counts,
-#' with fixed network shares calculated at the end of the historical period. Historical
-#' data (IEA Base) is separated and harmonized with SSP scenario projections.
+#' Data is downscaled from R5 to country-level using data center counts as weights,
+#' with exceptional fixed shares for China within Asia Pacific (73.28%) and for Europe's
+#' R12 sub-regions (WEU: 75%, EEU: 14%, FSU: 11%). Network demand is added using global network/DC ratios.
+#' Historical data (IEA Base) is separated and harmonized with SSP scenario projections.
 #'
 #' @param endOfHistory upper temporal boundary for historical data
 #'
@@ -40,6 +41,14 @@ calcElecDemandICT <- function(endOfHistory = 2025) {
   # TWh to EJ conversion factor
   twh2ej <- 3600 * 10^12 / 10^18
 
+  # fixed share of ICT demand China <-> Asia Pacific
+  chinaShare <- 0.7328
+
+  # fixed shares of R12 regions within R5 Europe
+  europeShares <- data.frame(
+    "R12" = c("WEU", "EEU", "FSU"),
+    "share" = c(0.75, 0.14, 0.11)
+  )
 
 
   # READ-IN DATA ---------------------------------------------------------------
@@ -60,10 +69,16 @@ calcElecDemandICT <- function(endOfHistory = 2025) {
     filter(!is.na(.data$value))
 
 
+  # MessageIX region mapping
+  regionmapMessage <- toolGetMapping("regionmappingMessageIX.csv",
+                                     type = "regional",
+                                     where = "mredgebuildings")
+
   # IEA R5 region mapping
-  regionmap <- toolGetMapping("regionmappingIEA_R5.csv",
-                              type = "regional",
-                              where = "mredgebuildings")
+  regionmapR5 <- toolGetMapping("regionmappingIEA_R5.csv",
+                                type = "regional",
+                                where = "mredgebuildings")
+
 
   # variable mapping
   variableMap <- toolGetMapping("variableMapping_ICT.csv",
@@ -74,6 +89,14 @@ calcElecDemandICT <- function(endOfHistory = 2025) {
 
 
   # PROCESS DATA ---------------------------------------------------------------
+
+  # unite region mappings (ISO -> R5 -> R12)
+  regionmap <- regionmapR5 %>%
+    select("region" = "CountryCode", "R5" = "Region") %>%
+    left_join(regionmapMessage %>%
+                select("region" = "CountryCode", "R12"),
+              by = "region")
+
 
   # re-map variables in R5 and R12
   dataR12 <- dataR12 %>%
@@ -119,13 +142,38 @@ calcElecDemandICT <- function(endOfHistory = 2025) {
         ieaScenarioExpanded
       )
     })() %>%
+    rename("R5" = "region") %>%
+    left_join(regionmap, by = "R5", relationship = "many-to-many") %>%
 
-    # add country-level weights (number of DCs)
-    rename("regionTarget" = "region") %>%
-    left_join(regionmap %>%
-                select("region" = "CountryCode", "regionTarget" = "Region"),
-              by = "regionTarget",
-              relationship = "many-to-many") %>%
+    # Step 1: Disaggregate regions with fixed disaggregation shares (China + Europe)
+    (\(df) {
+      # disaggregate China from Asia Pacific with fixed share
+      chinaDisagg <- df %>%
+        filter(.data$R5 == "Asia Pacific") %>%
+        mutate(share = ifelse(.data$region == "CHN", chinaShare, 1 - chinaShare),
+               value = .data$value * .data$share,
+               regionTarget = ifelse(.data$region == "CHN", "CHN", .data$R5)) %>%
+        select(-"share", -"R5", -"R12")
+
+      # disaggregate Europe into R12 regions with fixed shares
+      europeDisagg <- df %>%
+        filter(.data$R5 == "Europe") %>%
+        left_join(europeShares, by = "R12") %>%
+        mutate(value = .data$value * .data$share,
+               regionTarget = .data$R12) %>%
+        select(-"share", -"R5", -"R12")
+
+      # filter remaining regions
+      rest <- df %>%
+        filter(!.data$R5 %in% c("Asia Pacific", "Europe")) %>%
+        mutate(regionTarget = .data$R5) %>%
+        select(-"R5", -"R12")
+
+      # bind all data
+      rbind(chinaDisagg, europeDisagg, rest)
+    })() %>%
+
+    # Step 2: Disaggregate within each regionTarget using DC counts
     left_join(dataDC %>%
                 select("region", "weight" = "value"),
               by = "region") %>%
