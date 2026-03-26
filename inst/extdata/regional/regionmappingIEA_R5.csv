@@ -11,7 +11,7 @@ Argentina,ARG,Latin America
 Armenia,ARM,Europe
 American Samoa,ASM,Asia Pacific
 Antarctica,ATA,Latin America
-French Southern Territories,ATF,Asia Pacific
+French Southern Territories,ATF,Latin America
 Antigua and Barbuda,ATG,Latin America
 Australia,AUS,Asia Pacific
 Austria,AUT,Europe
@@ -73,7 +73,7 @@ Estonia,EST,Europe
 Ethiopia,ETH,Middle East and Africa
 Finland,FIN,Europe
 Fiji,FJI,Asia Pacific
-Falkland Islands,FLK,Europe
+Falkland Islands,FLK,Latin America
 France,FRA,Europe
 Faroe Islands,FRO,Europe
 Micronesia,FSM,Asia Pacific
@@ -96,7 +96,7 @@ French Guiana,GUF,Latin America
 Guam,GUM,Asia Pacific
 Guyana,GUY,Latin America
 Hong Kong,HKG,Asia Pacific
-Heard Island and McDonald Islands,HMD,Europe
+Heard Island and McDonald Islands,HMD,Asia Pacific
 Honduras,HND,Latin America
 Croatia,HRV,Europe
 Haiti,HTI,Latin America
@@ -104,7 +104,7 @@ Hungary,HUN,Europe
 Indonesia,IDN,Asia Pacific
 Isle of Man,IMN,Europe
 India,IND,Asia Pacific
-British Indian Ocean Territory,IOT,Asia Pacific
+British Indian Ocean Territory,IOT,Middle East and Africa
 Ireland,IRL,Europe
 Iran,IRN,Middle East and Africa
 Iraq,IRQ,Middle East and Africa
@@ -157,7 +157,7 @@ Martinique,MTQ,Latin America
 Mauritius,MUS,Middle East and Africa
 Malawi,MWI,Middle East and Africa
 Malaysia,MYS,Asia Pacific
-Mayotte,MYT,Asia Pacific
+Mayotte,MYT,Middle East and Africa
 Namibia,NAM,Middle East and Africa
 New Caledonia,NCL,Asia Pacific
 Niger,NER,Middle East and Africa
@@ -179,7 +179,7 @@ Philippines,PHL,Asia Pacific
 Palau,PLW,Asia Pacific
 Papua New Guinea,PNG,Asia Pacific
 Poland,POL,Europe
-Puerto Rico,PRI,Europe
+Puerto Rico,PRI,North America
 North Korea,PRK,Asia Pacific
 Portugal,PRT,Europe
 Paraguay,PRY,Latin America
@@ -195,14 +195,14 @@ Sudan,SDN,Middle East and Africa
 Senegal,SEN,Middle East and Africa
 Singapore,SGP,Asia Pacific
 South Georgia and South Sandwich Islands,SGS,Latin America
-Saint Helena,SHN,Europe
+Saint Helena,SHN,Middle East and Africa
 Svalbard and Jan Mayen,SJM,Europe
 Solomon Islands,SLB,Asia Pacific
 Sierra Leone,SLE,Middle East and Africa
 El Salvador,SLV,Latin America
 San Marino,SMR,Europe
 Somalia,SOM,Middle East and Africa
-Saint Pierre and Miquelon,SPM,Europe
+Saint Pierre and Miquelon,SPM,North America
 Serbia,SRB,Europe
 South Sudan,SSD,Middle East and Africa
 Sao Tome and Principe,STP,Middle East and Africa
@@ -212,9 +212,9 @@ Slovenia,SVN,Europe
 Sweden,SWE,Europe
 Eswatini,SWZ,Middle East and Africa
 Sint Maarten,SXM,Latin America
-Seychelles,SYC,Asia Pacific
+Seychelles,SYC,Middle East and Africa
 Syrian Arab Republic,SYR,Middle East and Africa
-Turks and Caicos Islands,TCA,Europe
+Turks and Caicos Islands,TCA,Latin America
 Chad,TCD,Middle East and Africa
 Togo,TGO,Middle East and Africa
 Thailand,THA,Asia Pacific
@@ -238,11 +238,11 @@ Uzbekistan,UZB,Europe
 Vatican City,VAT,Europe
 Saint Vincent and the Grenadines,VCT,Latin America
 Venezuela,VEN,Latin America
-British Virgin Islands,VGB,Europe
-US Virgin Islands,VIR,Europe
+British Virgin Islands,VGB,Latin America
+US Virgin Islands,VIR,Latin America
 Viet Nam,VNM,Asia Pacific
 Vanuatu,VUT,Asia Pacific
-Wallis and Futuna,WLF,Europe
+Wallis and Futuna,WLF,Asia Pacific
 Samoa,WSM,Asia Pacific
 Yemen,YEM,Middle East and Africa
 South Africa,ZAF,Middle East and Africa
