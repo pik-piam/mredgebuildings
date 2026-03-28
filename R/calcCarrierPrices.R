@@ -95,20 +95,23 @@ calcCarrierPrices <- function() {
       mutate(carrier = "elec")
   ) %>%
     mutate(value = ifelse(.data$region == "HRV", NA, .data$value), # Exclude HRV due to large jumps
-           year = as.numeric(sub("(\\d{4})-\\d{2}", "\\1", .data$period)))
+           year = as.integer(sub("(\\d{4})-\\d{2}", "\\1", .data$period)))
 
   # convert to USD - need this for OECD and Eurostat data
-  lcu2usd <- expand.grid(
-    region = union(unique(oecdPrices$region), unique(eurostatPrice$region)),
-    period = union(unique(oecdPrices$period), unique(eurostatPrice$year))
+  lcu2usd <- rbind(
+    oecdPrices[, c("region", "period")],
+    eurostatPrice[, c("region", "year")] %>%
+      rename(period = "year")
   ) %>%
+    unique() %>%
     filter(.data$period <= 2023) %>% # Conversion data (probably) only available until 2023
     group_by(.data$period) %>%
     mutate(lcu2usd = GDPuc::toolConvertSingle(1, .data$region, unique(.data$period),
                                               unit_in = "current LCU",
-                                              unit_out = "constant 2017 US$MER")) %>%
+                                              unit_out = "constant 2017 US$MER",
+                                              replace_NA = NA)) %>%
     ungroup() %>%
-    interpolate_missing_periods(union(unique(oecdPrices$period), unique(eurostatPrice$year)),
+    interpolate_missing_periods(unique(c(oecdPrices$period, eurostatPrice$year)),
                                 expand.values = TRUE,
                                 value = "lcu2usd")
 
