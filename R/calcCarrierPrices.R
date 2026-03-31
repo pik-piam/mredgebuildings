@@ -8,7 +8,7 @@
 #'
 #' @importFrom madrat readSource
 #' @importFrom dplyr %>% .data select mutate group_by across all_of any_of
-#'   summarise left_join full_join cross_join rename as_tibble
+#'   summarise left_join full_join cross_join rename as_tibble case_match
 #' @importFrom tidyr pivot_longer complete
 #' @importFrom quitte as.quitte inline.data.frame interpolate_missing_periods
 #' @importFrom madrat toolGetMapping
@@ -83,19 +83,39 @@ calcCarrierPrices <- function() {
     right_join(carrierMap, by = c(V2 = "carrier2")) %>%
     select(-"V2", -"carrier1")
 
-  # convert to USD
-  lcu2usd <- oecdPrices %>%
-    select("region", "period") %>%
+  # eurostat prices for electricity and gas to scale up most recent price data
+  eurostatPrice <- rbind(
+    readSource("EurostatBuildings", "nrg_pc_202") %>%
+      mselect(unit = "KWH", tax = "I_TAX", currency = "NAC", collapseNames = TRUE) %>%
+      as_tibble() %>%
+      mutate(carrier = "gases"),
+    readSource("EurostatBuildings", "nrg_pc_204") %>%
+      mselect(tax = "I_TAX", currency = "NAC", collapseNames = TRUE) %>%
+      as_tibble() %>%
+      mutate(carrier = "elec")
+  ) %>%
+    mutate(value = ifelse(.data$region == "HRV", NA, .data$value), # Exclude HRV due to large jumps
+           year = as.integer(sub("(\\d{4})-\\d{2}", "\\1", .data$period)))
+
+  # convert to USD - need this for OECD and Eurostat data
+  lcu2usd <- rbind(
+    oecdPrices[, c("region", "period")],
+    eurostatPrice[, c("region", "year")] %>%
+      rename(period = "year")
+  ) %>%
     unique() %>%
+    filter(.data$period <= 2023) %>% # Conversion data (probably) only available until 2023
     group_by(.data$period) %>%
     mutate(lcu2usd = GDPuc::toolConvertSingle(1, .data$region, unique(.data$period),
                                               unit_in = "current LCU",
-                                              unit_out = "constant 2017 US$MER")) %>%
+                                              unit_out = "constant 2017 US$MER",
+                                              replace_NA = NA)) %>%
     ungroup() %>%
-    interpolate_missing_periods(unique(oecdPrices$period),
+    interpolate_missing_periods(unique(c(oecdPrices$period, eurostatPrice$year)),
                                 expand.values = TRUE,
                                 value = "lcu2usd")
 
+  # convert to USD and remove VAT
   oecdPrices <- oecdPrices %>%
     left_join(lcu2usd, by = c("region", "period")) %>%
     group_by(.data$period) %>%
@@ -104,6 +124,23 @@ calcCarrierPrices <- function() {
     ungroup() %>%
     interpolate_missing_periods(periods) %>%
     filter(.data$period %in% periods)
+
+  # Compute price increase between 2016-2020 and 2021-2025
+  eurostatPriceIncrease <- eurostatPrice %>%
+    mutate(fiveYearPeriod = case_match(
+      .data$year,
+      2016:2020 ~ "2016-2020",
+      2021:2025 ~ "2021-2025",
+      .default = "none"
+    ))  %>%
+    filter(.data$fiveYearPeriod != "none") %>%
+    left_join(lcu2usd, by = c("region", year = "period")) %>%
+    mutate(value = .data$value * .data$lcu2usd) %>%
+    group_by(across(all_of(c("region", "fiveYearPeriod", "carrier")))) %>%
+    summarise(value = mean(.data$value), .groups = "drop") %>%
+    pivot_wider(names_from = "fiveYearPeriod") %>%
+    mutate(absIncrease = .data[["2021-2025"]] - .data[["2016-2020"]],
+           .keep = "unused")
 
 
   ## project with ECEMF ====
@@ -147,17 +184,26 @@ calcCarrierPrices <- function() {
     full_join(ecemfPrices,
               by = c("region", "period", "carrier"),
               suffix = c("", "ECEMF")) %>%
+    left_join(eurostatPriceIncrease, by = c("region", "carrier")) %>%
     group_by(across(all_of(c("region", "carrier")))) %>%
-    mutate(eod = if (all(is.na(.data$value))) NA else  max(.data$period[!is.na(.data$value)]),
-           value = case_when(!is.na(.data$value) ~ .data$value,
-                             all(is.na(.data$value)) ~ .data$valueECEMF,
-                             .default = .data$valueECEMF *
-                               (.data$value / .data$valueECEMF)[.data$period == .data$eod]),
+    mutate(eod = if (all(is.na(.data$value))) NA else max(.data$period[!is.na(.data$value)]),
+           factorAbsIncrease = case_when(
+             .data$period %in% seq(2025, 2040) & .data$carrier == "elec" ~ (2040 - .data$period) / (2040 - 2025),
+             .data$period > 2040 & .data$carrier == "elec" ~ 0,
+             .default = 1
+           ),
+           absIncrease = .data$absIncrease * .data$factorAbsIncrease,
+           value = case_when(
+             !is.na(.data$value) ~ .data$value,
+             all(is.na(.data$value)) ~ .data$valueECEMF + replace_na(.data$absIncrease, 0),
+             .default = .data$valueECEMF * (.data$value / .data$valueECEMF)[.data$period == .data$eod]
+             + replace_na(.data$absIncrease, 0)
+           ),
            variable = "price",
            unit = "USD/kWh",
            level = "central") %>%
     ungroup() %>%
-    select(-"valueECEMF", -"eod") %>%
+    select(-"valueECEMF", -"eod", -"absIncrease", -"factorAbsIncrease") %>%
     filter(.data$period %in% periods)
 
 

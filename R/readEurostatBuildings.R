@@ -38,10 +38,20 @@
 
 readEurostatBuildings <- function(subtype) {
 
+
+  .transformBiAnnual <- function(time) {
+    time <- as.character(time)
+    time <- sub("(\\d{4})-S1", "\\1-01", time)
+    time <- sub("(\\d{4})-S2", "\\1-07", time)
+    time
+  }
+
   # pick file
   files <- list(
     nrg_inf_hptc    = "estat_nrg_inf_hptc_de.csv",
     nrg_d_hhq       = "nrg_d_hhq_linear.csv",
+    nrg_pc_202      = "estat_nrg_pc_202.csv",
+    nrg_pc_204      = "estat_nrg_pc_204.csv",
     lfst_r_lfsd2hh  = "estat_lfst_r_lfsd2hh_de.csv",
     ilc_hcmh02      = "estat_ilc_hcmh02_de.csv",
     ilc_lvho31      = "estat_ilc_lvho31_de.csv",
@@ -57,12 +67,18 @@ readEurostatBuildings <- function(subtype) {
 
   data <- toolSubtypeSelect(subtype, files) %>%
     read.csv() %>%
-    select(-any_of(c("DATAFLOW", "LAST.UPDATE", "freq", "OBS_FLAG", "CONF_STATUS"))) %>%
+    select(-any_of(c("DATAFLOW", "LAST.UPDATE", "freq", "OBS_FLAG", "CONF_STATUS",
+                     "STRUCTURE", "STRUCTURE_ID", "STRUCTURE_NAME", "Time frequency",
+                     "Unit.of.measure", "Geopolitical.entity..reporting.", "Time",
+                     "Observation.value", "Time.frequency",
+                     "Observation.status..Flag..V2.structure", "Confidentiality.status..flag.",
+                     "Standard.international.energy.product.classification..SIEC.",
+                     "Energy.consumption", "Taxes", "Currency"))) %>%
     rename(region = "geo",
            period = "TIME_PERIOD",
            value = "OBS_VALUE") %>%
-    as.quitte() %>%
-    as.magpie()
+    mutate(period = .transformBiAnnual(.data$period)) %>%
+    as.magpie(spatial = "region", temporal = "period")
 
   return(data)
 }
