@@ -7,8 +7,7 @@
 readPRISMA_ICT(subtype)
 }
 \arguments{
-\item{subtype}{Character string specifying data type: "R12" for 12-region ICT data,
-"R5" for 5-region data center data, or "nDC" for data center counts}
+\item{subtype}{Character string specifying data type}
 }
 \value{
 A magpie object containing the requested ICT/data center data

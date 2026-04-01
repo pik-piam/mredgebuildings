@@ -7,18 +7,17 @@
 #'
 #' The function processes multiple demand estimates:
 #' \itemize{
-#'   \item Mean and central estimate
+#'   \item Mean and medium estimate
 #'   \item Lower demand boundary (DGI elasticity from historical efficiency dominant phases)
 #'   \item Upper demand boundary (DGI elasticity from historical service dominant phases)
 #' }
 #'
-#' Data is downscaled from R5 to country-level using historical DC counts,
-#' with fixed network shares calculated at the end of the historical period. Historical
-#' data (IEA Base) is separated and harmonized with SSP scenario projections.
+#' Data is downscaled from R5 to country-level using data center counts as weights,
+#' with exceptional fixed shares for China within Asia Pacific (73.28%) and for Europe's
+#' R12 sub-regions (WEU: 75%, EEU: 14%, FSU: 11%). Network demand is added using global network/DC ratios.
+#' Historical data (IEA Base) is separated and harmonized with SSP scenario projections.
 #'
 #' @param endOfHistory upper temporal boundary for historical data
-#' @param extrapolate if \code{TRUE}, regional demand will be linearly extrapolated using the slope
-#' of the last two existing data points per scenario, if \code{FALSE} data remains unchanged
 #'
 #' @returns A magpie object containing ICT electricity demand data calculated from
 #'   DC demands across regions, time periods, and scenarios.
@@ -35,37 +34,51 @@
 #' @importFrom magclass as.magpie
 #' @importFrom madrat toolCountryFill
 
-calcElecDemandICT <- function(endOfHistory = 2025, extrapolate = FALSE) {
+calcElecDemandICT <- function(endOfHistory = 2025) {
 
   # PARAMETER ------------------------------------------------------------------
 
   # TWh to EJ conversion factor
   twh2ej <- 3600 * 10^12 / 10^18
 
+  # fixed share of ICT demand China <-> Asia Pacific
+  chinaShare <- 0.7328
+
+  # fixed shares of R12 regions within R5 Europe
+  europeShares <- data.frame(
+    "R12" = c("WEU", "EEU", "FSU"),
+    "share" = c(0.75, 0.14, 0.11)
+  )
 
 
   # READ-IN DATA ---------------------------------------------------------------
 
   # R12 Resolution (Elec. Demand DC + ICT)
-  dataR12 <- readSource("PRISMA_ICT", subtype = "R12", convert = FALSE) %>%
+  dataR12 <- readSource("PRISMA_ICT", subtype = "Output_R12", convert = FALSE) %>%
     as_tibble() %>%
     filter(!is.na(.data$value))
 
   # R5 Resolution (Elec. Demand DC)
-  dataR5 <- readSource("PRISMA_ICT", subtype = "R5", convert = FALSE) %>%
+  dataR5 <- readSource("PRISMA_ICT", subtype = "R5 DC_2100_revised", convert = FALSE) %>%
     as_tibble() %>%
     filter(!is.na(.data$value))
 
   # Number of DCs
-  dataDC <- readSource("PRISMA_ICT", subtype = "nDC") %>%
+  dataDC <- readSource("PRISMA_ICT", subtype = "Num. DC") %>%
     as_tibble() %>%
     filter(!is.na(.data$value))
 
 
+  # MessageIX region mapping
+  regionmapMessage <- toolGetMapping("regionmappingMessageIX.csv",
+                                     type = "regional",
+                                     where = "mredgebuildings")
+
   # IEA R5 region mapping
-  regionmap <- toolGetMapping("regionmappingIEA_R5.csv",
-                              type = "regional",
-                              where = "mredgebuildings")
+  regionmapR5 <- toolGetMapping("regionmappingIEA_R5.csv",
+                                type = "regional",
+                                where = "mredgebuildings")
+
 
   # variable mapping
   variableMap <- toolGetMapping("variableMapping_ICT.csv",
@@ -76,6 +89,14 @@ calcElecDemandICT <- function(endOfHistory = 2025, extrapolate = FALSE) {
 
 
   # PROCESS DATA ---------------------------------------------------------------
+
+  # unite region mappings (ISO -> R5 -> R12)
+  regionmap <- regionmapR5 %>%
+    select("region" = "CountryCode", "R5" = "Region") %>%
+    left_join(regionmapMessage %>%
+                select("region" = "CountryCode", "R12"),
+              by = "region")
+
 
   # re-map variables in R5 and R12
   dataR12 <- dataR12 %>%
@@ -93,7 +114,8 @@ calcElecDemandICT <- function(endOfHistory = 2025, extrapolate = FALSE) {
     reframe(value = sum(.data$value)) %>%
     ungroup() %>%
     pivot_wider(names_from = "variable", values_from = "value") %>%
-    mutate(ratio = .data$ict / .data$dc - 1, .keep = "unused")
+    mutate(ratio = .data$ict / .data$dc - 1, .keep = "unused") %>%
+    interpolate_missing_periods(unique(dataR5$period), expand.values = TRUE, value = "ratio")
 
 
   data <- dataR5 %>%
@@ -120,13 +142,38 @@ calcElecDemandICT <- function(endOfHistory = 2025, extrapolate = FALSE) {
         ieaScenarioExpanded
       )
     })() %>%
+    rename("R5" = "region") %>%
+    left_join(regionmap, by = "R5", relationship = "many-to-many") %>%
 
-    # add country-level weights (number of DCs)
-    rename("regionTarget" = "region") %>%
-    left_join(regionmap %>%
-                select("region" = "CountryCode", "regionTarget" = "Region"),
-              by = "regionTarget",
-              relationship = "many-to-many") %>%
+    # Step 1: Disaggregate regions with fixed disaggregation shares (China + Europe)
+    (\(df) {
+      # disaggregate China from Asia Pacific with fixed share
+      chinaDisagg <- df %>%
+        filter(.data$R5 == "Asia Pacific") %>%
+        mutate(share = ifelse(.data$region == "CHN", chinaShare, 1 - chinaShare),
+               value = .data$value * .data$share,
+               regionTarget = ifelse(.data$region == "CHN", "CHN", .data$R5)) %>%
+        select(-"share", -"R5", -"R12")
+
+      # disaggregate Europe into R12 regions with fixed shares
+      europeDisagg <- df %>%
+        filter(.data$R5 == "Europe") %>%
+        left_join(europeShares, by = "R12") %>%
+        mutate(value = .data$value * .data$share,
+               regionTarget = .data$R12) %>%
+        select(-"share", -"R5", -"R12")
+
+      # filter remaining regions
+      rest <- df %>%
+        filter(!.data$R5 %in% c("Asia Pacific", "Europe")) %>%
+        mutate(regionTarget = .data$R5) %>%
+        select(-"R5", -"R12")
+
+      # bind all data
+      rbind(chinaDisagg, europeDisagg, rest)
+    })() %>%
+
+    # Step 2: Disaggregate within each regionTarget using DC counts
     left_join(dataDC %>%
                 select("region", "weight" = "value"),
               by = "region") %>%
@@ -137,7 +184,7 @@ calcElecDemandICT <- function(endOfHistory = 2025, extrapolate = FALSE) {
     ungroup() %>%
     select(-"regionTarget", -"weight") %>%
 
-    # calculate ICT (DC + Network) demand using global network share
+    # calculate ICT (DC + Network) demand using global network / DC ratio
     left_join(networkDCRatio, by = c("estimate", "period")) %>%
     mutate(value = .data$value * (1 + .data$ratio), .keep = "unused") %>%
     select(-"variable", -"unit") %>%
@@ -150,45 +197,6 @@ calcElecDemandICT <- function(endOfHistory = 2025, extrapolate = FALSE) {
     replace_na(list("value" = 0))
 
 
-  # extrapolate scenario data to 2100 using linear fit over last two periods (here: 2045-50)
-  if (isTRUE(extrapolate)) {
-    data <- data %>%
-      group_by(across(all_of(c("region", "scenario", "variable")))) %>%
-      group_modify(~ {
-        periods <- sort(unique(.x$period))
-
-        if (.y$scenario != "history") {
-          # linear extrapolation for future scenarios
-          fitData <- .x %>%
-            filter(.data$period %in% tail(periods, 2))
-
-          model <- lm(value ~ period, data = fitData)
-
-          .x %>%
-            interpolate_missing_periods(seq.int(endOfHistory + 5, 2100, 5)) %>%
-            mutate(pred = predict(model, newdata = .),
-                   value = ifelse(is.na(.data$value), pmax(0, .data$pred), .data$value)) %>%
-            select(-"pred")
-        } else {
-          .x
-        }
-      }) %>%
-      ungroup()
-  }
-
-
-
-  # weights
-  weights <- dataDC %>%
-    select("region", "value") %>%
-    mutate(region = as.character(.data$region)) %>%
-    right_join(data %>%
-                 select("region", "period", "variable") %>%
-                 unique(),
-               by = "region") %>%
-    replace_na(list("value" = 0))
-
-
 
   # OUTPUT ---------------------------------------------------------------------
 
@@ -197,14 +205,8 @@ calcElecDemandICT <- function(endOfHistory = 2025, extrapolate = FALSE) {
     as.magpie() %>%
     toolCountryFill(0, verbosity = 2)
 
-  weights <- weights %>%
-    as.quitte() %>%
-    as.magpie() %>%
-    toolCountryFill(0, verbosity = 2)
-
 
   return(list(x = data,
-              weight = weights,
               unit = "EJ",
               min = 0,
               description = "Annual historical and SSP ICT electricity demands"))

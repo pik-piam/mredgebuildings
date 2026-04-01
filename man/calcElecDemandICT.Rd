@@ -4,13 +4,10 @@
 \alias{calcElecDemandICT}
 \title{Calculate Electricity Demand for ICT from Data Center Demands}
 \usage{
-calcElecDemandICT(endOfHistory = 2025, extrapolate = FALSE)
+calcElecDemandICT(endOfHistory = 2025)
 }
 \arguments{
 \item{endOfHistory}{upper temporal boundary for historical data}
-
-\item{extrapolate}{if \code{TRUE}, regional demand will be linearly extrapolated using the slope
-of the last two existing data points per scenario, if \code{FALSE} data remains unchanged}
 }
 \value{
 A magpie object containing ICT electricity demand data calculated from
@@ -25,14 +22,15 @@ as the primary driver of demand, with IEA data serving as the historical baselin
 \details{
 The function processes multiple demand estimates:
 \itemize{
-\item Mean and central estimate
+\item Mean and medium estimate
 \item Lower demand boundary (DGI elasticity from historical efficiency dominant phases)
 \item Upper demand boundary (DGI elasticity from historical service dominant phases)
 }
 
-Data is downscaled from R5 to country-level using historical DC counts,
-with fixed network shares calculated at the end of the historical period. Historical
-data (IEA Base) is separated and harmonized with SSP scenario projections.
+Data is downscaled from R5 to country-level using data center counts as weights,
+with exceptional fixed shares for China within Asia Pacific (73.28\%) and for Europe's
+R12 sub-regions (WEU: 75\%, EEU: 14\%, FSU: 11\%). Network demand is added using global network/DC ratios.
+Historical data (IEA Base) is separated and harmonized with SSP scenario projections.
 }
 \author{
 Hagen Tockhorn

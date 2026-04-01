@@ -15,7 +15,7 @@
 #'
 convertPRISMA_ICT <- function(x, subtype) { # nolint: object_name_linter
 
-  if (subtype == "nDC") {
+  if (subtype == "Num. DC") {
     getItems(x, 1) <- toolCountry2isocode(getItems(x, 1))
     x <- toolCountryFill(x, verbosity = 2)
   }
