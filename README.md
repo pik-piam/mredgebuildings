@@ -1,8 +1,8 @@
 # Prepare data to be used by the EDGE-Buildings model
 
-R package **mredgebuildings**, version **0.15.6**
+R package **mredgebuildings**, version **0.15.7**
 
-[![CRAN status](https://www.r-pkg.org/badges/version/mredgebuildings)](https://cran.r-project.org/package=mredgebuildings) [![R build status](https://github.com/pik-piam/mredgebuildings/workflows/check/badge.svg)](https://github.com/pik-piam/mredgebuildings/actions) [![codecov](https://codecov.io/gh/pik-piam/mredgebuildings/branch/master/graph/badge.svg)](https://app.codecov.io/gh/pik-piam/mredgebuildings) [![r-universe](https://pik-piam.r-universe.dev/badges/mredgebuildings)](https://pik-piam.r-universe.dev/builds)
+   [![R build status](https://github.com/pik-piam/mredgebuildings/workflows/check/badge.svg)](https://github.com/pik-piam/mredgebuildings/actions) [![codecov](https://codecov.io/gh/pik-piam/mredgebuildings/branch/master/graph/badge.svg)](https://app.codecov.io/gh/pik-piam/mredgebuildings) [![r-universe](https://pik-piam.r-universe.dev/badges/mredgebuildings)](https://pik-piam.r-universe.dev/builds)
 
 ## Purpose and Functionality
 
@@ -20,13 +20,13 @@ The additional repository can be made available permanently by adding the line a
 
 After that the most recent version of the package can be installed using `install.packages`:
 
-```r 
+```r
 install.packages("mredgebuildings")
 ```
 
 Package updates can be installed using `update.packages` (make sure that the additional repository has been added before running that command):
 
-```r 
+```r
 update.packages()
 ```
 
@@ -38,15 +38,17 @@ In case of questions / problems please contact Robin Hasse <robin.hasse@pik-pots
 
 To cite package **mredgebuildings** in publications use:
 
-Hasse R, Sauer P, Levesque A, Tockhorn H (2026). "mredgebuildings: Prepare data to be used by the EDGE-Buildings model - Version 0.15.6."
+Hasse R, Sauer P, Levesque A, Tockhorn H (2026). "mredgebuildings: Prepare data to be used by the EDGE-Buildings model." Version: 0.15.7, <https://github.com/pik-piam/mredgebuildings>.
 
 A BibTeX entry for LaTeX users is
 
  ```latex
 @Misc{,
-  title = {mredgebuildings: Prepare data to be used by the EDGE-Buildings model - Version 0.15.6},
+  title = {mredgebuildings: Prepare data to be used by the EDGE-Buildings model},
   author = {Robin Hasse and Pascal Sauer and Antoine Levesque and Hagen Tockhorn},
-  date = {2026-03-31},
+  date = {2026-05-22},
   year = {2026},
+  url = {https://github.com/pik-piam/mredgebuildings},
+  note = {Version: 0.15.7},
 }
 ```
