@@ -6,6 +6,7 @@
 #'
 #' @importFrom magclass mbind as.magpie collapseDim mselect
 #' @importFrom madrat readSource toolCountryFill toolGetMapping getISOlist
+#'   calcOutput
 #' @importFrom quitte as.quitte interpolate_missing_periods removeColNa
 #' @importFrom dplyr group_by filter mutate .data across all_of reframe distinct
 #'   left_join %>% summarise select ungroup inner_join semi_join left_join
@@ -56,13 +57,12 @@ calcMatchingReference <- function(subtype) {
 
 
   getDataIDEES <- function(vars) {
-    c("Residential_2021", "Tertiary_2021") %>%
-      lapply(readSource, type = "JRC_IDEES") %>%
-      lapply(mselect, code = vars) %>%
-      do.call(what = mbind) %>%
+    mbind(readSource("JRC_IDEES", "Residential_2021"),
+          readSource("JRC_IDEES", "Tertiary_2021")) %>%
+      mselect(code = vars) %>%
       as.quitte(na.rm = TRUE) %>%
       select(-"scenario", -"model", -"unit", -"vintage", -"variable") %>%
-      mutate(code = dot2Dash(sub("\\..+$", "", .data[["code"]]), rev = TRUE))
+      mutate(code = dot2Dash(sub("\\..+$", "", .data$code), rev = TRUE))
   }
 
 
