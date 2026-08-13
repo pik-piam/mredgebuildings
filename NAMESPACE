@@ -182,6 +182,7 @@ importFrom(magclass,
   getItems,
   getNames,
   getSets,
+  getYears,
   mbind,
   mselect,
   new.magpie,
@@ -255,4 +256,7 @@ importFrom(utils,
   tail,
   write.csv
 )
-importFrom(zoo,rollmean)
+importFrom(zoo,
+  na.locf,
+  rollmean
+)
