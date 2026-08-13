@@ -2,7 +2,7 @@
 % Please edit documentation in R/calcFloorspacePast.R
 \name{calcFloorspacePast}
 \alias{calcFloorspacePast}
-\title{Historical residential floor space demand}
+\title{Historical floor space demand}
 \usage{
 calcFloorspacePast(endOfHistory = 2025)
 }
@@ -13,15 +13,16 @@ calcFloorspacePast(endOfHistory = 2025)
 MAgPIE object with historic floor space
 }
 \description{
-Data for many European countries is taken from EEA, India from IEA and other
-countries from Daioglou et al 2012. The result does not cover all countries
-and has mixed points in time depending on the region.
-}
-\note{
-RH: In Antoine's EDGE-B, data points associated with an GDP/POP above
-70000 USD/cap are dropped here to improve the later regression. This
-filtering should be moved to getFloorspaceResidential where the regression is
-performed. Therefore, the high-income data points are kept at this stage.
+Historical residential and commercial floor space per capita is compiled from
+several data sources. For each region, only a single source is used: going
+down a fixed priority (Odyssee > IEA EEI > GLOBUS > Daioglou > GEM > EEA), the
+highest-priority source that provides any data point for a region contributes
+all of its data points (all variables and periods). Individual regions can be
+reassigned to a specific source via a fixed list of exceptions. Missing
+regions and periods are subsequently filled by a
+sectorial regression on GDP per capita (and, for residential, population
+density) that is performed region-wise if enough data points exist. If not,
+projections are scaled by existing data.
 }
 \author{
 Robin Hasse, Antoine Levesque, Hagen Tockhorn
