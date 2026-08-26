@@ -4,13 +4,18 @@
 \alias{calcFloorspacePast}
 \title{Historical floor space demand}
 \usage{
-calcFloorspacePast(endOfHistory = 2025)
+calcFloorspacePast(endOfHistory = 2025, returnPars = FALSE)
 }
 \arguments{
 \item{endOfHistory}{upper temporal boundary for historical data}
+
+\item{returnPars}{if \code{TRUE}, only the parameters of the global
+regressions are returned as a MAgPIE object (region \code{"GLO"}) instead of
+the historic floor space}
 }
 \value{
-MAgPIE object with historic floor space
+MAgPIE object with historic floor space per capita, or, if
+\code{returnPars = TRUE}, with the global regression parameters
 }
 \description{
 Historical residential and commercial floor space per capita is compiled from
@@ -19,10 +24,10 @@ down a fixed priority (Odyssee > IEA EEI > GLOBUS > Daioglou > GEM > EEA), the
 highest-priority source that provides any data point for a region contributes
 all of its data points (all variables and periods). Individual regions can be
 reassigned to a specific source via a fixed list of exceptions. Missing
-regions and periods are subsequently filled by a
-sectorial regression on GDP per capita (and, for residential, population
-density) that is performed region-wise if enough data points exist. If not,
-projections are scaled by existing data.
+regions and periods are subsequently filled by a sectorial regression on GDP
+per capita (and, for residential, population density) that is performed
+region-wise if enough data points exist, otherwise a global regression is
+used. Predictions are subsequently scaled to match existing data region-wise.
 }
 \author{
 Robin Hasse, Antoine Levesque, Hagen Tockhorn
