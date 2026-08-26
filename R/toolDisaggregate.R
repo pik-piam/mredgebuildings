@@ -458,7 +458,7 @@ toolDisaggregate <- function(data,
 #' @author Hagen Tockhorn
 #'
 #' @importFrom dplyr left_join right_join semi_join group_by summarise filter mutate select
-#' bind_rows across all_of ungroup anti_join distinct
+#'   bind_rows across all_of ungroup anti_join distinct
 #' @importFrom tidyr crossing
 
 .enforceShares <- function(estimate, forceShares) {

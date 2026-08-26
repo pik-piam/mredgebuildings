@@ -47,7 +47,7 @@ readEuropeanCommissionRenovation <- function(subtype = "csv") {
       # clean two-line rows
       nameLine <- apply(table, 1, function(line) length(unique(line)) == 1)
       dataLine <- unlist(lapply(seq_along(nameLine), function(i) {
-        if (i == 1 | i == length(nameLine)) return(FALSE)
+        if (i == 1 || i == length(nameLine)) return(FALSE)
         identical(nameLine[(i - 1):(i + 1)], c(TRUE, FALSE, TRUE))
       }))
       if (sum(nameLine) != 2 * sum(dataLine)) stop("Check your line range!")

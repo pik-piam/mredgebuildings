@@ -39,13 +39,13 @@ fullEDGEBUILDINGS <- function(rev = 0) {
   calcOutput("HDDCDD", fromSource = TRUE, file = "f_hddcdd.cs4r")
 
   # energy ---------------------------------------------------------------------
-  calcOutput("IOEdgeBuildings", subtype = "output_EDGE_buildings", file = "f_edge_buildings.cs4r")
-  calcOutput("IOEdgeBuildings", subtype = "output_EDGE",           file = "f_edge_stationary.cs4r")
-  calcOutput("FloorspacePast",                                     file = "f_floorspace.cs4r")
-  calcOutput("TCEP", subtype = "floorspace",    aggregate = FALSE, file = "f_floorspace_tcep.cs4r")
-  calcOutput("FEbyEUEC",                                           file = "f_fe.cs4r")
-  calcOutput("FEUEefficiencies",                                   file = "f_feue_efficiencies.cs4r")
-  calcOutput("EfficiencyRegression",            aggregate = FALSE, file = "f_feue_efficiencyPars.cs4r")
-  calcOutput("UvalueParameters",                                   file = "f_uvaluePars.cs4r")
-  calcOutput("ElecDemandICT",                                      file = "f_elecICT.cs4r")
+  calcOutput("IOEdgeBuildings", subtype = "output_EDGE_buildings",     file = "f_edge_buildings.cs4r")
+  calcOutput("IOEdgeBuildings", subtype = "output_EDGE",               file = "f_edge_stationary.cs4r")
+  calcOutput("FloorspacePast",                                             file = "f_floorspace.cs4r")
+  calcOutput("FloorspacePast", returnPars = TRUE,       aggregate = FALSE, file = "f_floorspace_coefs.cs4r")
+  calcOutput("FEbyEUEC",                                               file = "f_fe.cs4r")
+  calcOutput("FEUEefficiencies",                                       file = "f_feue_efficiencies.cs4r")
+  calcOutput("EfficiencyRegression",                aggregate = FALSE, file = "f_feue_efficiencyPars.cs4r")
+  calcOutput("UvalueParameters",                                       file = "f_uvaluePars.cs4r")
+  calcOutput("ElecDemandICT",                                          file = "f_elecICT.cs4r")
 }
