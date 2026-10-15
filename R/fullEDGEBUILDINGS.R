@@ -31,7 +31,6 @@ fullEDGEBUILDINGS <- function(rev = 0) {
              average2020 = FALSE,
              file = "f_gdp.cs4r")
   calcOutput("Surface",                                                 file = "f_surface.cs4r")
-  calcOutput("Urban",       scenario = scenarios, naming = "scenario",  file = "f_urban.cs4r")
   calcOutput("ACOwnershipRatesFilled",                                  file = "f_acOwnershipRates.cs4r")
   calcOutput("ACOwnershipRegression", aggregate = FALSE,                file = "f_acOwnershipRegression.cs4r")
 

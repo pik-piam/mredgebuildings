@@ -14,7 +14,7 @@
 #'
 #' @export
 
-convertOdyssee <- function(x, subtype = "250109") {
+convertOdyssee <- function(x, subtype = "260305") {
 
   data <- x
 

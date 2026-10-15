@@ -12,7 +12,7 @@
 #' @importFrom dplyr %>% rename
 #' @importFrom rlang .data
 #' @importFrom tidyr unite
-#' @importFrom quitte as.quitte aggregate_map factor.data.frame
+#' @importFrom quitte as.quitte aggregate_map factor.data.frame getPeriods
 #' @importFrom magclass as.magpie
 #' @importFrom madrat calcOutput toolGetMapping
 #' @importFrom mrcommonsenergy toolSplitBiomass
