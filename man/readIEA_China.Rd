@@ -4,11 +4,15 @@
 \alias{readIEA_China}
 \title{Read final energy data by energy end-use for China}
 \usage{
-readIEA_China()
+readIEA_China(subtype = c("EnergySectorRoadmap", "FutureOfHeatPumps"))
+}
+\arguments{
+\item{subtype}{indicates source to use}
 }
 \description{
-The data is obtained from the 2021 IEA report "An Energy Sector Roadmap to Carbon
-Neutrality in China" from Figure 3.25
+The data is obtained from the either the 2021 IEA report "An Energy Sector Roadmap to Carbon
+Neutrality in China" from Figure 3.25 or the 2024 IEA report "The Future of Heat Pumps
+in China" from Figure 1.6.
 }
 \author{
 Robin Hasse
