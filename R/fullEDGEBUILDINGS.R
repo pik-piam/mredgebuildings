@@ -21,7 +21,7 @@ fullEDGEBUILDINGS <- function(rev = 0) {
 
   # Scenarios: High India for population and gdp, but not for urbanization -----
   scensIndia <- c("SSPs", "SDPs", "SSP2IndiaHigh")
-  scenarios <- c("SSPs", "SDPs")
+  scenarios <- c("SSPs", "SDPs") # nolint: object_usage_linter
 
   # socio-economic data --------------------------------------------------------
   calcOutput("Population",  scenario = scensIndia, naming = "scenario", file = "f_pop.cs4r")
