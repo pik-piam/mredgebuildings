@@ -19,12 +19,12 @@ MAgPIE object with historic floor space per capita, or, if
 }
 \description{
 Historical residential and commercial floor space per capita is compiled from
-several data sources. For each region, only a single source is used: going
+several data sources. For each region, only a single source is used: Going
 down a fixed priority (Odyssee > IEA EEI > GLOBUS > Daioglou > GEM > EEA), the
 highest-priority source that provides any data point for a region contributes
 all of its data points (all variables and periods). Individual regions can be
 reassigned to a specific source via a fixed list of exceptions. Missing
-regions and periods are subsequently filled by a sectorial regression on GDP
+regions and periods are subsequently filled by a sectoral regression on GDP
 per capita (and, for residential, population density) that is performed
 region-wise if enough data points exist, otherwise a global regression is
 used. Predictions are subsequently scaled to match existing data region-wise.

@@ -2,7 +2,7 @@
 % Please edit documentation in R/readGEM.R
 \name{readGEM}
 \alias{readGEM}
-\title{Read GEM Global Exposure Model}
+\title{Read Global Exposure Model (GEM)}
 \usage{
 readGEM()
 }
@@ -10,8 +10,7 @@ readGEM()
 MAgPIE object
 }
 \description{
-Building-stock exposure figures from the GEM (Global Earthquake Model) global
-exposure model.
+Building-stock exposure figures from GEM
 }
 \author{
 Hagen Tockhorn
