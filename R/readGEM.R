@@ -1,7 +1,6 @@
-#' Read GEM Global Exposure Model
+#' Read Global Exposure Model (GEM)
 #'
-#' Building-stock exposure figures from the GEM (Global Earthquake Model) global
-#' exposure model.
+#' Building-stock exposure figures from GEM
 #'
 #' @return MAgPIE object
 #'
@@ -23,7 +22,7 @@ readGEM <- function() {
                "DWELLINGS"                  = "number",
                "OCCUPANTS_TOTAL"            = "persons",
                "TOTAL_AREA_SQM"             = "m2",
-               "AVG_BUILDING_AREA_SQM"      = "m2",
+               "AVG_BUILDING_AREA_SQM"      = "m2/number",
                "AVG_BLDG_COST_PER_AREA_USD" = "USD/m2",
                "CARBON_BUILDINGS_TON"       = "tCO2",
                "BLDG_REPL_COST_USD"         = "USD",

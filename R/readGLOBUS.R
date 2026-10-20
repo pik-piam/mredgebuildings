@@ -12,6 +12,9 @@
 #' @importFrom openxlsx read.xlsx
 #' @importFrom zoo na.locf
 #' @importFrom tidyr pivot_longer
+#' @importFrom quitte as.quitte
+#' @importFrom dplyr mutate .data
+#' @importFrom magclass as.magpie
 #'
 #' @export
 
