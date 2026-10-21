@@ -4,7 +4,11 @@
 \alias{readGLOBUS}
 \title{Read GLOBUS building stock}
 \usage{
-readGLOBUS()
+readGLOBUS(subtype = "total")
+}
+\arguments{
+\item{subtype}{character, either \code{"total"} (building stock in million m2, default)
+or \code{"perCapita"} (population and floor area per capita in m2)}
 }
 \value{
 MAgPIE object containing building stock data

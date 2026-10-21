@@ -4,17 +4,21 @@
 \alias{convertGLOBUS}
 \title{Convert GLOBUS building stock}
 \usage{
-convertGLOBUS(x)
+convertGLOBUS(x, subtype = "total")
 }
 \arguments{
 \item{x}{MAgPIE object from readGLOBUS}
+
+\item{subtype}{character, either \code{"total"} or \code{"perCapita"}}
 }
 \value{
 MAgPIE object containing building stock per ISO country
 }
 \description{
 Disaggregate GLOBUS building stock projections from the model's aggregate
-regions to ISO countries. Population is used as the disaggregation weight.
+regions to ISO countries. For subtype \code{"total"}, population is used as the
+disaggregation weight. For subtype \code{"perCapita"}, the per-capita values are
+assigned to all countries of a region and the GLOBUS population is dropped.
 }
 \author{
 Hagen Tockhorn
