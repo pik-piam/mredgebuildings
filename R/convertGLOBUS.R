@@ -1,9 +1,12 @@
 #' Convert GLOBUS building stock
 #'
 #' Disaggregate GLOBUS building stock projections from the model's aggregate
-#' regions to ISO countries. Population is used as the disaggregation weight.
+#' regions to ISO countries. For subtype \code{"total"}, population is used as the
+#' disaggregation weight. For subtype \code{"perCapita"}, the per-capita values are
+#' assigned to all countries of a region and the GLOBUS population is dropped.
 #'
 #' @param x MAgPIE object from readGLOBUS
+#' @param subtype character, either \code{"total"} or \code{"perCapita"}
 #'
 #' @return MAgPIE object containing building stock per ISO country
 #'
@@ -15,7 +18,7 @@
 #' @importFrom madrat toolGetMapping toolAggregate toolCountryFill calcOutput
 #' @export
 
-convertGLOBUS <- function(x) {
+convertGLOBUS <- function(x, subtype = "total") {
 
   # PARAMETERS -----------------------------------------------------------------
 
@@ -30,26 +33,39 @@ convertGLOBUS <- function(x) {
                               type  = "regional",
                               where = "mredgebuildings")
 
-  pop <- calcOutput("Population", scenario = "SSP2", aggregate = FALSE)
-
 
   # PROCESS DATA ---------------------------------------------------------------
 
-  pop <- pop %>%
-    collapseDim() %>%
-    time_interpolate(interpolated_year = getYears(x, as.integer = TRUE),
-                     extrapolation_type = "constant")
-
-  x %>%
+  x <- x %>%
     as.quitte(na.rm = TRUE) %>%
     mutate(variable = recode(.data[["variable"]], !!!variableMap)) %>%
-    as.magpie() %>%
+    as.magpie()
 
-    toolAggregate(rel = regionmap,
-                  weight = pop[unique(regionmap$CountryCode), , ],
-                  from = "RegionCode",
-                  to = "CountryCode") %>%
+  x <- switch(subtype,
 
-    toolCountryFill(fill = NA, verbosity = 2)
+    # building stock is disaggregated by population
+    total = {
+      pop <- calcOutput("Population", scenario = "SSP2", aggregate = FALSE) %>%
+        collapseDim() %>%
+        time_interpolate(interpolated_year = getYears(x, as.integer = TRUE),
+                         extrapolation_type = "constant")
+
+      toolAggregate(x,
+                    rel = regionmap,
+                    weight = pop[unique(regionmap$CountryCode), , ],
+                    from = "RegionCode",
+                    to = "CountryCode")
+    },
+
+    # per-capita values are assigned to every country of a region
+    perCapita = {
+      toolAggregate(x[, , "Population", invert = TRUE],
+                    rel = regionmap,
+                    from = "RegionCode",
+                    to = "CountryCode")
+    }
+  )
+
+  toolCountryFill(x, fill = NA, verbosity = 2)
 
 }
