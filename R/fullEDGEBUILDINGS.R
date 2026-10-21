@@ -39,7 +39,6 @@ fullEDGEBUILDINGS <- function(rev = 0) {
 
   # energy ---------------------------------------------------------------------
   calcOutput("IOEdgeBuildings", subtype = "output_EDGE_buildings", file = "f_edge_buildings.cs4r")
-  calcOutput("IOEdgeBuildings", subtype = "output_EDGE",           file = "f_edge_stationary.cs4r")
   calcOutput("FloorspacePast",                                     file = "f_floorspace.cs4r")
   calcOutput("TCEP", subtype = "floorspace",    aggregate = FALSE, file = "f_floorspace_tcep.cs4r")
   calcOutput("FEbyEUEC",                                           file = "f_fe.cs4r")
