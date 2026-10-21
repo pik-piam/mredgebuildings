@@ -1,147 +1,147 @@
-RegionCode,CountryCode
-US,USA
-Canada,CAN
-the UK,GBR
-Korea,KOR
-Japan,JPN
-China,CHN
-India,IND
-Australia,AUS
-New zealand,NZL
-Turkey,TUR
-Indonesia,IDN
-European Union-27,AUT
-European Union-27,BEL
-European Union-27,BGR
-European Union-27,HRV
-European Union-27,CYP
-European Union-27,CZE
-European Union-27,DNK
-European Union-27,EST
-European Union-27,FIN
-European Union-27,FRA
-European Union-27,DEU
-European Union-27,GRC
-European Union-27,HUN
-European Union-27,IRL
-European Union-27,ITA
-European Union-27,LVA
-European Union-27,LTU
-European Union-27,LUX
-European Union-27,MLT
-European Union-27,NLD
-European Union-27,POL
-European Union-27,PRT
-European Union-27,ROU
-European Union-27,SVK
-European Union-27,SVN
-European Union-27,ESP
-European Union-27,SWE
-Africa,AGO
-Africa,BDI
-Africa,BEN
-Africa,BFA
-Africa,BWA
-Africa,CAF
-Africa,CIV
-Africa,CMR
-Africa,COD
-Africa,COG
-Africa,COM
-Africa,CPV
-Africa,DJI
-Africa,DZA
-Africa,EGY
-Africa,ERI
-Africa,ESH
-Africa,ETH
-Africa,GAB
-Africa,GHA
-Africa,GIN
-Africa,GMB
-Africa,GNB
-Africa,GNQ
-Africa,KEN
-Africa,LBR
-Africa,LBY
-Africa,LSO
-Africa,MAR
-Africa,MDG
-Africa,MLI
-Africa,MOZ
-Africa,MRT
-Africa,MUS
-Africa,MWI
-Africa,MYT
-Africa,NAM
-Africa,NER
-Africa,NGA
-Africa,REU
-Africa,RWA
-Africa,SDN
-Africa,SEN
-Africa,SHN
-Africa,SLE
-Africa,SOM
-Africa,SSD
-Africa,STP
-Africa,SWZ
-Africa,SYC
-Africa,TCD
-Africa,TGO
-Africa,TUN
-Africa,TZA
-Africa,UGA
-Africa,ZAF
-Africa,ZMB
-Africa,ZWE
-Latin America and Caribbean,ABW
-Latin America and Caribbean,AIA
-Latin America and Caribbean,ARG
-Latin America and Caribbean,ATG
-Latin America and Caribbean,BES
-Latin America and Caribbean,BHS
-Latin America and Caribbean,BLM
-Latin America and Caribbean,BLZ
-Latin America and Caribbean,BOL
-Latin America and Caribbean,BRA
-Latin America and Caribbean,BRB
-Latin America and Caribbean,CHL
-Latin America and Caribbean,COL
-Latin America and Caribbean,CRI
-Latin America and Caribbean,CUB
-Latin America and Caribbean,CUW
-Latin America and Caribbean,CYM
-Latin America and Caribbean,DMA
-Latin America and Caribbean,DOM
-Latin America and Caribbean,ECU
-Latin America and Caribbean,FLK
-Latin America and Caribbean,GLP
-Latin America and Caribbean,GRD
-Latin America and Caribbean,GTM
-Latin America and Caribbean,GUF
-Latin America and Caribbean,GUY
-Latin America and Caribbean,HND
-Latin America and Caribbean,HTI
-Latin America and Caribbean,JAM
-Latin America and Caribbean,KNA
-Latin America and Caribbean,LCA
-Latin America and Caribbean,MAF
-Latin America and Caribbean,MEX
-Latin America and Caribbean,MSR
-Latin America and Caribbean,MTQ
-Latin America and Caribbean,NIC
-Latin America and Caribbean,PAN
-Latin America and Caribbean,PER
-Latin America and Caribbean,PRI
-Latin America and Caribbean,PRY
-Latin America and Caribbean,SLV
-Latin America and Caribbean,SUR
-Latin America and Caribbean,SXM
-Latin America and Caribbean,TCA
-Latin America and Caribbean,TTO
-Latin America and Caribbean,URY
-Latin America and Caribbean,VCT
-Latin America and Caribbean,VEN
-Latin America and Caribbean,VGB
-Latin America and Caribbean,VIR
+Region,RegionCode,CountryCode
+US,USA,USA
+Canada,CAN,CAN
+the UK,GBR,GBR
+Korea,KOR,KOR
+Japan,JPN,JPN
+China,CHN,CHN
+India,IND,IND
+Australia,AUS,AUS
+New zealand,NZL,NZL
+Turkey,TUR,TUR
+Indonesia,IDN,IDN
+European Union-27,EU27,AUT
+European Union-27,EU27,BEL
+European Union-27,EU27,BGR
+European Union-27,EU27,HRV
+European Union-27,EU27,CYP
+European Union-27,EU27,CZE
+European Union-27,EU27,DNK
+European Union-27,EU27,EST
+European Union-27,EU27,FIN
+European Union-27,EU27,FRA
+European Union-27,EU27,DEU
+European Union-27,EU27,GRC
+European Union-27,EU27,HUN
+European Union-27,EU27,IRL
+European Union-27,EU27,ITA
+European Union-27,EU27,LVA
+European Union-27,EU27,LTU
+European Union-27,EU27,LUX
+European Union-27,EU27,MLT
+European Union-27,EU27,NLD
+European Union-27,EU27,POL
+European Union-27,EU27,PRT
+European Union-27,EU27,ROU
+European Union-27,EU27,SVK
+European Union-27,EU27,SVN
+European Union-27,EU27,ESP
+European Union-27,EU27,SWE
+Africa,AFR,AGO
+Africa,AFR,BDI
+Africa,AFR,BEN
+Africa,AFR,BFA
+Africa,AFR,BWA
+Africa,AFR,CAF
+Africa,AFR,CIV
+Africa,AFR,CMR
+Africa,AFR,COD
+Africa,AFR,COG
+Africa,AFR,COM
+Africa,AFR,CPV
+Africa,AFR,DJI
+Africa,AFR,DZA
+Africa,AFR,EGY
+Africa,AFR,ERI
+Africa,AFR,ESH
+Africa,AFR,ETH
+Africa,AFR,GAB
+Africa,AFR,GHA
+Africa,AFR,GIN
+Africa,AFR,GMB
+Africa,AFR,GNB
+Africa,AFR,GNQ
+Africa,AFR,KEN
+Africa,AFR,LBR
+Africa,AFR,LBY
+Africa,AFR,LSO
+Africa,AFR,MAR
+Africa,AFR,MDG
+Africa,AFR,MLI
+Africa,AFR,MOZ
+Africa,AFR,MRT
+Africa,AFR,MUS
+Africa,AFR,MWI
+Africa,AFR,MYT
+Africa,AFR,NAM
+Africa,AFR,NER
+Africa,AFR,NGA
+Africa,AFR,REU
+Africa,AFR,RWA
+Africa,AFR,SDN
+Africa,AFR,SEN
+Africa,AFR,SHN
+Africa,AFR,SLE
+Africa,AFR,SOM
+Africa,AFR,SSD
+Africa,AFR,STP
+Africa,AFR,SWZ
+Africa,AFR,SYC
+Africa,AFR,TCD
+Africa,AFR,TGO
+Africa,AFR,TUN
+Africa,AFR,TZA
+Africa,AFR,UGA
+Africa,AFR,ZAF
+Africa,AFR,ZMB
+Africa,AFR,ZWE
+Latin America and Caribbean,LAC,ABW
+Latin America and Caribbean,LAC,AIA
+Latin America and Caribbean,LAC,ARG
+Latin America and Caribbean,LAC,ATG
+Latin America and Caribbean,LAC,BES
+Latin America and Caribbean,LAC,BHS
+Latin America and Caribbean,LAC,BLM
+Latin America and Caribbean,LAC,BLZ
+Latin America and Caribbean,LAC,BOL
+Latin America and Caribbean,LAC,BRA
+Latin America and Caribbean,LAC,BRB
+Latin America and Caribbean,LAC,CHL
+Latin America and Caribbean,LAC,COL
+Latin America and Caribbean,LAC,CRI
+Latin America and Caribbean,LAC,CUB
+Latin America and Caribbean,LAC,CUW
+Latin America and Caribbean,LAC,CYM
+Latin America and Caribbean,LAC,DMA
+Latin America and Caribbean,LAC,DOM
+Latin America and Caribbean,LAC,ECU
+Latin America and Caribbean,LAC,FLK
+Latin America and Caribbean,LAC,GLP
+Latin America and Caribbean,LAC,GRD
+Latin America and Caribbean,LAC,GTM
+Latin America and Caribbean,LAC,GUF
+Latin America and Caribbean,LAC,GUY
+Latin America and Caribbean,LAC,HND
+Latin America and Caribbean,LAC,HTI
+Latin America and Caribbean,LAC,JAM
+Latin America and Caribbean,LAC,KNA
+Latin America and Caribbean,LAC,LCA
+Latin America and Caribbean,LAC,MAF
+Latin America and Caribbean,LAC,MEX
+Latin America and Caribbean,LAC,MSR
+Latin America and Caribbean,LAC,MTQ
+Latin America and Caribbean,LAC,NIC
+Latin America and Caribbean,LAC,PAN
+Latin America and Caribbean,LAC,PER
+Latin America and Caribbean,LAC,PRI
+Latin America and Caribbean,LAC,PRY
+Latin America and Caribbean,LAC,SLV
+Latin America and Caribbean,LAC,SUR
+Latin America and Caribbean,LAC,SXM
+Latin America and Caribbean,LAC,TCA
+Latin America and Caribbean,LAC,TTO
+Latin America and Caribbean,LAC,URY
+Latin America and Caribbean,LAC,VCT
+Latin America and Caribbean,LAC,VEN
+Latin America and Caribbean,LAC,VGB
+Latin America and Caribbean,LAC,VIR
