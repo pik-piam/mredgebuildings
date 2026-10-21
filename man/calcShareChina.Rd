@@ -8,8 +8,16 @@ calcShareChina()
 }
 \description{
 The data is obtained from the 2021 IEA report "An Energy Sector Roadmap to Carbon
-Neutrality in China" from Figure 3.25
+Neutrality in China" from Figure 3.25 and 2024 IEA report "The Future of Heat Pumps
+in China" from Figure 1.6.
+}
+\details{
+The latter report states in Box 1.1 that district heating has been incorrectly assigned
+to water heating by the IEA, thus significantly overestimating the demand and underestimating
+demand for space heating. They corrected their numbers using data from the
+Tsinghua University's Annual Report on China Building Energy Efficiency in 2022 which
+are used here to correct the space_heating/water_heating split.
 }
 \author{
-Robin Hasse
+Robin Hasse, Hagen Tockhorn
 }

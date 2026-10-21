@@ -19,7 +19,7 @@
 #'
 #' @importFrom stats SSasymp na.omit
 #' @importFrom dplyr reframe mutate select left_join rename group_by across all_of ungroup
-#' filter semi_join case_when group_modify
+#'   filter semi_join case_when group_modify
 #' @importFrom tidyr spread unite replace_na pivot_wider
 #' @importFrom madrat calcOutput
 #' @importFrom quitte as.quitte interpolate_missing_periods
