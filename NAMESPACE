@@ -228,7 +228,6 @@ importFrom(stats,
   nls.control,
   predict,
   pweibull,
-  setNames,
   sigma,
   var
 )
