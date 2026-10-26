@@ -23,11 +23,15 @@ several data sources. For each region, only a single source is used: Going
 down a fixed priority (Odyssee > IEA EEI > GLOBUS > Daioglou > GEM > EEA), the
 highest-priority source that provides any data point for a region contributes
 all of its data points (all variables and periods). Individual regions can be
-reassigned to a specific source via a fixed list of exceptions. Missing
+reassigned to a specific source via a fixed list of exceptions. Region/source
+combinations listed as outliers are discarded beforehand. Missing
 regions and periods are subsequently filled by a sectoral regression on GDP
 per capita (and, for residential, population density) that is performed
 region-wise if enough data points exist, otherwise a global regression is
-used. Predictions are subsequently scaled to match existing data region-wise.
+used. Both regressions are fitted on the data of all sources, weighted by
+source priority; the global regression additionally weights each region by
+its population. Predictions are subsequently scaled to match the selected
+data region-wise.
 }
 \author{
 Robin Hasse, Antoine Levesque, Hagen Tockhorn

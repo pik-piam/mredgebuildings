@@ -5,11 +5,15 @@
 #' down a fixed priority (Odyssee > IEA EEI > GLOBUS > Daioglou > GEM > EEA), the
 #' highest-priority source that provides any data point for a region contributes
 #' all of its data points (all variables and periods). Individual regions can be
-#' reassigned to a specific source via a fixed list of exceptions. Missing
+#' reassigned to a specific source via a fixed list of exceptions. Region/source
+#' combinations listed as outliers are discarded beforehand. Missing
 #' regions and periods are subsequently filled by a sectoral regression on GDP
 #' per capita (and, for residential, population density) that is performed
 #' region-wise if enough data points exist, otherwise a global regression is
-#' used. Predictions are subsequently scaled to match existing data region-wise.
+#' used. Both regressions are fitted on the data of all sources, weighted by
+#' source priority; the global regression additionally weights each region by
+#' its population. Predictions are subsequently scaled to match the selected
+#' data region-wise.
 #'
 #' @param endOfHistory upper temporal boundary for historical data
 #' @param returnPars if \code{TRUE}, only the parameters of the global
@@ -26,10 +30,10 @@
 #'   calc_addVariable
 #' @importFrom dplyr filter mutate select group_by left_join %>% .data ungroup
 #'   group_modify recode across all_of bind_rows rename anti_join inner_join
-#'   summarise pull
 #' @importFrom magclass mbind as.magpie collapseDim mselect getItems getYears
-#' @importFrom tidyr replace_na pivot_wider pivot_longer
+#' @importFrom tidyr replace_na pivot_wider pivot_longer unnest
 #' @importFrom stats coef lm predict as.formula
+#' @importFrom tibble enframe
 #' @export
 
 calcFloorspacePast <- function(endOfHistory = 2025, returnPars = FALSE) {
@@ -54,23 +58,32 @@ calcFloorspacePast <- function(endOfHistory = 2025, returnPars = FALSE) {
       left_join(dens, by = c("region", "period"))
   }
 
-  # A global linear regression given by 'formula' is fitted across all regions
-  # of 'fitData'. Regions do not need to be ISO countries.
-  .fitGlobal <- function(fitData, gdppop, dens, formula, periodBegin, endOfHistory) {
-    fitData %>%
-      .prepareData(gdppop, dens, periodBegin, endOfHistory, fill = FALSE) %>%
-      filter(!is.na(.data[["value"]]) & .data$value != 0) %>%
-      lm(formula = as.formula(formula))
+  # Add a regression weight to each data point: the population of every region
+  # is split among its data points proportionally to their source weights.
+  .addWeights <- function(df, pop, sourceWeight) {
+    df %>%
+      mutate(sourceWeight = unname(sourceWeight[as.character(.data$source)])) %>%
+      left_join(pop, by = c("region", "period")) %>%
+      group_by(across(all_of(c("region", "period", "variable")))) %>%
+      mutate(weight = .data$pop * proportions(.data$sourceWeight)) %>%
+      ungroup() %>%
+      select(-"sourceWeight", -"pop")
   }
 
-  # A region-specific linear regression given by 'formula' is fitted for every
-  # region that provides enough observations. Regions with too few (or no)
-  # observations fall back to the global regression 'estimateGlobal'.
-  # Predicted values are corrected region-wise w.r.t. historical data where
+  # A global weighted linear regression given by 'formula' is fitted across all
+  # regions of 'fitData'. Regions do not need to be ISO countries.
+  .fitGlobal <- function(fitData, formula) {
+    lm(as.formula(formula), data = fitData, weights = fitData$weight)
+  }
+
+  # A region-specific weighted linear regression given by 'formula' is fitted on
+  # 'fitData' for every region that provides enough observations. Regions with
+  # too few (or no) observations fall back to the global regression 'estimateGlobal'.
+  # Predicted values are corrected region-wise w.r.t. historical data 'df' where
   # available, otherwise the prediction is chosen.
   #
   # Returns the filled floor space per capita (region, period, variable, value).
-  .projectFloorspace <- function(df, gdppop, dens, formula, periodBegin, endOfHistory,
+  .projectFloorspace <- function(df, fitData, gdppop, dens, formula, periodBegin, endOfHistory,
                                  estimateGlobal) {
 
     ## helper functions ====
@@ -78,10 +91,10 @@ calcFloorspacePast <- function(endOfHistory = 2025, returnPars = FALSE) {
     # fit a region's regression, falling back to the global one
     .fitRegion <- function(chunk) {
       obs <- chunk %>%
-        filter(!is.na(.data[["value"]])) %>%
-        select(all_of(intersect(formulaVars, names(chunk))))
+        select(all_of(intersect(c(formulaVars, "weight"), names(chunk))))
       if (nrow(obs) >= minObsRegion) {
-        tryCatch(lm(formula, data = obs), error = function(e) estimateGlobal)
+        tryCatch(lm(as.formula(formula), data = obs, weights = obs$weight),
+                 error = function(e) estimateGlobal)
       } else {
         estimateGlobal
       }
@@ -89,7 +102,8 @@ calcFloorspacePast <- function(endOfHistory = 2025, returnPars = FALSE) {
 
     # predict a region's floor space
     .predictRegion <- function(chunk, key, ...) {
-      model <- .fitRegion(chunk)
+      model <- .fitRegion(fitData %>%
+                            filter(.data$region == key$region))
       pred <- tryCatch(exp(predict(model, newdata = chunk)),
                        error = function(e) exp(predict(estimateGlobal, newdata = chunk)))
       mutate(chunk, pred = pred)
@@ -156,14 +170,18 @@ calcFloorspacePast <- function(endOfHistory = 2025, returnPars = FALSE) {
   # source hierarchy
   sourcePriority <- c("Odyssee", "IEA EEI", "GLOBUS", "Daioglou", "GEM", "EEA")
 
+  # source weights in the regressions decline geometrically with priority rank
+  sourceWeightBase <- 0.5
+  sourceWeight <- setNames(sourceWeightBase^(seq_along(sourcePriority) - 1),
+                           sourcePriority)
+
   # exceptions to the source hierarchy overwriting the default priority selection
   sourceExceptions <- list("IEA EEI" = c("FIN", "GRC"),
                            "GLOBUS"  = c("BGR", "LUX", "MLT", "USA"),
                            "GEM"     = c("BEL", "EST", "ITA", "LVA", "ROU"))
 
-  # minimum share of countries of a GLOBUS region with GLOBUS as selected source
-  # for the region to enter the global regression with its original aggregate data
-  minShareGlobus <- 0.5
+  # region/source combinations excluded from the regressions as outliers
+  outlierSources <- list("RUS" = c("GEM"))
 
 
   # LOAD DATA ------------------------------------------------------------------
@@ -204,7 +222,7 @@ calcFloorspacePast <- function(endOfHistory = 2025, returnPars = FALSE) {
                        scenario = "SSP2",
                        average2020 = FALSE,
                        aggregate = FALSE,
-                       years = 1960:endOfHistory)
+                       years = periodBegin:endOfHistory)
 
   # Population density
   dens <- calcOutput("Density", aggregate = FALSE)
@@ -237,6 +255,11 @@ calcFloorspacePast <- function(endOfHistory = 2025, returnPars = FALSE) {
                               from = "CountryCode",
                               to = "RegionCode")
 
+  popGlobus <- toolAggregate(pop[regionmapGlobusMulti$CountryCode, , ],
+                             rel = regionmapGlobusMulti,
+                             from = "CountryCode",
+                             to = "RegionCode")
+
   gdppopFit <- mbind(gdppop, gdppopGlobus) %>%
     as.quitte() %>%
     select("region", "period", "gdppop" = "value")
@@ -244,6 +267,10 @@ calcFloorspacePast <- function(endOfHistory = 2025, returnPars = FALSE) {
   densFit <- mbind(dens, densGlobus) %>%
     as.quitte() %>%
     select("region", "period", "density" = "value")
+
+  popFit <- mbind(pop, popGlobus) %>%
+    as.quitte() %>%
+    select("region", "period", "pop" = "value")
 
   pop <- pop %>%
     as.quitte() %>%
@@ -343,11 +370,19 @@ calcFloorspacePast <- function(endOfHistory = 2025, returnPars = FALSE) {
 
   # Going down 'sourcePriority', the highest-priority source that provides any
   # data point for a region contributes all of its data points, unless a
-  # variable/region combo is reassigned in 'sourceExceptions'.
+  # variable/region combo is reassigned in 'sourceExceptions'. Outliers listed in
+  # 'outlierSources' are discarded entirely.
+
+  # flatten outliers to (region, source) pairs
+  outliers <- outlierSources %>%
+    enframe(name = "region", value = "source") %>%
+    unnest("source")
+
   dataSources <- odyssee %>%
     rbind(eei, globus, daioglou, eea, gem) %>%
     filter(!is.na(.data$value),
-           .data$period <= endOfHistory)
+           .data$period <= endOfHistory) %>%
+    anti_join(outliers, by = c("region", "source"))
 
 
   # flatten exceptions to (region, source) pairs
@@ -356,7 +391,7 @@ calcFloorspacePast <- function(endOfHistory = 2025, returnPars = FALSE) {
   }))
 
 
-  selected <- dataSources %>%
+  selectedData <- dataSources %>%
     # keep only the rows of the highest-priority source available per region
     mutate(source = factor(.data$source, levels = sourcePriority, ordered = TRUE)) %>%
     group_by(across(all_of("region"))) %>%
@@ -366,36 +401,25 @@ calcFloorspacePast <- function(endOfHistory = 2025, returnPars = FALSE) {
 
     # replace overridden regions with their designated source (both variables)
     anti_join(sourceOverride, by = "region") %>%
-    bind_rows(inner_join(dataSources, sourceOverride,
-                         by = c("region", "source")))
-
-  data <- selected %>%
+    bind_rows(inner_join(dataSources, sourceOverride, by = c("region", "source"))) %>%
     select("region", "period", "variable", "value")
 
-  # GLOBUS regions where GLOBUS is the selected source for enough countries
-  globusRegions <- regionmapGlobus %>%
-    left_join(selected %>%
-                select("region", "source") %>%
-                unique(),
-              by = c("CountryCode" = "region")) %>%
-    group_by(across(all_of("RegionCode"))) %>%
-    summarise(share = mean(.data$source %in% "GLOBUS"), .groups = "drop") %>%
-    filter(.data$share >= minShareGlobus) %>%
-    pull("RegionCode")
+  # data for the regional regressions: all sources
+  fitDataRegional <- dataSources %>%
+    .prepareData(gdppop, dens, periodBegin, endOfHistory, fill = FALSE) %>%
+    filter(!is.na(.data[["value"]])) %>%
+    .addWeights(pop, sourceWeight)
 
-  globusCountries <- regionmapGlobus %>%
-    filter(.data$RegionCode %in% globusRegions) %>%
-    pull("CountryCode")
-
-  # data for the global regression: the disaggregated GLOBUS data of these
-  # regions is replaced by the original aggregate GLOBUS data
-  fitData <- selected %>%
-    filter(!(.data$source == "GLOBUS" & .data$region %in% globusCountries)) %>%
-    select("region", "period", "variable", "value") %>%
+  # data for the global regression: all sources with the disaggregated GLOBUS
+  # data replaced by the original aggregate GLOBUS data
+  fitDataGlobal <- dataSources %>%
+    filter(.data$source != "GLOBUS") %>%
     bind_rows(globusAgg %>%
-                filter(.data$region %in% globusRegions,
-                       .data$period <= endOfHistory) %>%
-                select("region", "period", "variable", "value"))
+                filter(.data$period <= endOfHistory) %>%
+                anti_join(outliers, by = c("region", "source"))) %>%
+    .prepareData(gdppopFit, densFit, periodBegin, endOfHistory, fill = FALSE) %>%
+    filter(!is.na(.data[["value"]]) & .data$value != 0) %>%
+    .addWeights(popFit, sourceWeight)
 
 
   ## Projections ====
@@ -408,23 +432,29 @@ calcFloorspacePast <- function(endOfHistory = 2025, returnPars = FALSE) {
 
   for (sector in names(formulas)) {
     # global regression
-    estimatesGlobal <- fitData %>%
+    estimateGlobal <- fitDataGlobal %>%
       filter(.data$variable == sector) %>%
-      .fitGlobal(gdppopFit, densFit, formulas[[sector]], periodBegin, endOfHistory)
+      .fitGlobal(formulas[[sector]])
 
     # region-specific projection with global fallback
     projections <- mbind(projections,
-                         data %>%
+                         selectedData %>%
                            filter(.data$variable == sector) %>%
-                           .projectFloorspace(gdppop, dens, formulas[[sector]], periodBegin,
-                                              endOfHistory, estimatesGlobal) %>%
+                           .projectFloorspace(fitDataRegional %>%
+                                                filter(.data$variable == sector),
+                                              gdppop,
+                                              dens,
+                                              formulas[[sector]],
+                                              periodBegin,
+                                              endOfHistory,
+                                              estimateGlobal) %>%
                            mutate(scenario = "history") %>%
                            as.quitte() %>%
                            as.magpie())
 
     # coefficients of the global regression, labelled as <coefficient>_<sector>
     fitCoefs <- mbind(fitCoefs,
-                      .globalParameters(estimatesGlobal) %>%
+                      .globalParameters(estimateGlobal) %>%
                         mutate(variable = paste0(.data$variable, "_", sector)) %>%
                         as.magpie())
   }

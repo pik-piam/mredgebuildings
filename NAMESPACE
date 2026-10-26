@@ -228,13 +228,15 @@ importFrom(stats,
   nls.control,
   predict,
   pweibull,
+  setNames,
   sigma,
   var
 )
 importFrom(stringr,word)
 importFrom(tibble,
   as_tibble,
-  deframe
+  deframe,
+  enframe
 )
 importFrom(tidyr,
   complete,
@@ -246,7 +248,8 @@ importFrom(tidyr,
   replace_na,
   separate,
   spread,
-  unite
+  unite,
+  unnest
 )
 importFrom(utils,
   capture.output,
