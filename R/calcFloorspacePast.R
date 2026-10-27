@@ -89,7 +89,8 @@ calcFloorspacePast <- function(endOfHistory = 2025, returnPars = FALSE) {
     ## helper functions ====
 
     # fit a region's regression, falling back to the global one
-    .fitRegion <- function(chunk) {
+    .fitRegion <- function(chunk, formula, estimateGlobal, minObsRegion) {
+      formulaVars <- all.vars(as.formula(formula))
       obs <- chunk %>%
         select(all_of(intersect(c(formulaVars, "weight"), names(chunk))))
       if (nrow(obs) >= minObsRegion) {
@@ -101,9 +102,12 @@ calcFloorspacePast <- function(endOfHistory = 2025, returnPars = FALSE) {
     }
 
     # predict a region's floor space
-    .predictRegion <- function(chunk, key, ...) {
-      model <- .fitRegion(fitData %>%
-                            filter(.data$region == key$region))
+    .predictRegion <- function(chunk, key, fitData, formula, estimateGlobal, minObsRegion) {
+      model <- .fitRegion(chunk = fitData %>%
+                            filter(.data$region == key$region),
+                          formula = formula,
+                          estimateGlobal = estimateGlobal,
+                          minObsRegion = minObsRegion)
       pred <- tryCatch(exp(predict(model, newdata = chunk)),
                        error = function(e) exp(predict(estimateGlobal, newdata = chunk)))
       mutate(chunk, pred = pred)
@@ -113,16 +117,17 @@ calcFloorspacePast <- function(endOfHistory = 2025, returnPars = FALSE) {
     # minimum number of observations for a region-specific regression
     minObsRegion <- 5
 
-    # variables entering the regression
-    formulaVars <- all.vars(as.formula(formula))
-
     # create full data set
     dataFull <- .prepareData(df, gdppop, dens, periodBegin, endOfHistory)
 
     # predict missing data with region-specific or global regression
     pred <- dataFull %>%
       group_by(across(all_of("region"))) %>%
-      group_modify(.predictRegion) %>%
+      group_modify(.predictRegion,
+                   fitData = fitData,
+                   formula = formula,
+                   estimateGlobal = estimateGlobal,
+                   minObsRegion = minObsRegion) %>%
       ungroup()
 
     # create correction factor to balance-out deviations w.r.t. historic data and
