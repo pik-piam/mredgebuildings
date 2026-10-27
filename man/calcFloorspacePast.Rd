@@ -2,26 +2,36 @@
 % Please edit documentation in R/calcFloorspacePast.R
 \name{calcFloorspacePast}
 \alias{calcFloorspacePast}
-\title{Historical residential floor space demand}
+\title{Historical floor space demand}
 \usage{
-calcFloorspacePast(endOfHistory = 2025)
+calcFloorspacePast(endOfHistory = 2025, returnPars = FALSE)
 }
 \arguments{
 \item{endOfHistory}{upper temporal boundary for historical data}
+
+\item{returnPars}{if \code{TRUE}, only the parameters of the global
+regressions are returned as a MAgPIE object (region \code{"GLO"}) instead of
+the historic floor space}
 }
 \value{
-MAgPIE object with historic floor space
+MAgPIE object with historic floor space per capita, or, if
+\code{returnPars = TRUE}, with the global regression parameters
 }
 \description{
-Data for many European countries is taken from EEA, India from IEA and other
-countries from Daioglou et al 2012. The result does not cover all countries
-and has mixed points in time depending on the region.
-}
-\note{
-RH: In Antoine's EDGE-B, data points associated with an GDP/POP above
-70000 USD/cap are dropped here to improve the later regression. This
-filtering should be moved to getFloorspaceResidential where the regression is
-performed. Therefore, the high-income data points are kept at this stage.
+Historical residential and commercial floor space per capita is compiled from
+several data sources. For each region, only a single source is used: Going
+down a fixed priority (Odyssee > IEA EEI > GLOBUS > Daioglou > GEM > EEA), the
+highest-priority source that provides any data point for a region contributes
+all of its data points (all variables and periods). Individual regions can be
+reassigned to a specific source via a fixed list of exceptions. Region/source
+combinations listed as outliers are discarded beforehand. Missing
+regions and periods are subsequently filled by a sectoral regression on GDP
+per capita (and, for residential, population density) that is performed
+region-wise if enough data points exist, otherwise a global regression is
+used. Both regressions are fitted on the data of all sources, weighted by
+source priority; the global regression additionally weights each region by
+its population. Predictions are subsequently scaled to match the selected
+data region-wise.
 }
 \author{
 Robin Hasse, Antoine Levesque, Hagen Tockhorn
