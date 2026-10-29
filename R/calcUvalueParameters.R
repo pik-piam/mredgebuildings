@@ -477,13 +477,16 @@ calcUvalueParameters <- function(endOfHistory = 2025) {
   row.names(regionalPars) <- c()
 
 
-  # total floor space per region
+  # total floor space per region aggregated over sectors
   floorspaceWeights <- floorspaceWeights %>%
     left_join(pop %>%
                 pivot_wider(names_from = "variable", values_from = "value"),
               by = c("region", "period")) %>%
     mutate(value = .data$value * .data$pop) %>%
-    select(-"pop")
+    select(-"pop") %>%
+    group_by(across(all_of(c("region", "period")))) %>%
+    reframe(value = sum(.data$value)) %>%
+    ungroup()
 
 
   # Calculate regional offset for remaining countries
